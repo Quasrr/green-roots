@@ -1,0 +1,116 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client"
+  output   = "./generated"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum Growth {
+  slow
+  medium
+  fast
+}
+
+enum OrderStatus {
+  waiting
+  paid
+  canceled
+}
+
+enum RoleName {
+  user
+  admin
+}
+
+model Role {
+  id       Int      @id @default(autoincrement())
+  nameRole RoleName @unique
+
+  users User[]
+}
+
+model User {
+  id        Int     @id @default(autoincrement())
+  lastname  String
+  firstname String
+  email     String  @unique
+  password  String
+  address   String?
+
+  roleId Int
+  role   Role @relation(fields: [roleId], references: [id])
+
+  orders Order[]
+
+  @@map("user")
+}
+
+model Tree {
+  id          Int     @id @default(autoincrement())
+  name        String  @unique
+  price       Decimal
+  description String
+  impact_co2  Decimal
+  impact_o2   Decimal
+  image       String  @unique
+  quantity    Int     @default(0)
+  label       String
+  country     String
+  height      Decimal
+  growth      Growth  @default(medium)
+  exposition  String
+  rusticity   String
+
+  categories TreeCategory[]
+  orderLines OrderLine[]
+}
+
+model Category {
+  id   Int    @id @default(autoincrement())
+  name String @unique
+
+  trees TreeCategory[]
+}
+
+model TreeCategory {
+  treeId     Int
+  categoryId Int
+
+  tree     Tree     @relation(fields: [treeId], references: [id])
+  category Category @relation(fields: [categoryId], references: [id])
+
+  @@id([treeId, categoryId])
+}
+
+model Order {
+  id     Int         @id @default(autoincrement())
+  status OrderStatus @default(waiting)
+  total  Decimal
+
+  userId Int
+  user   User @relation(fields: [userId], references: [id])
+
+  lines OrderLine[]
+
+  @@map("order")
+}
+
+model OrderLine {
+  id       Int @id @default(autoincrement())
+  quantity Int
+
+  treeId  Int
+  orderId Int
+
+  tree  Tree  @relation(fields: [treeId], references: [id])
+  order Order @relation(fields: [orderId], references: [id])
+}

@@ -4,4 +4,4 @@
 /dist
 
 # prisma
-generated
+prisma/generated
