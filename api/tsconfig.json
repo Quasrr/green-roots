@@ -1,0 +1,19 @@
+{
+    "compilerOptions": {
+    "target": "esnext",
+    "module": "nodenext",
+    "moduleResolution": "nodenext",
+    "rootDir": "./",
+    "outDir": "./dist",
+    
+    "forceConsistentCasingInFileNames": true,
+    "rewriteRelativeImportExtensions": true,
+    
+    "strict": true,
+    "erasableSyntaxOnly": true,
+    "verbatimModuleSyntax": true,
+    
+    "skipLibCheck": true
+  },
+  "exclude": ["**/*.test.ts"]
+}
