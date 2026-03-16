@@ -1,23 +1,31 @@
-import { useEffect, useState } from "react"
+import { useEffect, useState } from "react";
+import { useParams } from "react-router-dom";
 
 function Product() {
 
-    const [tree, setTree] = useState([])
+    const [tree, setTree] = useState(null); // On reçoit un objet unique potentiellement vide
+    const { id } = useParams(); // Récupérer l'id avec le hook params
+    const [isLoading, setIsLoading] = useState(true) // Loader de chargement
 
     useEffect(() => {
         async function fetchTreeById() {
             try {
-                const response = await fetch('/api/trees/:id');
+                const response = await fetch(`/api/trees/${id}`); // Fetch l'arbre sur la route /api/trees/:id
                 const data = await response.json();
                 setTree(data);
             } catch (error) {
                 console.error(error)
+            } finally {
+                setIsLoading(false) // exécution du loader qu'il y ait un succès ou une erreur
             }
         }
         fetchTreeById();
-    })
+    }, [id]) // Relancer l'arbre si l'id change
 
     return (
+        isLoading ? <p>Chargement en cours...</p> // Tant que notre objet est vide / pas encore totalement rempli, on affiche un loader de chargement
+        : !tree ? <p>Arbre introuvable.</p> // Afficher un message à l'utilisateur en cas d'erreur de chargement de l'arbre
+        : // Affiche tout le reste
         <>
             <img src={tree.image} alt={tree.name} className="product_banner" />
             <div className="add_cart_tree">
