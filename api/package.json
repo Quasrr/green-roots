@@ -10,7 +10,7 @@
     "start": "node dist/index.js",
     "build": "tsc",
     "docker:start": "npm run db:migrate:deploy && npm run start",
-    "docker:dev": "npm run db:generate && npm run db:push && npm run db:seed && npm run dev",
+    "docker:dev": "npm run db:generate && npm run db:push && npm run dev",
     "dev": "tsx --watch index.ts",
     "db:push": "prisma db push",
     "db:migrate:dev": "prisma migrate dev",
@@ -25,9 +25,12 @@
   "dependencies": {
     "@prisma/adapter-pg": "^6.19.2",
     "@prisma/client": "^6.19.2",
+    "argon2": "^0.44.0",
     "dotenv": "^17.3.1",
     "express": "^5.2.1",
-    "pg": "^8.20.0"
+    "jsonwebtoken": "^9.0.3",
+    "pg": "^8.20.0",
+    "zod": "^4.3.6"
   },
   "devDependencies": {
     "@eslint/js": "^10.0.1",
