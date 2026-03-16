@@ -6,9 +6,11 @@ import { prisma } from '../models/index.ts';
 
 
 
-export class AuthController {
+class AuthController {
 
-    static async register(req: Request, res: Response) {
+
+
+    async register(req: Request, res: Response) {
         // schéma pour valider les données entrantes dans notre controller
         const schema = z.object({
             lastname: z.string().min(2),
@@ -38,7 +40,7 @@ export class AuthController {
             //créer l'utilisateur dans la base de données
 
             const createdUser = await prisma.user.create({
-                data: { lastname, firstname, email, password: hashedPassword },
+                data: { lastname, firstname, email, password: hashedPassword, roleId: 2 },
             });
             res.status(201).json({
                 message: "OK", user: {
@@ -46,7 +48,7 @@ export class AuthController {
                     email: createdUser.email,
                     firstname: createdUser.firstname,
                     lastname: createdUser.lastname,
-            
+
                 }
             });
 
@@ -55,3 +57,5 @@ export class AuthController {
         }
     }
 }
+
+export default new AuthController();
