@@ -53,6 +53,34 @@ class AuthController {
             ErrorHandler.sendError(res, error);
         }
     }
+    async login(req: Request, res: Response) {
+
+        // schéma pour valider les données entrantes dans notre controller
+        const schema = z.object({
+            email: z.string().email(),
+            password: z.string().min(6),
+        });
+
+        try {
+            //valider et récupérer les informations du client
+            const { email, password } = schema.parse(req.body);
+
+            //vérifier que l'utilisateur existe bien en base de données
+            const user = await prisma.user.findUnique({ where: { email } });
+            if (!user) {
+                throw new ConflictError('Invalid credentials');
+            }
+
+            //vérifier que le mot de passe correspond à celui stocké en base de données
+            const isPasswordValid = await argon2.verify(user.password, password);
+            if (!isPasswordValid) {
+                throw new ConflictError('Invalid credentials');
+            }
+        } catch (error) {
+            return ErrorHandler.sendError(res, error);
+        }       
+
+
 }
 
 export default new AuthController();
