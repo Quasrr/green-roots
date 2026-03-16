@@ -24,12 +24,12 @@ export class AuthController {
 
             //s'assurer que les password correspondent
             if (password !== passwordConfirm) {
-                throw ('Les mdp ne correspondent pas');
+                throw new Error('Passwords don\'t match');
             }
             //avant de créer un user, s'assurer qu'il n'existe pas déjà
             const existingUser = await prisma.user.findUnique({ where: { email } });
             if (existingUser) {
-                return res.status(409).json({ message: 'Email already in use' });
+                throw new Error('Email already in use');
             }
 
             //hasher le mot de passe avant de le stocker en base de données
@@ -39,7 +39,7 @@ export class AuthController {
 
             const createdUser = await prisma.user.create({
                 data: { lastname, firstname, email, password: hashedPassword },
-            })
+            });
             res.status(201).json({
                 message: "OK", user: {
                     id: createdUser.id,
