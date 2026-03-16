@@ -35,6 +35,8 @@ export class AuthController {
             //hasher le mot de passe avant de le stocker en base de données
             const hashedPassword = await argon2.hash(password);
 
+            //créer l'utilisateur dans la base de données
+
             const createdUser = await prisma.user.create({
                 data: { lastname, firstname, email, password: hashedPassword },
             })
