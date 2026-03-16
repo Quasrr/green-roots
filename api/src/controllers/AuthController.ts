@@ -3,7 +3,7 @@ import z from 'zod';
 import argon2 from 'argon2';
 import jwt from 'jsonwebtoken';
 import { prisma } from '../models/index.ts';
-import { ConflictError, NotFoundError } from '../utils/Error.ts';
+import { ConflictError, NotFoundError, UnauthorizedError } from '../utils/Error.ts';
 import ErrorHandler from '../ErrorHandler.ts';
 
 class AuthController {
@@ -67,22 +67,40 @@ class AuthController {
 
             //vérifier que l'utilisateur existe bien en base de données
             const user = await prisma.user.findUnique({ where: { email } });
-            if (!user) {
-                throw new NotFoundError('Invalid credentials');
-            }
+
+            if (!user) throw new NotFoundError('Invalid credentials');
 
             //vérifier que le mot de passe correspond à celui stocké en base de données
             const isPasswordValid = await argon2.verify(user.password, password);
-            if (!isPasswordValid) {
-                throw new NotFoundError('Invalid credentials');
-            }
+
+            if (!isPasswordValid) throw new UnauthorizedError('Invalid credentials');
+
+            const token = jwt.sign(
+                { email },
+                process.env.JWT_SECRET,
+                { expiresIn: "1h" }
+            );
+
+            res.cookie("access_token", token, {
+                httpOnly: true,
+                secure: process.env.NODE_ENV === "production",
+                sameSite: "lax",
+                path: "/api",
+                maxAge: 1000 * 60 * 60
+            });
+
+            return res.send({ email });
+
         } catch (error) {
+            console.log(error)
             return ErrorHandler.sendError(res, error);
-        }     
-    }  
+        };
+    };
 
-
-
-}
+    async logout(_req: Request, res: Response) {
+        res.clearCookie("access_token", { path: "/api" });
+        res.sendStatus(204);
+    }
+};
 
 export default new AuthController();
