@@ -65,9 +65,3 @@ function LandingPage() {
         </>
     )
 }
-
-<<<<<<< HEAD
-export default LandingPage;
-=======
-export default LandingPage;
->>>>>>> b2ae3dfde503add9d1aa01476a135e50651e1e7a
