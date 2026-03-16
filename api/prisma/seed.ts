@@ -1,18 +1,76 @@
 import { Growth } from "./generated/enums.ts";
+import { RoleName } from "./generated/enums.ts";
 import { prisma } from "../src/models/index.ts";
+import argon2 from "argon2";
 
 async function main() {
+    // Roles
+    const adminRole = await prisma.role.upsert({
+        where: { nameRole: RoleName.admin },
+        update: {},
+        create: { nameRole: RoleName.admin },
+    });
+
+    const userRole = await prisma.role.upsert({
+        where: { nameRole: RoleName.user },
+        update: {},
+        create: { nameRole: RoleName.user },
+    });
+
+    // Test user
+    const testUserPassword = await argon2.hash("Test1234!");
+    await prisma.user.upsert({
+        where: { email: "test.user@greenroots.fr" },
+        update: {
+            lastname: "User",
+            firstname: "Test",
+            password: testUserPassword,
+            roleId: userRole.id,
+        },
+        create: {
+            lastname: "User",
+            firstname: "Test",
+            email: "test.user@greenroots.fr",
+            password: testUserPassword,
+            roleId: userRole.id,
+        },
+    });
+
+    const adminUserPassword = await argon2.hash("Admin1234!");
+    await prisma.user.upsert({
+        where: { email: "admin@greenroots.fr" },
+        update: {
+            lastname: "Admin",
+            firstname: "Super",
+            password: adminUserPassword,
+            roleId: adminRole.id,
+        },
+        create: {
+            lastname: "Admin",
+            firstname: "Super",
+            email: "admin@greenroots.fr",
+            password: adminUserPassword,
+            roleId: adminRole.id,
+        },
+    });
+
     // Categories
-    const fruitiers = await prisma.category.create({
-        data: { name: "Fruitier" },
+    const fruitiers = await prisma.category.upsert({
+        where: { name: "Fruitier" },
+        update: {},
+        create: { name: "Fruitier" },
     });
 
-    const ornamentaux = await prisma.category.create({
-        data: { name: "Ornemental" },
+    const ornamentaux = await prisma.category.upsert({
+        where: { name: "Ornemental" },
+        update: {},
+        create: { name: "Ornemental" },
     });
 
-    const persistants = await prisma.category.create({
-        data: { name: "Persistant" },
+    const persistants = await prisma.category.upsert({
+        where: { name: "Persistant" },
+        update: {},
+        create: { name: "Persistant" },
     });
 
     // Trees
@@ -192,8 +250,20 @@ async function main() {
     for (const tree of trees) {
         const { categories, ...treeData } = tree;
 
-        await prisma.tree.create({
-            data: {
+        await prisma.tree.upsert({
+            where: { name: treeData.name },
+            update: {
+                ...treeData,
+                categories: {
+                    deleteMany: {},
+                    create: categories.map((categoryId) => ({
+                        category: {
+                            connect: { id: categoryId },
+                        },
+                    })),
+                },
+            },
+            create: {
                 ...treeData,
                 categories: {
                     create: categories.map((categoryId) => ({
@@ -206,7 +276,7 @@ async function main() {
         });
     }
 
-    console.log("Seed terminé");
+    console.log(`Seed terminé`);
 }
 
 main()
