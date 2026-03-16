@@ -3,7 +3,7 @@ import z from 'zod';
 import argon2 from 'argon2';
 import jwt from 'jsonwebtoken';
 import { prisma } from '../models/index.ts';
-import { ConflictError } from '../utils/Error.ts';
+import { ConflictError, NotFoundError } from '../utils/Error.ts';
 import ErrorHandler from '../ErrorHandler.ts';
 
 class AuthController {
@@ -68,17 +68,19 @@ class AuthController {
             //vérifier que l'utilisateur existe bien en base de données
             const user = await prisma.user.findUnique({ where: { email } });
             if (!user) {
-                throw new ConflictError('Invalid credentials');
+                throw new NotFoundError('Invalid credentials');
             }
 
             //vérifier que le mot de passe correspond à celui stocké en base de données
             const isPasswordValid = await argon2.verify(user.password, password);
             if (!isPasswordValid) {
-                throw new ConflictError('Invalid credentials');
+                throw new NotFoundError('Invalid credentials');
             }
         } catch (error) {
             return ErrorHandler.sendError(res, error);
-        }       
+        }     
+    }  
+
 
 
 }
