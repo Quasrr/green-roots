@@ -27,6 +27,7 @@ services:
       PORT: ${API_LOCAL_PORT}
       DATABASE_URL: postgres://${POSTGRES_USER}:${POSTGRES_PASSWORD}@greenroots-db:5432/${POSTGRES_DB}
       NODE_ENV: development
+      JWT_SECRET: ${API_JWT_SECRET}
     ports:
       - ${API_LOCAL_PORT}:${API_LOCAL_PORT}
     volumes:
