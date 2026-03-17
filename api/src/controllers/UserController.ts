@@ -1,6 +1,16 @@
 import type { Request, Response } from "express";
 import { prisma } from '../models/index.ts';
 import { NotFoundError } from "../utils/Error.ts";
+import z from 'zod';
+
+const shemas = {
+    update: z.object({
+        email: z.string().email().optional(),
+        firstname: z.string().min(2).optional(),
+        lastname: z.string().min(2).optional(),
+        address: z.string().min(5).optional(),
+    })
+};
 
 
 const userSelect = {
@@ -13,6 +23,7 @@ const userSelect = {
         select: { nameRole: true }
     }
 };
+
 
 class UserController {
 
@@ -36,7 +47,8 @@ class UserController {
     }
     async update(req: Request, res: Response) {
         const { id } = req.params;
-        const data = req.body;
+        const data = shemas.update.parse(req.body);
+
 
         const exists = await prisma.user.findUnique({  
             where: { id: Number(id) }
