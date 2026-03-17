@@ -95,7 +95,6 @@ class AuthController {
             return res.send({ email });
 
         } catch (error) {
-            console.log(error)
             return ErrorHandler.sendError(res, error);
         };
     };

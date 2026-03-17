@@ -16,14 +16,16 @@ export default class ErrorHandler {
             throw error;
         };
 
-        if (error instanceof UnexpectedServerError) return res.status(500).send(error);
-        if (error instanceof BadRequestError) return res.status(400).send(error);
-        if (error instanceof UnauthorizedError) return res.status(401).send(error);
-        if (error instanceof ForbiddenError) return res.status(403).send(error);
-        if (error instanceof NotFoundError) return res.status(404).send(error);
-        if (error instanceof ConflictError) return res.status(409).send(error);
+        const errorResponse = { message: error.message };
+
+        if (error instanceof UnexpectedServerError) return res.status(500).send(errorResponse);
+        if (error instanceof BadRequestError) return res.status(400).send(errorResponse);
+        if (error instanceof UnauthorizedError) return res.status(401).send(errorResponse);
+        if (error instanceof ForbiddenError) return res.status(403).send(errorResponse);
+        if (error instanceof NotFoundError) return res.status(404).send(errorResponse);
+        if (error instanceof ConflictError) return res.status(409).send(errorResponse);
         if (error instanceof z.ZodError) return res.status(422).send({ error: z.prettifyError(error) });
 
-        return res.status(500).send(error);
+        return res.status(500).send(errorResponse);
     };
 };
