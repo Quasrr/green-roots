@@ -6,7 +6,7 @@ const router = Router();
 // routes d'authentification
 router.post('/api/auth/register', AuthController.register);
 router.post('/api/auth/login', AuthController.login);
-router.post('/api/auth/logout', AuthController.logout);
+router.post('/api/auth/logout', authMiddleware, AuthController.logout);
 router.get('/api/auth/me', authMiddleware, AuthController.me);
 
 export default router;

@@ -100,19 +100,23 @@ class AuthController {
         };
     };
 
-    async logout(_req: Request, res: Response)  {
+    async logout(_req: Request, res: Response) {
         res.clearCookie("access_token", { path: "/api" });
         res.sendStatus(204);
     }
-    async me(req: Request, res: Response) : Promise<void> {
+    async me(req: Request, res: Response): Promise<void> {
         // Récupérer les informations de l'utilisateur à partir de la requête (grâce au middleware d'authentification)
         const userInfo = req.user;
         // Si l'utilisateur n'est pas trouvé, renvoyer une erreur
         if (!userInfo) {
             throw new NotFoundError('User not found');
         }
+        //On utilise l'email du token pour aller chercher toutes les infos en BDD
+        const user = await prisma.user.findUnique({ where: { email: userInfo.email } });
+        if (!user) throw new NotFoundError('User not found');
+
         // Renvoyer les informations de l'utilisateur au client
-        res.json({ email: userInfo.email, firstname: userInfo.firstname, lastname: userInfo.lastname, role: userInfo.roleId });
+        res.json({ email: user.email, firstname: user.firstname, lastname: user.lastname, role: user.roleId });
     }
 
 };
