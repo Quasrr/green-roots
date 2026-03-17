@@ -53,7 +53,7 @@ function Product() {
                 <div className="measure_tree">
                     <div className="measure_tree_value">
                         <p className="information_tree">HAUTEUR ADULTE</p>
-                        <p className="information_tree_value">{tree.heigth}</p>
+                        <p className="information_tree_value">{tree.height}</p>
                     </div>
                     <div className="measure_tree_value">
                         <p className="information_tree">CROISSANCE</p>
