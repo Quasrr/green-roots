@@ -1,4 +1,3 @@
-import { execSync } from "node:child_process";
 import type { Server } from "node:http";
 import { after, before, beforeEach, type TestContext } from "node:test";
 import express from "express";
@@ -11,8 +10,6 @@ let server: Server;
 // s'exécutes une seule fois pour tous les tests
 before(async () => {
     await waitForDatabase();
-    
-    execSync("npx prisma migrate deploy", { stdio: "ignore" });
 
     const app = express();
     app.use(express.json());
