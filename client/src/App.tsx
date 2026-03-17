@@ -1,12 +1,12 @@
 import { Routes, Route } from 'react-router-dom';
-import Header from './components/header';
-import LandingPage from './components/landingPage.tsx';
-import Footer from './components/footer.tsx';
-import PrivacyPolicy from './components/privacyPolicy.tsx';
-import CGV from './components/cgv.tsx';
-import Legals from './components/legals.tsx';
-import Product from './components/product.tsx';
-import Catalog from './components/catalog.tsx';
+import Header from './components/Header.tsx';
+import LandingPage from './components/LandingPage.tsx';
+import Footer from './components/Footer.tsx';
+import PrivacyPolicy from './components/PrivacyPolicy.tsx';
+import CGV from './components/Cgv.tsx';
+import Legals from './components/Legals.tsx';
+import Product from './components/Product.tsx';
+import Catalog from './components/Catalog.tsx';
 import './App.css'
 
 function App() {

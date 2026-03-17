@@ -1,8 +1,9 @@
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
+import type { Tree } from '../types';
 
 function LandingPage() {
-    const [trees, setTrees] = useState([]); //State des arbres
+    const [trees, setTrees] = useState<Tree[]>([]); //State des arbres
 
     useEffect(() => {
         async function fetchTrees () {
