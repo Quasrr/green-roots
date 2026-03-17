@@ -1,12 +1,13 @@
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import type { Tree } from '../types';
+import './LandingPage.css';
 
 function LandingPage() {
     const [trees, setTrees] = useState<Tree[]>([]); //State des arbres
 
     useEffect(() => {
-        async function fetchTrees () {
+        async function fetchTrees() {
             try {
                 const res = await fetch('/api/trees') // Fetch sur la route des arbres de notre api
                 const data = await res.json()
@@ -22,10 +23,14 @@ function LandingPage() {
         <>
             <section className="banniere_landing">
                 <img src="/banniere.webp" alt="banniere GreenRoots" className="banniere" />
-                <h1>Rejoignez le mouvement GreenRoots</h1>
-                <p className="hero_banniere">Plantez un arbre aujourd'hui pour un avenir plus vert demain. Chaque geste compte pour la restauration de notre biodiversité.</p>
-                <Link to="/catalog" className='btn_catalog'>Acheter un arbre</Link>
-                <Link to="/about" className='btn_about'>En savoir plus</Link>
+                <div className="banniere_landing_content">
+                    <h1>Rejoignez le mouvement GreenRoots</h1>
+                    <p className="hero_banniere">Plantez un arbre aujourd'hui pour un avenir plus vert demain. Chaque geste compte pour la restauration de notre biodiversité.</p>
+                    <div className="div_buttons_banniere">
+                        <Link to="/catalog" className='btn_catalog'>Acheter un arbre</Link>
+                        <Link to="/about" className='btn_about'>En savoir plus</Link>
+                    </div>
+                </div>
             </section>
             <section className="why_choose">
                 <h4>Notre mission</h4>
@@ -52,14 +57,14 @@ function LandingPage() {
                 <Link to="/catalog" className='link_catalog'>Voir tout le catalogue</Link>
 
                 {/* Récupérer les 4 premiers arbres avec slice et map pour chaque arbre dans notre catalogue d'arbres */}
-                {trees.slice(0,4).map(tree => (
-                <article key={tree.id} className="article_reasons_choose">
-                    <img src={tree.image} alt="image d'un chene" className={tree.name} />
-                    <h3 className='title_tree_popular'>{tree.name}</h3>
-                    <p className="label_tree">{tree.label}</p>
-                    <p className="price_tree">{tree.price}</p>
-                    <img src="/cart.webp" alt="logo panier d'achat" className="logo_cart" />
-                </article>
+                {trees.slice(0, 4).map(tree => (
+                    <article key={tree.id} className="article_reasons_choose">
+                        <img src={tree.image} alt="image d'un chene" className={tree.name} />
+                        <h3 className='title_tree_popular'>{tree.name}</h3>
+                        <p className="label_tree">{tree.label}</p>
+                        <p className="price_tree">{tree.price}</p>
+                        <img src="/cart.webp" alt="logo panier d'achat" className="logo_cart" />
+                    </article>
                 ))}
             </section>
 
