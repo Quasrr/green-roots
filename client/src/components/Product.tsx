@@ -1,11 +1,13 @@
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
+import type { Tree } from "../types";
 
 function Product() {
 
-    const [tree, setTree] = useState(null); // On reçoit un objet unique potentiellement vide
+    const [tree, setTree] = useState<Tree | null>(null); // On reçoit un objet (un arbre) unique potentiellement vide
     const { id } = useParams(); // Récupérer l'id avec le hook params
-    const [isLoading, setIsLoading] = useState(true) // Loader de chargement
+    const [isLoading, setIsLoading] = useState<boolean>(true); // Loader de chargement
+    const [error, setError] = useState(false);
 
     useEffect(() => {
         async function fetchTreeById() {
@@ -15,6 +17,7 @@ function Product() {
                 setTree(data);
             } catch (error) {
                 console.error(error)
+                setError(true)
             } finally {
                 setIsLoading(false) // exécution du loader qu'il y ait un succès ou une erreur
             }
@@ -22,10 +25,11 @@ function Product() {
         fetchTreeById();
     }, [id]) // Relancer l'arbre si l'id change
 
+    if (isLoading) return <p>Chargement en cours...</p> // Tant que notre objet est vide / pas encore totalement rempli, on affiche un loader de chargement
+    if (error) return <p>Erreur de chargement.</p>
+    if (!tree) return <p>Arbre introuvable.</p> // Afficher un message à l'utilisateur en cas d'erreur de chargement de l'arbre
+
     return (
-        isLoading ? <p>Chargement en cours...</p> // Tant que notre objet est vide / pas encore totalement rempli, on affiche un loader de chargement
-        : !tree ? <p>Arbre introuvable.</p> // Afficher un message à l'utilisateur en cas d'erreur de chargement de l'arbre
-        : // Affiche tout le reste
         <>
             <img src={tree.image} alt={tree.name} className="product_banner" />
             <div className="add_cart_tree">
