@@ -1,0 +1,55 @@
+:root {
+  --bg-color-primary: #F6F8F7;
+  --bg-color-secondary: #1A4231;
+  --bg-color-tercary: #0D0D0C;
+  --bg-color-quartary: #151D1A;
+  --font-primary: 'Inter', sans-serif;
+}
+
+.banniere_landing {
+  position: relative;
+  height: 50dvh;
+}
+
+.banniere {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.banniere_landing_content {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  text-align: center;
+  width: 60%;
+}
+
+.hero_banniere {
+  color: var(--bg-color-primary);
+  font-size: 1.2rem;
+  font-weight: bold;
+}
+
+.div_buttons_banniere {
+  display: flex;
+  gap: 2rem;
+  justify-content: center;
+}
+
+.btn_catalog,
+.btn_about {
+  background-color: var(--bg-color-secondary);
+  color: var(--bg-color-primary);
+  font-size: 1.3rem;
+  font-weight: bold;
+  padding: 0.6rem;
+  border-radius: 1rem;
+  border: 1px solid #1A4231;
+}
+
+.btn_about {
+  background-color: #433C34;
+  color: var(--bg-color-primary);
+}
