@@ -38,29 +38,36 @@ class UserController {
         const { id } = req.params;
         const data = req.body;
 
-        try {
-            const user = await prisma.user.update({
-                where: { id: Number(id) },
-                data: data,
-                select: userSelect
-            });
-            res.json(user);
-        } catch {
+        const exists = await prisma.user.findUnique({  
+            where: { id: Number(id) }
+        });
+        if (!exists) {
             throw new NotFoundError('User not found');
         }
 
+        const user = await prisma.user.update({
+            where: { id: Number(id) },
+            data: data,
+            select: userSelect
+        });
+        res.json(user);
     }
 
     async delete(req: Request, res: Response) {
         const { id } = req.params;
-        try {
-            await prisma.user.delete({
-                where: { id: Number(id) }
-            });
-            res.status(204).send();
-        } catch {
+        const user = await prisma.user.findUnique({
+            where: { id: Number(id) }
+        });
+        if (!user) {
             throw new NotFoundError('User not found');
         }
+
+        await prisma.user.delete({
+            where: { id: Number(id) }
+        });
+        res.status(204).send();
+
     }
 }
+
 export default new UserController();

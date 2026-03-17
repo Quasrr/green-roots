@@ -17,4 +17,6 @@ router.get('/api/users/:id', authMiddleware, UserController.getById);
 router.patch('/api/users/:id', authMiddleware, UserController.update);
 router.delete('/api/users/:id', authMiddleware, UserController.delete);
 
+//routes panier
+
 export default router;
