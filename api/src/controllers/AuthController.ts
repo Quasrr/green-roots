@@ -6,6 +6,9 @@ import { prisma } from '../models/index.ts';
 import { ConflictError, NotFoundError, UnauthorizedError } from '../utils/Error.ts';
 import ErrorHandler from '../ErrorHandler.ts';
 
+
+
+
 class AuthController {
     async register(req: Request, res: Response) {
         // schéma pour valider les données entrantes dans notre controller
@@ -97,10 +100,21 @@ class AuthController {
         };
     };
 
-    async logout(_req: Request, res: Response) {
+    async logout(_req: Request, res: Response)  {
         res.clearCookie("access_token", { path: "/api" });
         res.sendStatus(204);
     }
+    async me(req: Request, res: Response) : Promise<void> {
+        // Récupérer les informations de l'utilisateur à partir de la requête (grâce au middleware d'authentification)
+        const userInfo = req.user;
+        // Si l'utilisateur n'est pas trouvé, renvoyer une erreur
+        if (!userInfo) {
+            throw new NotFoundError('User not found');
+        }
+        // Renvoyer les informations de l'utilisateur au client
+        res.json({ email: userInfo.email, firstname: userInfo.firstname, lastname: userInfo.lastname, role: userInfo.roleId });
+    }
+
 };
 
 export default new AuthController();
