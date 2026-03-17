@@ -2,6 +2,7 @@ import { Router } from "express";
 import AuthController from "./controllers/AuthController.ts";
 import authMiddleware from "./Middlewares/authMiddleware.ts";
 import TreesController from "./controllers/TreesController.ts";
+import adminMiddleware from "./Middlewares/adminMiddleware.ts";
 const router = Router();
 
 // routes d'authentification
@@ -13,8 +14,8 @@ router.get('/api/auth/me', authMiddleware, AuthController.me);
 // routes d'arbres
 router.get('/api/trees', TreesController.getAll);
 router.get('/api/trees/:id', TreesController.getById);
-router.post('/api/trees', TreesController.create);
-router.patch('/api/trees/:id', TreesController.update);
-router.delete('/api/trees/:id', TreesController.delete);
+router.post('/api/trees', authMiddleware, adminMiddleware, TreesController.create);
+router.patch('/api/trees/:id', authMiddleware, adminMiddleware, TreesController.update);
+router.delete('/api/trees/:id', authMiddleware, adminMiddleware, TreesController.delete);
 
 export default router;
