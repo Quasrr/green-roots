@@ -1,0 +1,70 @@
+:root {
+  --bg-color-primary: #F6F8F7;
+  --bg-color-secondary: #1A4231;
+  --bg-color-tercary: #0D0D0C;
+  --bg-color-quartary: #151D1A;
+  --font-primary: 'Inter', sans-serif;
+}
+
+body {
+  font-family: var(--font-primary);
+  background-color: var(--bg-color-primary);
+}
+
+header {
+  display: flex;
+  justify-content: space-between;
+  margin: 0 1rem
+}
+
+nav {
+  display: flex;
+  align-items: center;
+  gap: 2rem;
+}
+
+a {
+  color: var(--bg-color-quartary);
+  text-decoration: none;
+  font-weight: bold;
+  font-size: 1.2rem;
+}
+
+.div_logo_header {
+  display: flex;
+}
+
+.logo_greenroots {
+  width: 70px;
+  height: 70px;
+}
+
+.name_enterprise {
+  color: var(--bg-color-secondary);
+  font-size: 1.5rem;
+  font-weight: bold;
+}
+
+.div_buttons_header {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 1rem;
+}
+
+.login,
+.register {
+  color: var(--bg-color-quartary);
+  font-size: 1.3rem;
+  font-weight: bold;
+  background-color: var(--bg-color-primary);
+  padding: 0.6rem;
+  border-radius: 1rem;
+  border: 1px solid #1A4231;
+}
+
+h1 {
+  color: white;
+  font-weight: bold;
+  font-size: 3rem;
+}
