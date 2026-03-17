@@ -3,7 +3,16 @@
   --bg-color-secondary: #1A4231;
   --bg-color-tercary: #0D0D0C;
   --bg-color-quartary: #151D1A;
+  --text-color: #6F777A;
   --font-primary: 'Inter', sans-serif;
+}
+
+/* === Section Banniere === */
+
+h1 {
+  color: white;
+  font-weight: bold;
+  font-size: 3rem;
 }
 
 .banniere_landing {
@@ -52,4 +61,82 @@
 .btn_about {
   background-color: #433C34;
   color: var(--bg-color-primary);
+}
+
+/* === Section why_choose === */
+
+.why_choose {
+  margin: 0 18rem;
+}
+
+h4 {
+  color: var(--bg-color-secondary);
+  font-size: 1.2rem;
+  font-weight: bold;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+h4::before {
+  content: '';
+  width: 30px;
+  height: 4px;
+  background-color: var(--bg-color-quartary);
+}
+
+h2 {
+  color: var(--bg-color-tercary);
+  font-weight: bold;
+  font-size: 2rem;
+}
+
+.description_h2 {
+  color: var(--text-color);
+}
+
+h3 {
+  font-weight: bold;
+  font-size: 1.6rem;
+}
+
+.article_mission {
+  display: flex;
+  gap: 4rem;
+}
+
+.article_reasons_choose {
+  background-color: white;
+  padding: 2rem 3rem;
+  border-radius: 1rem;
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+}
+
+.icon_wrapper {
+  background-color: lightgray;
+  border-radius: 50%;
+  width: 72px;
+  height: 72px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 1rem;
+}
+
+.description_article {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  gap: 1rem;
+}
+
+.description_article h3 {
+  min-height: 4rem;
+}
+
+.description_article_reasons {
+  color: var(--text-color);
+  font-size: 1.2rem;
 }
