@@ -3,10 +3,6 @@ export type Category = {
     name: string
 };
 
-export type TreeCategory = {
-    category: Category
-};
-
 export type Tree = {
     id: number
     name: string
@@ -22,5 +18,5 @@ export type Tree = {
     growth: string
     exposition: string
     rusticity: string
-    categories: TreeCategory[]
+    categories: Category[]
 }

@@ -26,18 +26,19 @@ function Catalog() {
         fetchTrees()
     }, [])
 
+
+
     // === Partie filtre des catégories ===
-    // Extraire uniquement les catégories depuis le tableau [Tree] (avec des doublons de catégorie)
-    const allCategoriesWithDoublons = trees.flatMap(tree => // Methode flat + map met tout en un seul tableau ==> [{treeId: 1, categoryId: 2, category: { id: 2, name: "Feuillus" }}]
-        tree.categories.map(tc => tc.category) // [{ id: 2, name: "Feuillus" }] / On récupère que l'objet category
-    );
+    // Extraire uniquement le tableau d'objet Catégory depuis le tableau [Tree] (avec des doublons de catégorie)
+    const allCategoriesWithDoublons = trees.flatMap(tree => tree.categories)
+    // Résultat : [{ id: 1, name: "Fruitier" }, { id: 3, name: "Mabrouk" }, ...]
 
     // Avoir un nom de catégorie unique dans son tableau
-    const categories: Category[]= []
+    const categories: Category[] = []
     allCategoriesWithDoublons.forEach(cat => {
         const categoriesPresente = categories.some(c => c.id === cat.id) // (Boolean) Tester l'id d'une catégorie dans le tableau categories VS l'id de la catégorie qui se fait tester
         if (!categoriesPresente) { // categoriesPresente = False ==> on ajoute au tableau
-            categories.push(cat) 
+            categories.push(cat)
         }
     });
 
@@ -49,7 +50,7 @@ function Catalog() {
         if (idDejaSelectionnee) { // catégorie cochée
             setIdSelectedCategories(idSelectedCategories.filter(c => c !== id)) // retirer la catégorie déjà cochée (grâce à son id) tout en gardant les autres catégories
         } else { // catégorie pas cochée
-            setIdSelectedCategories([...idSelectedCategories, id]) // ...on recopie le tableau existant et on ajoute le nouvel id à la fin
+            setIdSelectedCategories([...idSelectedCategories, id]) // on recopie le tableau existant et on ajoute le nouvel id à la fin
         }
     };
 
@@ -57,7 +58,7 @@ function Catalog() {
     const filteredTrees = trees.filter(tree => {
 
         const noCategorySelected = idSelectedCategories.length === 0 // Si aucune catégorie cochée (true) = on affiche tout
-        const treeInCategory = tree.categories.some(tc => idSelectedCategories.includes(tc.category.id)) // Si l'arbre appartient à une catégorie cochée (true)
+        const treeInCategory = tree.categories.some(cat => idSelectedCategories.includes(cat.id)) // Si l'arbre appartient à une catégorie cochée (true) — directement cat.id sans passer par tc.category.id
 
         const matchCategory = noCategorySelected || treeInCategory // passe si aucun filtre est actif OU si l'arbre correspond
         const matchPrice = tree.price <= maxPrice // passe si le prix de l'arbre est inférieur ou égal au max du slider (300)
@@ -79,11 +80,11 @@ function Catalog() {
                         <p className="filtre">Filtres</p>
 
                         <p className="categories">CATEGORIES</p>
-                        {categories.map(categorie =>
+                        {categories.map(category =>
                         // Ajoute un bouton cliquable pour chaque catégorie unique présente dans notre tableau
-                        (<button key={categorie.id} className={idSelectedCategories.includes(categorie.id) ? 'active' : ''} // Ajout d'une classe en ternaire (active) pour colorisé le bouton cliqué
-                            onClick={() => chooseCategory(categorie.id)}>
-                            {categorie.name}
+                        (<button key={category.id} className={idSelectedCategories.includes(category.id) ? 'active' : ''} // Ajout d'une classe en ternaire (active) pour colorisé le bouton cliqué
+                            onClick={() => chooseCategory(category.id)}>
+                            {category.name}
                         </button>
                         ))}
 
@@ -104,8 +105,8 @@ function Catalog() {
                         {filteredTrees.map(tree => (
                             <article className="article_tree" key={tree.id}>
                                 <img src={tree.image} alt={tree.name} />
-                                {tree.categories.map(tc => ( // Les catégories sont incluses dans chaque arbre grâce à la jointure (include) avec Prisma
-                                    <p key={tc.category.id}>{tc.category.name}</p>
+                                {tree.categories.map(category => ( // Prendre la propriété (objet) 'categories' dans le tableau Tree
+                                    <p key={category.id}>{category.name}</p>
                                 ))}
                                 <h2>{tree.name}</h2>
                                 <p className="label_tree">{tree.label}</p>
