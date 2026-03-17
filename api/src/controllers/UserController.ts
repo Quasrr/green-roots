@@ -2,6 +2,7 @@ import type { Request, Response } from "express";
 import { prisma } from '../models/index.ts';
 import { NotFoundError } from "../utils/Error.ts";
 import z from 'zod';
+import ErrorHandler from "../ErrorHandler.ts";
 
 const shemas = {
     update: z.object({
@@ -11,7 +12,6 @@ const shemas = {
         address: z.string().min(5).optional(),
     })
 };
-
 
 const userSelect = {
     id: true,
@@ -24,62 +24,77 @@ const userSelect = {
     }
 };
 
-
 class UserController {
-
     async getAll(req: Request, res: Response) {
-        const users = await prisma.user.findMany({
-            select: userSelect
-        });
-        res.json(users);
-    }
+        try {
+            const users = await prisma.user.findMany({
+                select: userSelect
+            });
+            res.json(users);
+        } catch (error) {
+            ErrorHandler.sendError(res, error);
+        };
+    };
 
     async getById(req: Request, res: Response) {
-        const { id } = req.params;
-        const user = await prisma.user.findUnique({
-            where: { id: Number(id) },
-            select: userSelect
-        });
-        if (!user) {
-            throw new NotFoundError('User not found');
-        }
-        res.json(user);
-    }
+        try {
+            const { id } = req.params;
+
+            const user = await prisma.user.findUnique({
+                where: { id: Number(id) },
+                select: userSelect
+            });
+
+            if (!user) throw new NotFoundError('User not found');
+
+            res.json(user);
+        } catch (error) {
+            ErrorHandler.sendError(res, error);
+        };
+    };
+
     async update(req: Request, res: Response) {
-        const { id } = req.params;
-        const data = shemas.update.parse(req.body);
+        try {
+            const { id } = req.params;
+            const data = shemas.update.parse(req.body);
 
+            const exists = await prisma.user.findUnique({
+                where: { id: Number(id) }
+            });
 
-        const exists = await prisma.user.findUnique({  
-            where: { id: Number(id) }
-        });
-        if (!exists) {
-            throw new NotFoundError('User not found');
-        }
+            if (!exists) throw new NotFoundError('User not found');
 
-        const user = await prisma.user.update({
-            where: { id: Number(id) },
-            data: data,
-            select: userSelect
-        });
-        res.json(user);
-    }
+            const user = await prisma.user.update({
+                where: { id: Number(id) },
+                data: data,
+                select: userSelect
+            });
+
+            res.json(user);
+        } catch (error) {
+            ErrorHandler.sendError(res, error);
+        };
+    };
 
     async delete(req: Request, res: Response) {
-        const { id } = req.params;
-        const user = await prisma.user.findUnique({
-            where: { id: Number(id) }
-        });
-        if (!user) {
-            throw new NotFoundError('User not found');
-        }
+        try {
+            const { id } = req.params;
 
-        await prisma.user.delete({
-            where: { id: Number(id) }
-        });
-        res.status(204).send();
+            const user = await prisma.user.findUnique({
+                where: { id: Number(id) }
+            });
 
-    }
-}
+            if (!user) throw new NotFoundError('User not found');
+
+            await prisma.user.delete({
+                where: { id: Number(id) }
+            });
+
+            res.status(204).send();
+        } catch (error) {
+            ErrorHandler.sendError(res, error);
+        };
+    };
+};
 
 export default new UserController();
