@@ -6,6 +6,7 @@ import PrivacyPolicy from './components/privacyPolicy.tsx';
 import CGV from './components/cgv.tsx';
 import Legals from './components/legals.tsx';
 import Product from './components/product.tsx';
+import Catalog from './components/catalog.tsx';
 import './App.css'
 
 function App() {
@@ -19,6 +20,7 @@ function App() {
         <Route path="/cgv" element={<CGV />} />
         <Route path="/legals" element={<Legals />} />
         <Route path="/product" element={<Product />} />
+        <Route path="/catalog" element={<Catalog />} />
       </Routes>
       <Footer />
     </>
