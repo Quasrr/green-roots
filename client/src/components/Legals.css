@@ -1,0 +1,73 @@
+:root {
+  --bg-color-primary: #F6F8F7;
+  --bg-color-secondary: #1A4231;
+  --bg-color-tercary: #0D0D0C;
+  --bg-color-quartary: #151D1A;
+  --text-color: #6F777A;
+  --font-primary: 'Inter', sans-serif;
+}
+
+.legals {
+  max-width: 40%;
+  margin: 2rem auto;
+  padding: 0 2rem;
+  font-family: var(--font-primary);
+}
+
+.legals h1 {
+  color: var(--bg-color-tercary);
+  font-size: 2.2rem;
+  font-weight: bold;
+  margin-bottom: 0.5rem;
+}
+
+.legals .last_update {
+  color: var(--text-color);
+  font-size: 0.95rem;
+  margin-bottom: 2.5rem;
+}
+
+.legals section {
+  margin-bottom: 2rem;
+}
+
+.legals h2 {
+  color: var(--bg-color-secondary);
+  font-size: 1.6rem;
+  font-weight: bold;
+  margin-bottom: 0.75rem;
+  padding-bottom: 0.4rem;
+  border-bottom: 2px solid #e0e8e4;
+}
+
+.legals p {
+  color: var(--bg-color-tercary);
+  font-size: 1.1rem;
+  line-height: 1.7;
+  margin-bottom: 0.5rem;
+}
+
+.legals ul {
+  padding-left: 1.5rem;
+  margin: 0.5rem 0;
+}
+
+.legals ul li {
+  color: var(--bg-color-tercary);
+  font-size: 1rem;
+  line-height: 1.8;
+}
+
+.legals ul li strong {
+  color: var(--bg-color-tercary);
+}
+
+.legals a {
+  color: var(--bg-color-secondary);
+  font-weight: bold;
+  text-decoration: underline;
+}
+
+.legals a:hover {
+  color: var(--bg-color-quartary);
+}
