@@ -2,6 +2,8 @@ import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import type { Tree } from '../types';
 import './LandingPage.css';
+import { Leaf, Bird, MountainSnow } from 'lucide-react';
+
 
 function LandingPage() {
     const [trees, setTrees] = useState<Tree[]>([]); //State des arbres
@@ -36,21 +38,35 @@ function LandingPage() {
                 <h4>Notre mission</h4>
                 <h2>Pourquoi nous choisir ?</h2>
                 <p className="description_h2">Nous ne nous contentons pas de planter des arbres. Nous restaurons des écosystèmes complets pour un impact durable.</p>
-                <article className="article_reasons_choose">
-                    <img src="/leaf.webp" alt="logo d'article feuille" className="logo_article_choose" />
-                    <h3>Capture de CO2</h3>
-                    <p className="description_article_reasons">Chaque arbre planté absorbe en moyenne 22kg de CO2 par an, luttant activement contre le réchauffement climatique.</p>
-                </article>
-                <article className="article_reasons_choose">
-                    <img src="/oiseau.webp" alt="logo d'article oiseau" className="logo_article_choose" />
-                    <h3>Biodiversité</h3>
-                    <p className="description_article_reasons">Nous recréons des habitats naturels pour des milliers d'espèces d'oiseaux, d'insectes et de petits mammifères.</p>
-                </article>
-                <article className="article_reasons_choose">
-                    <img src="/montagne.webp" alt="logo d'article montagne" className="logo_article_choose" />
-                    <h3>Restauration des sols</h3>
-                    <p className="description_article_reasons">Les racines stabilisent le sol, préviennent l'érosion et restaurent la fertilité naturelle de la terre.</p>
-                </article>
+                <section className="article_mission">
+                    <article className="article_reasons_choose">
+                        <div className="icon_wrapper">
+                            <Leaf size={48} color="#1F4D4D" className="logo_article_choose" />
+                        </div>
+                        <div className="description_article">
+                            <h3>Capture de CO2</h3>
+                            <p className="description_article_reasons">Chaque arbre planté absorbe en moyenne 22kg de CO2 par an, luttant activement contre le réchauffement climatique.</p>
+                        </div></article>
+
+                    <article className="article_reasons_choose">
+                        <div className="icon_wrapper">
+                            <Bird size={48} color="#1F4D4D" className="logo_article_choose" />
+                        </div>
+                        <div className="description_article">
+                            <h3>Biodiversité</h3>
+                            <p className="description_article_reasons">Nous recréons des habitats naturels pour des milliers d'espèces d'oiseaux, d'insectes et de petits mammifères.</p>
+                        </div>
+                    </article>
+                    <article className="article_reasons_choose">
+                        <div className="icon_wrapper">
+                            <MountainSnow size={48} color="#1F4D4D" className="logo_article_choose" />
+                        </div>
+                        <div className="description_article">
+                            <h3>Restauration des sols</h3>
+                            <p className="description_article_reasons">Les racines stabilisent le sol, préviennent l'érosion et restaurent la fertilité naturelle de la terre.</p>
+                        </div>
+                    </article>
+                </section>
             </section>
             <section className="trees_popular">
                 <h3>Top arbres populaires</h3>
