@@ -29,6 +29,7 @@ router.delete('/api/trees/:id', authMiddleware, adminMiddleware, TreesController
 
 // routes Commandes
 router.get('/api/orders', authMiddleware, adminMiddleware, OrdersController.getOrders);
+router.post('/api/orders', authMiddleware, OrdersController.createOrder);
 
 
 
