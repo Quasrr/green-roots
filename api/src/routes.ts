@@ -4,6 +4,7 @@ import authMiddleware from "./Middlewares/authMiddleware.ts";
 import UserController from "./controllers/UserController.ts";
 import TreesController from "./controllers/TreesController.ts";
 import adminMiddleware from "./Middlewares/adminMiddleware.ts";
+import CartController from "./controllers/CartController.ts";
 const router = Router();
 
 // routes d'authentification
@@ -19,6 +20,9 @@ router.patch('/api/users/:id', authMiddleware, UserController.update);
 router.delete('/api/users/:id', authMiddleware, UserController.delete);
 
 //routes panier
+router.get('/api/cart', authMiddleware, CartController.getAll);
+router.put('/api/cart', authMiddleware, CartController.update);
+
 // routes d'arbres
 router.get('/api/trees', TreesController.getAll);
 router.get('/api/trees/:id', TreesController.getById);
