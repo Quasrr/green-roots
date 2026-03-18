@@ -21,7 +21,8 @@ class OrdersController {
                     user: {
                         select: {
                             id: true,
-                            name: true,
+                            firstname: true,
+                            lastname: true,
                             email: true
                         }
                     },
@@ -46,7 +47,7 @@ class OrdersController {
     async createOrder(req: Request, res: Response) {
         try {
             const lines = schemas.parse(req.body);
-            const userId = req.user?.id;
+            const userId = Number(req.user?.id);
 
             //Aller chercher les arbres 
             const trees = await prisma.tree.findMany({
