@@ -21,35 +21,35 @@ const updateCartSchema = z.object({
     }),
 });
 
+// Créer une clé Redis dédiée au panier de l'utilisateur
+function getCartKey(email: string) {
+    return `cart:${email.toLowerCase()}`;
+};
+
+// Lire le panier existant et fallback sur tableau vide si la clé n'existe pas
+async function readCart(email: string): Promise<Array<CartItem>> {
+    const rawCart = await redis.get(getCartKey(email));
+
+    if (!rawCart) return [];
+
+    try {
+        const parsed = JSON.parse(rawCart);
+
+        if (!Array.isArray(parsed)) return [];
+
+        return parsed as Array<CartItem>;
+    } catch {
+        return [];
+    };
+};
+
 class CartController {
-    // Créer une clé Redis dédiée au panier de l'utilisateur
-    private getCartKey(email: string) {
-        return `cart:${email.toLowerCase()}`;
-    };
-
-    // Lire le panier existant et fallback sur tableau vide si la clé n'existe pas
-    private async readCart(email: string): Promise<CartItem[]> {
-        const rawCart = await redis.get(this.getCartKey(email));
-
-        if (!rawCart) return [];
-
-        try {
-            const parsed = JSON.parse(rawCart);
-
-            if (!Array.isArray(parsed)) return [];
-
-            return parsed as Array<CartItem>;
-        } catch {
-            return [];
-        };
-    };
-
     async getAll(req: Request, res: Response) {
         try {
             // Récupération de l'email via req.user
             const { email } = req.user;
 
-            const items = await this.readCart(email);
+            const items = await readCart(email);
 
             res.send({ items });
         } catch (error) {
@@ -60,7 +60,7 @@ class CartController {
     async update(req: Request, res: Response) {
         try {
             const { item } = updateCartSchema.parse(req.body);
-            
+
             // Récupération de l'email via req.user
             const { email } = req.user;
 
@@ -69,13 +69,13 @@ class CartController {
 
             if (Number.isNaN(quantity)) throw new BadRequestError("Item must contain a valid quantity");
 
-            const currentCart = await this.readCart(email);
+            const currentCart = await readCart(email);
             const itemIndex = currentCart.findIndex((cartItem) => cartItem.id === itemId);
 
             // quantity = 0 => suppression directe de l'item
             if (quantity === 0) {
                 if (itemIndex >= 0) currentCart.splice(itemIndex, 1);
-                await redis.set(this.getCartKey(email), JSON.stringify(currentCart));
+                await redis.set(getCartKey(email), JSON.stringify(currentCart));
                 return res.send({ items: currentCart });
             };
 
@@ -93,7 +93,7 @@ class CartController {
                     };
                 };
 
-                await redis.set(this.getCartKey(email), JSON.stringify(currentCart));
+                await redis.set(getCartKey(email), JSON.stringify(currentCart));
                 return res.send({ items: currentCart });
             };
 
@@ -133,7 +133,7 @@ class CartController {
                 });
             };
 
-            await redis.set(this.getCartKey(email), JSON.stringify(currentCart));
+            await redis.set(getCartKey(email), JSON.stringify(currentCart));
 
             res.send({ items: currentCart });
         } catch (error) {
