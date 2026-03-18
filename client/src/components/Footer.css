@@ -21,14 +21,13 @@ footer {
 
 .div_logo_footer {
   display: flex;
-  align-items: center;
   gap: 2rem;
 }
 
 .div_logo_description {
   display: flex;
-  flex-direction: column;
   gap: 1rem;
+  align-items: center;
 }
 
 .logo_greenroots {
@@ -36,7 +35,7 @@ footer {
   height: 50px;
 }
 
-.name_enterprise {
+.name_enterprise_footer {
   color: var(--bg-color-primary);
   font-size: 1.3rem;
   font-weight: bold;

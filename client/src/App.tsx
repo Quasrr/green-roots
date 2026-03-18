@@ -19,8 +19,8 @@ function App() {
         <Route path="/privacy-policy" element={<PrivacyPolicy />} />
         <Route path="/cgv" element={<CGV />} />
         <Route path="/legals" element={<Legals />} />
-        <Route path="/product" element={<Product />} />
         <Route path="/catalog" element={<Catalog />} />
+        <Route path="/catalog/:id" element={<Product />} />
       </Routes>
       <Footer />
     </>
