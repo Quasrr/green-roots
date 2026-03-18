@@ -47,7 +47,6 @@ function LandingPage() {
                             <h3>Capture de CO2</h3>
                             <p className="description_article_reasons">Chaque arbre planté absorbe en moyenne 22kg de CO2 par an, luttant activement contre le réchauffement climatique.</p>
                         </div></article>
-
                     <article className="article_reasons_choose">
                         <div className="icon_wrapper">
                             <Bird size={48} color="#1F4D4D" className="logo_article_choose" />
@@ -129,9 +128,7 @@ function LandingPage() {
                         </div>
                     </article>
                 </section>
-
             </section>
-
         </>
     )
 }
