@@ -7,6 +7,10 @@
   --font-primary: 'Inter', sans-serif;
 }
 
+section {
+  margin-bottom: 5rem;
+}
+
 /* === Section Banniere === */
 
 h1 {
@@ -65,11 +69,14 @@ h1 {
 
 /* === Section why_choose === */
 
-.why_choose {
-  margin: 0 18rem;
+.why_choose,
+.trees_popular {
+  margin-right: 18rem;
+  margin-left: 18rem;
 }
 
-h4 {
+h4,
+.link_catalog {
   color: var(--bg-color-secondary);
   font-size: 1.2rem;
   font-weight: bold;
@@ -93,11 +100,13 @@ h2 {
 
 .description_h2 {
   color: var(--text-color);
+  width: 50%;
 }
 
 h3 {
   font-weight: bold;
   font-size: 1.6rem;
+  margin: 1rem 0 0 1rem;
 }
 
 .article_mission {
@@ -107,7 +116,6 @@ h3 {
 
 .article_reasons_choose {
   background-color: white;
-  padding: 2rem 3rem;
   border-radius: 1rem;
   display: flex;
   flex-direction: column;
@@ -122,7 +130,7 @@ h3 {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  margin-bottom: 1rem;
+  margin: 1rem 1rem 0 1rem;
 }
 
 .description_article {
@@ -139,4 +147,70 @@ h3 {
 .description_article_reasons {
   color: var(--text-color);
   font-size: 1.2rem;
+  margin: 0 1rem 1rem 1rem;
+}
+
+.section_article_trees {
+  display: flex;
+  gap: 2rem;
+}
+
+.article_reasons_choose {
+  padding: 0;
+}
+
+/* === Section arbre populaire ===  */
+
+.div_h3_link_catalog {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2rem;
+}
+
+.h3_trees_popular {
+  margin: 0;
+}
+
+.chene {
+  width: 100%;
+  border-radius: 1rem 1rem 0 0;
+}
+
+.title_tree_popular {
+  color: var(--bg-color-tercary);
+  /* text-align: center; */
+  margin: 0.5rem 1.5rem;
+}
+
+.label_tree {
+  color: var(--text-color);
+  font-size: 1.2rem;
+  margin: 0;
+  padding: 0 1rem;
+  text-align: center;
+}
+
+.price_tree {
+  font-weight: 800;
+  font-size: 1.6rem;
+  color: var(--bg-color-secondary);
+  margin: 0;
+}
+
+.div_price_cart {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem;
+}
+
+.icon_wrapper_cart {
+  background-color: var(--bg-color-secondary);
+  border-radius: 50%;
+  width: 50px;
+  height: 50px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center
 }
