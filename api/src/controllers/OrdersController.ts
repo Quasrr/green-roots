@@ -105,6 +105,30 @@ class OrdersController {
         };
 
     };
+    async getMyOrders(req: Request, res: Response) {
+        try {
+            const userId = Number(req.user?.id);
+            const orders = await prisma.order.findMany({
+                where: { userId },
+                include: {
+                    lines: {
+                        include: {
+                            tree: {
+                                select: {
+                                    id: true,
+                                    name: true,
+                                    price: true
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+            res.send(orders);
+        } catch (error) {
+            ErrorHandler.sendError(res, error);
+        };
+    };
 };
 
 export default new OrdersController();
