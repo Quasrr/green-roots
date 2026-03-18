@@ -2,6 +2,7 @@ services:
   postgres-test:
     image: postgres:17-alpine
     container_name: green-roots-api-test-db
+    restart: unless-stopped
     environment:
       POSTGRES_USER: greenroot_test
       POSTGRES_PASSWORD: greenroot_test
@@ -14,13 +15,26 @@ services:
       timeout: 5s
       retries: 10
 
+  redis-test:
+    image: redis:7-alpine
+    container_name: green-roots-api-test-redis
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
   api-test:
     build:
       context: .
       dockerfile: Dockerfile.test
     container_name: green-roots-api-test-runner
+    restart: "no"
     depends_on:
       postgres-test:
+        condition: service_healthy
+      redis-test:
         condition: service_healthy
     environment:
       PORT: 3001
@@ -29,6 +43,7 @@ services:
       POSTGRES_PASSWORD: greenroot_test
       POSTGRES_DB: greenroot_test
       DATABASE_URL: postgres://greenroot_test:greenroot_test@postgres-test:5432/greenroot_test
+      REDIS_URL: redis://redis-test:6379
       JWT_SECRET: test_secret_green_roots
       NODE_ENV: test
     command: ["npm", "test"]

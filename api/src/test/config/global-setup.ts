@@ -4,6 +4,7 @@ import express from "express";
 import type { Request, Response, NextFunction } from "express";
 import router from "../../routes.ts";
 import { prisma } from "../../models/index.ts";
+import redis from "../../models/redis.ts";
 
 let server: Server;
 
@@ -40,6 +41,7 @@ beforeEach(async (t) => {
 // s'exécutes une seule fois après l'ensemble des tests
 after(async () => {
     if (!server) {
+        await redis.quit().catch(() => {});
         await prisma.$disconnect();
         return;
     }
@@ -51,6 +53,7 @@ after(async () => {
         });
     });
 
+    await redis.quit().catch(() => {});
     await prisma.$disconnect();
 });
 
