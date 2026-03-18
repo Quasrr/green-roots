@@ -12,12 +12,12 @@ const authMiddleware = async (req: Request, res: Response, next: NextFunction) =
 
         }
         //Vérifier et décoder le token JWT
-        const decodedToken = jwt.verify(token, process.env.JWT_SECRET as string) as { email: string };
+        const decodedToken = jwt.verify(token, process.env.JWT_SECRET as string) as { email: string, id: string };
 
 
    
         // Attacher les informations de l'utilisateur à la requête
-        req.user = { email: decodedToken.email }; 
+        req.user = { email: decodedToken.email, id: decodedToken.id }; 
 
         next();
 
