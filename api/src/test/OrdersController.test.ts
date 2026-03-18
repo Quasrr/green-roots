@@ -211,3 +211,61 @@ describe("POST /api/orders", () => {
         assert.notEqual(response.status, 201);
     });
 });
+
+describe("GET /api/orders/me", () => {
+    it("retourne un tableau vide si l'utilisateur n'a pas de commandes", async () => {
+        await createUser({ email: "user@greenroots.fr", roleId: 2 });
+        const cookie = await loginAndGetCookie("user@greenroots.fr", "GreenRoots123");
+
+        const response = await fetch(`${baseUrl}/api/orders/me`, {
+            headers: { Cookie: cookie },
+        });
+
+        assert.equal(response.status, 200);
+        const orders = await response.json();
+        assert.deepEqual(orders, []);
+    });
+
+    it("retourne uniquement les commandes de l'utilisateur connecté", async () => {
+        // On crée deux utilisateurs
+        const user = await createUser({ email: "user@greenroots.fr", roleId: 2 });
+        await createUser({ email: "other@greenroots.fr", roleId: 2 });
+        const tree = await createTree(10);
+
+        const cookieUser = await loginAndGetCookie("user@greenroots.fr", "GreenRoots123");
+        const cookieOther = await loginAndGetCookie("other@greenroots.fr", "GreenRoots123");
+
+        // L'utilisateur "other" passe une commande
+        await fetch(`${baseUrl}/api/orders`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json", Cookie: cookieOther },
+            body: JSON.stringify([{ treeId: tree.id, quantity: 1 }]),
+        });
+
+        // L'utilisateur "user" passe une commande
+        await fetch(`${baseUrl}/api/orders`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json", Cookie: cookieUser },
+            body: JSON.stringify([{ treeId: tree.id, quantity: 2 }]),
+        });
+
+        // On récupère les commandes de "user"
+        const response = await fetch(`${baseUrl}/api/orders/me`, {
+            headers: { Cookie: cookieUser },
+        });
+
+        assert.equal(response.status, 200);
+        const orders = await response.json();
+
+        // On doit avoir 1 seule commande, celle de "user"
+        assert.equal(orders.length, 1);
+        assert.equal(orders[0].userId, user.id);
+        assert.equal(orders[0].lines[0].quantity, 2);
+    });
+
+    it("retourne 401 si non connecté", async () => {
+        const response = await fetch(`${baseUrl}/api/orders/me`);
+
+        assert.equal(response.status, 401);
+    });
+});
