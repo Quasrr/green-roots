@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import type { Tree } from '../types';
 import './LandingPage.css';
-import { Leaf, Bird, MountainSnow } from 'lucide-react';
+import { Leaf, Bird, MountainSnow, ShoppingCart } from 'lucide-react';
 
 
 function LandingPage() {
@@ -69,9 +69,10 @@ function LandingPage() {
                 </section>
             </section>
             <section className="trees_popular">
-                <h3>Top arbres populaires</h3>
-                <Link to="/catalog" className='link_catalog'>Voir tout le catalogue</Link>
-
+                <div className="div_h3_link_catalog">
+                    <h3 className='h3_trees_popular'>Top arbres populaires</h3>
+                    <Link to="/catalog" className='link_catalog'>Voir tout le catalogue</Link>
+                </div>
                 {/* Récupérer les 4 premiers arbres avec slice et map pour chaque arbre dans notre catalogue d'arbres */}
                 {trees.slice(0, 4).map(tree => (
                     <article key={tree.id} className="article_reasons_choose">
@@ -79,9 +80,56 @@ function LandingPage() {
                         <h3 className='title_tree_popular'>{tree.name}</h3>
                         <p className="label_tree">{tree.label}</p>
                         <p className="price_tree">{tree.price}</p>
-                        <img src="/cart.webp" alt="logo panier d'achat" className="logo_cart" />
+                        <ShoppingCart size={48} color="#1F4D4D" className="logo_cart" />
                     </article>
                 ))}
+                <section className="section_article_trees">
+                    <article className="article_reasons_choose">
+                        <img src="/banniere.webp" alt="image d'un chene" className="chene" />
+                        <h3 className='title_tree_popular'>Big chene de fou</h3>
+                        <p className="label_tree">un tres tres gros chene qui fait des glands</p>
+                        <div className="div_price_cart">
+                            <p className="price_tree">40.50€</p>
+                            <div className="icon_wrapper_cart">
+                                <ShoppingCart size={32} color="#F6F8F7" className="logo_cart" />
+                            </div>
+                        </div>
+                    </article>
+                    <article className="article_reasons_choose">
+                        <img src="/banniere.webp" alt="image d'un chene" className="chene" />
+                        <h3 className='title_tree_popular'>Big chene de fou</h3>
+                        <p className="label_tree">un tres tres gros chene qui fait des glands</p>
+                        <div className="div_price_cart">
+                            <p className="price_tree">40.50€</p>
+                            <div className="icon_wrapper_cart">
+                                <ShoppingCart size={32} color="#F6F8F7" className="logo_cart" />
+                            </div>
+                        </div>
+                    </article>
+                    <article className="article_reasons_choose">
+                        <img src="/banniere.webp" alt="image d'un chene" className="chene" />
+                        <h3 className='title_tree_popular'>Big chene de fou</h3>
+                        <p className="label_tree">un tres tres gros chene qui fait des glands</p>
+                        <div className="div_price_cart">
+                            <p className="price_tree">40.50€</p>
+                            <div className="icon_wrapper_cart">
+                                <ShoppingCart size={32} color="#F6F8F7" className="logo_cart" />
+                            </div>
+                        </div>
+                    </article>
+                    <article className="article_reasons_choose">
+                        <img src="/banniere.webp" alt="image d'un chene" className="chene" />
+                        <h3 className='title_tree_popular'>Big chene de fou</h3>
+                        <p className="label_tree">un tres tres gros chene qui fait des glands</p>
+                        <div className="div_price_cart">
+                            <p className="price_tree">40.50€</p>
+                            <div className="icon_wrapper_cart">
+                                <ShoppingCart size={32} color="#F6F8F7" className="logo_cart" />
+                            </div>
+                        </div>
+                    </article>
+                </section>
+
             </section>
 
         </>

@@ -79,7 +79,7 @@ class AuthController {
             if (!isPasswordValid) throw new UnauthorizedError('Invalid credentials');
 
             const token = jwt.sign(
-                { email },
+                { email, id: user.id },
                 process.env.JWT_SECRET,
                 { expiresIn: "1h" }
             );
