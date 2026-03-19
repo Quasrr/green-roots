@@ -1,0 +1,156 @@
+:root {
+    --bg-color-primary: #F6F8F7;
+    --bg-color-secondary: #1A4231;
+    --bg-color-tercary: #0D0D0C;
+    --bg-color-quartary: #151D1A;
+    --text-color: #6F777A;
+    --font-primary: 'Inter', sans-serif;
+}
+
+.about_wrapper {
+    max-width: 900px;
+    margin: 3rem auto;
+    padding: 0 2rem 4rem;
+    font-family: var(--font-primary);
+    display: flex;
+    flex-direction: column;
+    gap: 4rem;
+}
+
+/* === Hero === */
+
+.about_hero {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.about_wrapper h1 {
+    font-size: 2.5rem;
+    font-weight: bold;
+    color: var(--bg-color-tercary);
+    margin: 0;
+}
+
+.about_hero_description {
+    font-size: 1.1rem;
+    color: var(--text-color);
+    line-height: 1.7;
+    max-width: 650px;
+    margin: 0;
+}
+
+/* === Valeurs === */
+
+.about_values h2,
+.about_team h2 {
+    font-size: 1.6rem;
+    font-weight: bold;
+    color: var(--bg-color-tercary);
+    margin: 0 0 1.5rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 2px solid #e0e8e4;
+}
+
+.about_values_list {
+    display: flex;
+    gap: 1rem;
+    flex-wrap: wrap;
+}
+
+.about_value_card {
+    background-color: white;
+    border-radius: 1rem;
+    padding: 1.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    flex: 1;
+    min-width: 180px;
+}
+
+.about_icon_wrapper {
+    background-color: #e6f4ec;
+    border-radius: 50%;
+    width: 56px;
+    height: 56px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.about_value_card h3 {
+    font-size: 1rem;
+    font-weight: bold;
+    color: var(--bg-color-tercary);
+    margin: 0;
+}
+
+.about_value_card p {
+    font-size: 0.9rem;
+    color: var(--text-color);
+    line-height: 1.6;
+    margin: 0;
+}
+
+/* === Équipe === */
+
+.about_team_description {
+    color: var(--text-color);
+    font-size: 0.95rem;
+    line-height: 1.6;
+    margin: -0.5rem 0 1.5rem;
+}
+
+.about_team_list {
+    display: flex;
+    gap: 1.5rem;
+}
+
+.about_team_card {
+    background-color: white;
+    border-radius: 1rem;
+    padding: 1.5rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.5rem;
+    flex: 1;
+    text-align: center;
+}
+
+.about_team_avatar {
+    background-color: var(--bg-color-secondary);
+    color: white;
+    font-size: 1.5rem;
+    font-weight: bold;
+    width: 64px;
+    height: 64px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 0.5rem;
+}
+
+.about_team_card h3 {
+    font-size: 1.1rem;
+    font-weight: bold;
+    color: var(--bg-color-tercary);
+    margin: 0;
+}
+
+.about_team_role {
+    font-size: 0.8rem;
+    font-weight: bold;
+    color: var(--bg-color-secondary);
+    letter-spacing: 0.06em;
+    margin: 0;
+}
+
+.about_team_desc {
+    font-size: 0.85rem;
+    color: var(--text-color);
+    line-height: 1.5;
+    margin: 0;
+}

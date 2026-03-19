@@ -7,6 +7,8 @@ import CGV from './components/Cgv.tsx';
 import Legals from './components/Legals.tsx';
 import Product from './components/Product.tsx';
 import Catalog from './components/Catalog.tsx';
+import Contact from './components/Contact.tsx';
+import About from './components/About.tsx';
 import './App.css'
 
 function App() {
@@ -21,6 +23,8 @@ function App() {
         <Route path="/legals" element={<Legals />} />
         <Route path="/catalog" element={<Catalog />} />
         <Route path="/catalog/:id" element={<Product />} />
+        <Route path="/contact" element={<Contact />} />
+        <Route path="/about" element={<About />} />
       </Routes>
       <Footer />
     </>

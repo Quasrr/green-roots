@@ -1,0 +1,138 @@
+:root {
+    --bg-color-primary: #F6F8F7;
+    --bg-color-secondary: #1A4231;
+    --bg-color-tercary: #0D0D0C;
+    --bg-color-quartary: #151D1A;
+    --text-color: #6F777A;
+    --font-primary: 'Inter', sans-serif;
+}
+
+.contact_wrapper {
+    max-width: 900px;
+    margin: 3rem auto;
+    padding: 0 2rem 4rem;
+    font-family: var(--font-primary);
+}
+
+.contact_wrapper h1 {
+    font-size: 2.2rem;
+    font-weight: bold;
+    color: var(--bg-color-tercary);
+    margin-bottom: 0.5rem;
+}
+
+.contact_description {
+    color: var(--text-color);
+    font-size: 1rem;
+    margin-bottom: 3rem;
+}
+
+/* === Layout === */
+
+.contact_layout {
+    display: flex;
+    gap: 3rem;
+    align-items: flex-start;
+}
+
+/* === Infos === */
+
+.contact_info {
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+    min-width: 200px;
+}
+
+.contact_info_item {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+}
+
+.contact_info_label {
+    font-size: 0.7rem;
+    font-weight: bold;
+    letter-spacing: 0.08em;
+    color: var(--text-color);
+    margin: 0;
+}
+
+.contact_info_value {
+    font-size: 0.95rem;
+    font-weight: bold;
+    color: var(--bg-color-tercary);
+    margin: 0;
+}
+
+/* === Formulaire === */
+
+.contact_form {
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+    flex: 1;
+}
+
+.contact_form_row {
+    display: flex;
+    gap: 1rem;
+}
+
+.contact_form_row .contact_field {
+    flex: 1;
+}
+
+.contact_field {
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+}
+
+.contact_label {
+    font-size: 0.85rem;
+    font-weight: bold;
+    color: var(--bg-color-tercary);
+}
+
+.contact_input,
+.contact_textarea {
+    background-color: white;
+    border: 1px solid #e0e8e4;
+    border-radius: 0.5rem;
+    padding: 0.65rem 0.9rem;
+    font-size: 0.95rem;
+    font-family: var(--font-primary);
+    color: var(--bg-color-tercary);
+    outline: none;
+    transition: border-color 0.15s;
+    resize: none;
+}
+
+.contact_input:focus,
+.contact_textarea:focus {
+    border-color: var(--bg-color-secondary);
+}
+
+.contact_input::placeholder,
+.contact_textarea::placeholder {
+    color: var(--text-color);
+}
+
+.contact_btn {
+    background-color: var(--bg-color-secondary);
+    color: white;
+    border: none;
+    border-radius: 0.5rem;
+    padding: 0.75rem 2rem;
+    font-size: 1rem;
+    font-weight: bold;
+    font-family: var(--font-primary);
+    cursor: pointer;
+    transition: background 0.15s;
+    align-self: flex-end;
+}
+
+.contact_btn:hover {
+    background-color: #2D6A4F;
+}

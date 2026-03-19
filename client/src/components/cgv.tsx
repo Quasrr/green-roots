@@ -1,3 +1,5 @@
+import './Cgv.css';
+
 function CGV() {
     return (
         <main className="cgv">

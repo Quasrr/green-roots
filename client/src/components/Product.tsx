@@ -14,7 +14,7 @@ function Product() {
     useEffect(() => {
         async function fetchTreeById() {
             try {
-                const response = await fetch(`/api/trees/${id}`); // Fetch l'arbre sur la route /api/trees/:id
+                const response = await fetch(`http://localhost:3000/api/trees/${id}`); // Fetch l'arbre sur la route /api/trees/:id
                 const data = await response.json();
                 setTree(data);
             } catch (error) {

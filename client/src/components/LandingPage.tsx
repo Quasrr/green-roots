@@ -11,7 +11,7 @@ function LandingPage() {
     useEffect(() => {
         async function fetchTrees() {
             try {
-                const res = await fetch('/api/trees') // Fetch sur la route des arbres de notre api
+                const res = await fetch('http://localhost:3000/api/trees') // Fetch sur la route des arbres de notre api
                 const data = await res.json()
                 setTrees(data) // Maj du state avec les arbres récupérer
             } catch (error) {
