@@ -15,9 +15,9 @@ const authMiddleware = async (req: Request, res: Response, next: NextFunction) =
         const decodedToken = jwt.verify(token, process.env.JWT_SECRET as string) as { email: string, id: string };
 
 
-   
+
         // Attacher les informations de l'utilisateur à la requête
-        req.user = { email: decodedToken.email, id: decodedToken.id }; 
+        req.user = { email: decodedToken.email, id: decodedToken.id };
 
         next();
 

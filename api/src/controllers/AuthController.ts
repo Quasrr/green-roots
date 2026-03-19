@@ -84,12 +84,36 @@ class AuthController {
                 { expiresIn: "1h" }
             );
 
+            const refreshToken = jwt.sign(
+                { email, id: user.id },
+                process.env.JWT_SECRET,
+                { expiresIn: "7d" }
+            );
+
+            // Creation du refresh token en bdd
+            await prisma.refreshToken.create({
+                data: {
+                    token: refreshToken,
+                    userId: user.id,
+                    expiresAt: new Date(Date.now() + 1000 * 60 * 60 * 24 * 7) // 7j
+                }
+            });
+
+
             res.cookie("access_token", token, {
                 httpOnly: true,
                 secure: process.env.NODE_ENV === "production",
                 sameSite: "lax",
                 path: "/api",
                 maxAge: 1000 * 60 * 60
+            });
+
+            res.cookie("refresh_token", refreshToken, {
+                httpOnly: true,
+                secure: process.env.NODE_ENV === "production",
+                sameSite: "lax",
+                path: "/api/auth/refresh",
+                maxAge: 1000 * 60 * 60 * 24 * 7 // 7j
             });
 
             return res.send({ email });
@@ -99,10 +123,29 @@ class AuthController {
         };
     };
 
-    async logout(_req: Request, res: Response) {
+    async logout(req: Request, res: Response) {
+        const refreshToken = req.cookies?.refresh_token;
+        // Supression access token
         res.clearCookie("access_token", { path: "/api" });
+
+        // Supression refresh token + suppression en bdd
+        res.clearCookie(`refresh_token`, {
+            httpOnly: true,
+            secure: process.env.NODE_ENV === "production",
+            sameSite: "lax",
+            maxAge: 1000 * 60 * 60 * 24 * 7, // 7j
+            path: "/api/auth/refresh"
+        });
+
+        // On supprime également le refreshToken dans la DB (celui qui avait été confié au client et qu'il nous renvoie sur la route logout via cookie) pour forcer le relogin
+        if (refreshToken) {
+            await prisma.refreshToken.deleteMany({
+                where: { token: refreshToken }
+            });
+        }
         res.sendStatus(204);
     }
+
     async me(req: Request, res: Response): Promise<void> {
         // Récupérer les informations de l'utilisateur à partir de la requête (grâce au middleware d'authentification)
         const userInfo = req.user;
