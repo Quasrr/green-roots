@@ -2,6 +2,7 @@ import type { Request, Response } from 'express';
 import z from 'zod';
 import argon2 from 'argon2';
 import jwt from 'jsonwebtoken';
+import { RoleName } from '../../prisma/generated/enums.ts';
 import { prisma } from '../models/index.ts';
 import { ConflictError, NotFoundError, UnauthorizedError } from '../utils/Error.ts';
 import ErrorHandler from '../ErrorHandler.ts';
@@ -46,7 +47,15 @@ class AuthController {
 
             //créer l'utilisateur dans la base de données
             const createdUser = await prisma.user.create({
-                data: { lastname, firstname, email, password: hashedPassword, roleId: 2 },
+                data: {
+                    lastname,
+                    firstname,
+                    email,
+                    password: hashedPassword,
+                    role: {
+                        connect: { nameRole: RoleName.user }
+                    }
+                },
             });
 
             res.status(201).json({
