@@ -51,6 +51,8 @@ model User {
 
   orders Order[]
 
+  refreshTokens RefreshToken[]
+
   @@map("user")
 }
 
@@ -113,4 +115,13 @@ model OrderLine {
 
   tree  Tree  @relation(fields: [treeId], references: [id])
   order Order @relation(fields: [orderId], references: [id], onDelete: Cascade)
+}
+
+model RefreshToken {
+  id        Int      @id @default(autoincrement())
+  token     String   @unique
+  userId    Int
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+  expiresAt DateTime
 }
