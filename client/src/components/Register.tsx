@@ -3,33 +3,39 @@ import { Link, useNavigate } from 'react-router-dom';
 import './Register.css';
 
 function Register() {
-    const navigate = useNavigate();
-
-    const [firstname, setFirstname] = useState<string>('');
-    const [lastname, setLastname] = useState<string>('');
-    const [email, setEmail] = useState<string>('');
-    const [password, setPassword] = useState<string>('');
-    const [confirmPassword, setConfirmPassword] = useState<string>('');
-    const [error, setError] = useState<string>('');
+    const [firstname, setFirstname] = useState('');
+    const [lastname, setLastname] = useState('');
+    const [email, setEmail] = useState('');
+    const [password, setPassword] = useState('');
+    const [confirmPassword, setConfirmPassword] = useState('');
+    const [error, setError] = useState('');
     const [isLoading, setIsLoading] = useState(false);
 
-    async function handleSubmit(e: React.FormEvent) {
-        e.preventDefault();
-        if (password !== confirmPassword) return;
+    const navigate = useNavigate();
 
+    async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
+        e.preventDefault();
         setError('');
+
+        if (password !== confirmPassword) {
+            setError('Les mots de passe ne correspondent pas.');
+            return;
+        }
+
         setIsLoading(true);
         try {
-            const res = await fetch('http://localhost:3000/api/auth/register', {
+            const res = await fetch(`${import.meta.env.VITE_API_URL}/api/auth/register`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ firstname, lastname, email, password, passwordConfirm: confirmPassword }),
             });
+
             if (!res.ok) {
                 const data = await res.json();
-                throw new Error(data.message || 'Erreur lors de la création du compte');
+                throw new Error(data.message || 'Erreur lors de l\'inscription');
             }
-            navigate('/login'); // compte créé → redirige vers la connexion
+
+            navigate('/login');
         } catch (err) {
             setError(err instanceof Error ? err.message : 'Une erreur est survenue');
         } finally {
@@ -99,9 +105,11 @@ function Register() {
                             <p className="register_error">Les mots de passe ne correspondent pas.</p>
                         )}
                     </div>
-                    {error && <p className="register_error">{error}</p>}
+
+                    {error && <p className="register_error_global">{error}</p>}
+
                     <button type="submit" className="register_btn" disabled={isLoading}>
-                        {isLoading ? 'Création...' : 'Créer mon compte'}
+                        {isLoading ? 'Inscription...' : 'Créer mon compte'}
                     </button>
                 </form>
 
@@ -110,7 +118,7 @@ function Register() {
                 </p>
             </div>
         </main>
-    )
+    );
 }
 
-export default Register
+export default Register;

@@ -4,14 +4,13 @@ import type { Tree } from '../types';
 import './LandingPage.css';
 import { Leaf, Bird, MountainSnow, ShoppingCart } from 'lucide-react';
 
-
 function LandingPage() {
     const [trees, setTrees] = useState<Tree[]>([]); //State des arbres
 
     useEffect(() => {
         async function fetchTrees() {
             try {
-                const res = await fetch('http://localhost:3000/api/trees') // Fetch sur la route des arbres de notre api
+                const res = await fetch(`${import.meta.env.VITE_API_URL}/api/trees`) // Fetch sur la route des arbres de notre api
                 const data = await res.json()
                 setTrees(data) // Maj du state avec les arbres récupérer
             } catch (error) {
@@ -72,7 +71,7 @@ function LandingPage() {
                     <h3 className='h3_trees_popular'>Top arbres populaires</h3>
                     <Link to="/catalog" className='link_catalog'>Voir tout le catalogue</Link>
                 </div>
-                <section className="section_article_trees">
+                <div className="section_article_trees">
                     {trees.slice(0, 4).map(tree => (
                         <article key={tree.id} className="article_reasons_choose">
                             <img src={`/${tree.image}`} alt={tree.name} className="chene" />
@@ -88,7 +87,7 @@ function LandingPage() {
                             </div>
                         </article>
                     ))}
-                </section>
+                </div>
             </section>
         </>
     )

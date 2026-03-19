@@ -108,6 +108,20 @@
     background-color: #2D6A4F;
 }
 
+.register_btn:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+.register_error_global {
+    font-size: 0.85rem;
+    color: #c0392b;
+    background-color: #fde8e8;
+    padding: 0.6rem 0.9rem;
+    border-radius: 0.5rem;
+    margin: 0;
+}
+
 .register_redirect {
     text-align: center;
     font-size: 0.9rem;

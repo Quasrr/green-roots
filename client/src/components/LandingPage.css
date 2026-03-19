@@ -183,6 +183,7 @@ h3 {
   display: flex;
   justify-content: space-between;
   align-items: center;
+  gap: 1rem;
   margin-bottom: 2rem;
 }
 
@@ -325,5 +326,15 @@ h3 {
   /* Grille des arbres populaires : 1 colonne */
   .section_article_trees {
     grid-template-columns: 1fr;
+  }
+
+  .div_h3_link_catalog {
+    flex-direction: column;
+    align-items: flex-start;
+    margin-bottom: 1.5rem;
+  }
+
+  .link_catalog {
+    font-size: 0.95rem;
   }
 }

@@ -30,7 +30,7 @@ function Profile() {
             const body: Record<string, string> = { firstname, lastname, email };
             if (password) body.password = password;
 
-            const res = await fetch(`http://localhost:3000/api/users/${user?.id}`, {
+            const res = await fetch(`${import.meta.env.VITE_API_URL}/api/users/${user?.id}`, {
                 method: 'PATCH',
                 headers: { 'Content-Type': 'application/json' },
                 credentials: 'include',

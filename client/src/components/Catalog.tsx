@@ -20,7 +20,7 @@ function Catalog() {
     useEffect(() => {
         async function fetchTrees() {
             try {
-                const response = await fetch('http://localhost:3000/api/trees/') // Fetch l'arbre sur la route /api/trees/
+                const response = await fetch(`${import.meta.env.VITE_API_URL}/api/trees/`) // Fetch l'arbre sur la route /api/trees/
                 const data = await response.json()
                 setTrees(data)
             } catch (error) {
