@@ -1,0 +1,325 @@
+/* Les variables :root sont dans index.css */
+
+.cart_wrapper {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 2rem 3rem 4rem;
+    font-family: var(--font-primary);
+}
+
+.cart_wrapper h1 {
+    font-size: 2rem;
+    font-weight: bold;
+    color: var(--bg-color-tercary);
+    margin: 0;
+}
+
+/* === En-tête : titre + bouton vider === */
+
+.cart_header_row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2rem;
+}
+
+.cart_btn_clear {
+    background: none;
+    border: 1px solid #e0e8e4;
+    border-radius: 0.5rem;
+    padding: 0.4rem 0.9rem;
+    font-size: 0.85rem;
+    color: var(--text-color);
+    cursor: pointer;
+    font-family: var(--font-primary);
+    transition: border-color 0.15s, color 0.15s;
+}
+
+.cart_btn_clear:hover {
+    border-color: #c0392b;
+    color: #c0392b;
+}
+
+/* === Layout principal : articles + résumé === */
+
+.cart_layout {
+    display: flex;
+    gap: 2rem;
+    align-items: flex-start;
+}
+
+/* === Liste des articles === */
+
+.cart_items {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    flex: 1;
+}
+
+.cart_item {
+    background-color: white;
+    border-radius: 1rem;
+    display: flex;
+    gap: 1rem;
+    overflow: hidden;
+    transition: box-shadow 0.2s;
+}
+
+.cart_item:hover {
+    box-shadow: var(--shadow-card);
+}
+
+.cart_item_img {
+    width: 120px;
+    min-width: 120px;
+    height: 120px;
+    object-fit: cover;
+}
+
+.cart_item_info {
+    flex: 1;
+    padding: 1rem 1rem 1rem 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    gap: 0.5rem;
+}
+
+.cart_item_top {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+}
+
+.cart_item_name {
+    font-size: 1rem;
+    font-weight: 700;
+    color: var(--bg-color-tercary);
+    margin: 0 0 0.2rem;
+}
+
+.cart_item_label {
+    font-size: 0.85rem;
+    color: var(--text-color);
+    margin: 0;
+}
+
+.cart_item_remove {
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: var(--text-color);
+    padding: 0.2rem;
+    border-radius: 0.3rem;
+    transition: color 0.15s;
+    display: flex;
+    align-items: center;
+}
+
+.cart_item_remove:hover {
+    color: #c0392b;
+}
+
+.cart_item_bottom {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+/* === Contrôles quantité === */
+
+.cart_quantity {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    background-color: var(--bg-color-primary);
+    border-radius: 0.5rem;
+    padding: 0.25rem 0.5rem;
+}
+
+.cart_qty_btn {
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: var(--bg-color-tercary);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.2rem;
+    border-radius: 0.3rem;
+    transition: background 0.15s;
+}
+
+.cart_qty_btn:hover {
+    background-color: #e0e8e4;
+}
+
+.cart_qty_value {
+    font-size: 0.95rem;
+    font-weight: 700;
+    color: var(--bg-color-tercary);
+    min-width: 1.5rem;
+    text-align: center;
+}
+
+.cart_item_price {
+    font-size: 1.1rem;
+    font-weight: 800;
+    color: var(--bg-color-secondary);
+    margin: 0;
+}
+
+/* === Résumé de commande === */
+
+.cart_summary {
+    background-color: white;
+    border-radius: 1rem;
+    padding: 1.5rem;
+    width: 260px;
+    min-width: 260px;
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    position: sticky;
+    top: 1rem;
+}
+
+.cart_summary_title {
+    font-size: 1rem;
+    font-weight: 700;
+    color: var(--bg-color-tercary);
+    margin: 0 0 0.25rem;
+}
+
+.cart_summary_row {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.9rem;
+    color: var(--text-color);
+}
+
+.cart_summary_divider {
+    border-top: 1px solid #e0e8e4;
+    margin: 0.25rem 0;
+}
+
+.cart_summary_total {
+    font-size: 1rem;
+    font-weight: 700;
+    color: var(--bg-color-tercary);
+}
+
+.cart_btn_order {
+    background-color: var(--bg-color-secondary);
+    color: var(--bg-color-primary);
+    border: none;
+    border-radius: 0.5rem;
+    padding: 0.6rem;
+    font-size: 0.9rem;
+    font-weight: 600;
+    font-family: var(--font-primary);
+    cursor: pointer;
+    transition: background 0.15s;
+    margin-top: 0.5rem;
+    text-align: center;
+}
+
+.cart_btn_order:hover {
+    background-color: #2D6A4F;
+}
+
+.cart_link_continue {
+    text-align: center;
+    font-size: 0.85rem;
+    color: var(--text-color);
+    text-decoration: none;
+    transition: color 0.15s;
+}
+
+.cart_link_continue:hover {
+    color: var(--bg-color-secondary);
+}
+
+/* === Panier vide === */
+
+.cart_empty {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1rem;
+    padding: 4rem 2rem;
+    text-align: center;
+}
+
+.cart_empty_icon {
+    background-color: white;
+    border-radius: 50%;
+    width: 90px;
+    height: 90px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.cart_empty_title {
+    font-size: 1.3rem;
+    font-weight: 700;
+    color: var(--bg-color-tercary);
+    margin: 0;
+}
+
+.cart_empty_description {
+    font-size: 0.95rem;
+    color: var(--text-color);
+    max-width: 380px;
+    margin: 0;
+}
+
+.cart_btn_catalog {
+    background-color: var(--bg-color-secondary);
+    color: var(--bg-color-primary);
+    font-size: 0.95rem;
+    font-weight: 600;
+    padding: 0.55rem 1.4rem;
+    border-radius: 0.5rem;
+    text-decoration: none;
+    transition: opacity 0.15s;
+    margin-top: 0.5rem;
+}
+
+.cart_btn_catalog:hover {
+    opacity: 0.85;
+}
+
+/* ===================================================
+   RESPONSIVE — MOBILE (≤ 768px)
+   =================================================== */
+@media (max-width: 768px) {
+    .cart_wrapper {
+        padding: 1.5rem 1rem 3rem;
+    }
+
+    .cart_wrapper h1 {
+        font-size: 1.5rem;
+    }
+
+    /* Articles + résumé en colonne */
+    .cart_layout {
+        flex-direction: column;
+    }
+
+    /* Image plus petite sur mobile */
+    .cart_item_img {
+        width: 90px;
+        min-width: 90px;
+        height: 90px;
+    }
+
+    /* Résumé pleine largeur, plus sticky */
+    .cart_summary {
+        width: 100%;
+        min-width: unset;
+        position: static;
+    }
+}

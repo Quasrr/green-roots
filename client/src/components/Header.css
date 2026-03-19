@@ -81,6 +81,30 @@ header a {
   color: var(--bg-color-primary);
 }
 
+/* === Icône panier === */
+.cart_icon_link {
+  position: relative;
+  display: flex;
+  align-items: center;
+  color: var(--bg-color-quartary);
+}
+
+.cart_badge {
+  position: absolute;
+  top: -6px;
+  right: -8px;
+  background-color: var(--bg-color-secondary);
+  color: white;
+  font-size: 0.65rem;
+  font-weight: 700;
+  width: 17px;
+  height: 17px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
 /* === Hamburger (caché sur desktop) === */
 .hamburger {
   display: none;

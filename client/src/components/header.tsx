@@ -1,9 +1,12 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
+import { ShoppingCart } from 'lucide-react';
+import { useCart } from '../context/CartContext';
 import './Header.css';
 
 function Header() {
     const [menuOpen, setMenuOpen] = useState(false);
+    const { totalItems } = useCart();
 
     const closeMenu = () => setMenuOpen(false);
 
@@ -40,6 +43,10 @@ function Header() {
             </nav>
 
             <div className='div_buttons_header'>
+                <Link to="/cart" className="cart_icon_link">
+                    <ShoppingCart size={22} />
+                    {totalItems > 0 && <span className="cart_badge">{totalItems}</span>}
+                </Link>
                 <Link to="/register">
                     <button className="register">Inscription</button>
                 </Link>

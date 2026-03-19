@@ -1,10 +1,12 @@
 import { useEffect, useState } from "react";
 import type { Category, Tree } from "../types";
 import { ShoppingCart } from 'lucide-react';
+import { useCart } from '../context/CartContext';
 
 import './Catalog.css'
 
 function Catalog() {
+    const { addToCart } = useCart();
 
     const [trees, setTrees] = useState<Tree[]>([]);
     const [isLoading, setIsLoading] = useState<boolean>(true); // Loader de chargement
@@ -128,7 +130,7 @@ function Catalog() {
                                         <p className="label_tree">{tree.label}</p>
                                         <div className="price_cart_row">
                                             <p className="price_tree">{tree.price}€</p>
-                                            <div className="icon_wrapper_cart">
+                                            <div className="icon_wrapper_cart" onClick={() => addToCart(tree)}>
                                                 <ShoppingCart size={18} color="#F6F8F7" className="logo_cart" />
                                             </div>
                                         </div>
