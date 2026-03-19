@@ -23,18 +23,23 @@ class AuthController {
             lastname: z.string().min(2),
             firstname: z.string().min(2),
             email: z.string().email(),
-            password: z.string().min(6),
-            passwordConfirm: z.string().min(6)
+             password: z
+                .string()
+                .min(8, "Invalid password format (min. 8 characters)")
+                .refine(
+                    (v) =>
+                    /[a-z]/.test(v) &&
+                    /[A-Z]/.test(v) &&
+                    /[0-9]/.test(v) &&
+                    /[^a-zA-Z0-9]/.test(v),
+                "Invalid password format. Please include uppercase, lowercase, a number, and a special character (min. 6 characters)"
+            ),
         });
 
         try {
             //valider et récupérer les informations du client
-            const { lastname, firstname, email, password, passwordConfirm } = schema.parse(req.body);
+            const { lastname, firstname, email, password } = schema.parse(req.body);
 
-            //s'assurer que les password correspondent
-            if (password !== passwordConfirm) {
-                throw new ConflictError('Passwords don\'t match');
-            }
 
             //avant de créer un user, s'assurer qu'il n'existe pas déjà
             const existingUser = await prisma.user.findUnique({ where: { email } });
