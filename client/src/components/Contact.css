@@ -90,6 +90,7 @@
 
 .contact_input,
 .contact_textarea {
+    width: 100%;
     background-color: white;
     border: 1px solid #e0e8e4;
     border-radius: 0.5rem;
@@ -128,4 +129,55 @@
 
 .contact_btn:hover {
     background-color: #2D6A4F;
+}
+
+/* ===================================================
+   RESPONSIVE — MOBILE (≤ 768px)
+   =================================================== */
+@media (max-width: 768px) {
+  .contact_wrapper {
+    margin: 1.5rem auto;
+    padding: 0 1rem 3rem;
+  }
+
+  .contact_wrapper h1 {
+    font-size: 1.7rem;
+  }
+
+  .contact_description {
+    margin-bottom: 1.5rem;
+  }
+
+  /* Infos + formulaire en colonne */
+  .contact_layout {
+    flex-direction: column;
+    gap: 2rem;
+    align-items: stretch;
+  }
+
+  .contact_info {
+    min-width: unset;
+    width: 100%;
+  }
+
+  .contact_form {
+    width: 100%;
+  }
+
+  /* Les 2 champs côte à côte deviennent 1 colonne */
+  .contact_form_row {
+    flex-direction: column;
+  }
+
+  /* Inputs et textarea pleine largeur */
+  .contact_input,
+  .contact_textarea {
+    width: 100%;
+  }
+
+  /* Bouton centré sur mobile */
+  .contact_btn {
+    align-self: stretch;
+    text-align: center;
+  }
 }

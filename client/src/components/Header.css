@@ -80,3 +80,88 @@ header a {
   background-color: var(--bg-color-secondary);
   color: var(--bg-color-primary);
 }
+
+/* === Hamburger (caché sur desktop) === */
+.hamburger {
+  display: none;
+  flex-direction: column;
+  gap: 5px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0.5rem;
+  z-index: 101;
+}
+
+.hamburger span {
+  display: block;
+  width: 24px;
+  height: 2px;
+  background-color: var(--bg-color-quartary);
+  border-radius: 2px;
+  transition: transform 0.3s ease, opacity 0.3s ease;
+}
+
+.hamburger.open span:nth-child(1) {
+  transform: translateY(7px) rotate(45deg);
+}
+.hamburger.open span:nth-child(2) {
+  opacity: 0;
+}
+.hamburger.open span:nth-child(3) {
+  transform: translateY(-7px) rotate(-45deg);
+}
+
+/* Boutons dans le menu mobile — cachés sur desktop */
+.div_buttons_header_mobile {
+  display: none;
+}
+
+/* ===================================================
+   RESPONSIVE — MOBILE (≤ 768px)
+   =================================================== */
+@media (max-width: 768px) {
+  header {
+    flex-wrap: wrap;
+    padding: 0.75rem 1rem;
+    position: relative;
+  }
+
+  /* Affiche le bouton hamburger */
+  .hamburger {
+    display: flex;
+  }
+
+  /* Cache les boutons desktop */
+  .div_buttons_header {
+    display: none;
+  }
+
+  /* Menu de navigation : masqué par défaut, glisse vers le bas quand ouvert */
+  /* "header nav" cible UNIQUEMENT le nav du header, pas ceux du footer */
+  header nav {
+    display: none;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1rem;
+    width: 100%;
+    background-color: var(--bg-color-primary);
+    padding: 1rem 1.5rem 1.5rem;
+    border-top: 1px solid var(--border-color);
+  }
+
+  header nav.open {
+    display: flex;
+  }
+
+  header a {
+    font-size: 1rem;
+  }
+
+  /* Boutons login/register dans le menu mobile */
+  .div_buttons_header_mobile {
+    display: flex;
+    gap: 0.75rem;
+    margin-top: 0.5rem;
+  }
+}

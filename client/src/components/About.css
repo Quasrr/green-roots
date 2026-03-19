@@ -147,3 +147,37 @@
     line-height: 1.5;
     margin: 0;
 }
+
+/* ===================================================
+   RESPONSIVE — MOBILE (≤ 768px)
+   =================================================== */
+@media (max-width: 768px) {
+  .about_wrapper {
+    margin: 1.5rem auto;
+    padding: 0 1rem 3rem;
+    gap: 2.5rem;
+  }
+
+  .about_wrapper h1 {
+    font-size: 1.8rem;
+  }
+
+  .about_hero_description {
+    font-size: 1rem;
+    max-width: 100%;
+  }
+
+  /* Cards valeurs : 1 colonne sur mobile */
+  .about_values_list {
+    flex-direction: column;
+  }
+
+  .about_value_card {
+    min-width: unset;
+  }
+
+  /* Cards équipe : 1 colonne sur mobile */
+  .about_team_list {
+    flex-direction: column;
+  }
+}
