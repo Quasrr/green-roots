@@ -62,7 +62,7 @@ services:
       dockerfile: Dockerfile
     restart: unless-stopped
     environment:
-      VITE_API_BASE_URL: http://localhost:${API_LOCAL_PORT}
+      VITE_API_URL: http://localhost:${API_LOCAL_PORT}
     ports:
       - ${CLIENT_LOCAL_PORT}:5173
     volumes:
