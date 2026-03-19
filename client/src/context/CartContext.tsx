@@ -1,14 +1,14 @@
 import { createContext, useContext, useState } from 'react';
 import type { Tree } from '../types';
 
-// === Type d'un article dans le panier ===
+// Type d'un article dans le panier 
 // Un CartItem = un arbre + la quantité choisie par l'utilisateur
 export type CartItem = {
     tree: Tree;
     quantity: number;
 };
 
-// === Type du Context : ce qu'on expose aux composants ===
+// Type du Context : ce qu'on expose aux composants qui en ont besoin
 type CartContextType = {
     items: CartItem[];
     addToCart: (tree: Tree) => void;
@@ -21,7 +21,7 @@ type CartContextType = {
 // Création du context avec une valeur par défaut vide
 const CartContext = createContext<CartContextType | null>(null);
 
-// === Provider : enveloppe l'application et fournit le panier à tous les composants ===
+// Provider : enveloppe l'application et fournit le panier à tous les composants qui en ont besoin
 export function CartProvider({ children }: { children: React.ReactNode }) {
     const [items, setItems] = useState<CartItem[]>([]);
 

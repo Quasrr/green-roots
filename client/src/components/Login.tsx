@@ -1,15 +1,29 @@
 import { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
+import { useAuth } from '../context/AuthContext';
 import './Login.css';
 
 function Login() {
+    const { login } = useAuth();
+    const navigate = useNavigate();
 
     const [email, setEmail] = useState<string>('');
     const [password, setPassword] = useState<string>('');
+    const [error, setError] = useState<string>('');
+    const [isLoading, setIsLoading] = useState(false);
 
-    function handleSubmit(e: React.FormEvent) {
+    async function handleSubmit(e: React.FormEvent) {
         e.preventDefault();
-        console.log({ email, password });
+        setError('');
+        setIsLoading(true);
+        try {
+            await login(email, password); // appel à l'API via le context
+            navigate('/');               // redirige vers l'accueil si succès
+        } catch (err) {
+            setError(err instanceof Error ? err.message : 'Une erreur est survenue');
+        } finally {
+            setIsLoading(false);
+        }
     }
 
     return (
@@ -39,7 +53,10 @@ function Login() {
                             onChange={e => setPassword(e.target.value)}
                         />
                     </div>
-                    <button type="submit" className="login_btn">Se connecter</button>
+                    {error && <p className="login_error">{error}</p>}
+                    <button type="submit" className="login_btn" disabled={isLoading}>
+                        {isLoading ? 'Connexion...' : 'Se connecter'}
+                    </button>
                 </form>
 
                 <p className="login_redirect">
