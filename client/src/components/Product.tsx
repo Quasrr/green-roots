@@ -32,7 +32,7 @@ function Product() {
     if (!tree) return <p>Arbre introuvable.</p> // Afficher un message à l'utilisateur en cas d'erreur de chargement de l'arbre
 
     return (
-        <main>
+        <main className="main_product">
             <img src={tree.image} alt={tree.name} className="product_banner" />
             <div className="add_cart_tree">
                 <h2>{tree.name}</h2>

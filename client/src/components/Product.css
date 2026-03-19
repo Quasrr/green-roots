@@ -7,7 +7,7 @@
   --font-primary: 'Inter', sans-serif;
 }
 
-main {
+.main_product {
   max-width: 900px;
   margin: 0 auto;
   padding: 2rem 3rem;
