@@ -1,18 +1,20 @@
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import type { Tree } from "../types";
+import { Leaf, Wind, MapPin } from 'lucide-react';
+import './Product.css';
 
 function Product() {
 
     const [tree, setTree] = useState<Tree | null>(null); // On reçoit un objet (un arbre) unique potentiellement vide
     const { id } = useParams(); // Récupérer l'id avec le hook params
-    const [isLoading, setIsLoading] = useState<boolean>(true); // Loader de chargement
+    const [isLoading, setIsLoading] = useState<boolean>(false); // Loader de chargement
     const [error, setError] = useState(false);
 
     useEffect(() => {
         async function fetchTreeById() {
             try {
-                const response = await fetch(`/api/trees/${id}`); // Fetch l'arbre sur la route /api/trees/:id
+                const response = await fetch(`http://localhost:3000/api/trees/${id}`); // Fetch l'arbre sur la route /api/trees/:id
                 const data = await response.json();
                 setTree(data);
             } catch (error) {
@@ -30,23 +32,34 @@ function Product() {
     if (!tree) return <p>Arbre introuvable.</p> // Afficher un message à l'utilisateur en cas d'erreur de chargement de l'arbre
 
     return (
-        <>
+        <main>
             <img src={tree.image} alt={tree.name} className="product_banner" />
             <div className="add_cart_tree">
                 <h2>{tree.name}</h2>
-                <p className="price_tree">{tree.price}€ quantité: {tree.quantity}</p>
-                <button className="btn_addCart">Ajouter au panier</button>
+                <div className="add_cart_right">
+                    <div className="price_stock_row">
+                        <p className="price_tree">{tree.price}€</p>
+                        <span className={`stock_badge ${tree.quantity > 0 ? 'in_stock' : 'out_stock'}`}>
+                            {tree.quantity > 0 ? 'EN STOCK' : 'RUPTURE'}
+                        </span>
+                    </div>
+                    <button className="btn_add_to_cart">Ajouter au panier</button>
+                </div>
             </div>
             <section className="impact">
                 <article className="impact_tree">
-                    <img src="/wind.webp" alt="logo vent" />
-                    <h3>Production d'oxygène</h3>
+                    <div className="div_wrap_logo_prodimpact">
+                        <Wind size={48} color="#1F4D4D" className="logo_article_choose" />
+                        <h3>Oxygène produit</h3>
+                    </div>
                     <p className="impact_tree_specimen">{tree.impact_o2}L/jour</p>
                     <p className="description_impact">Production moyenne d'oxygène pour un spécimen mature en pleine saison de croissance.</p>
                 </article>
                 <article className="impact_tree">
-                    <img src="/leaf.webp" alt="logo feuille" />
-                    <h3>Captation du dioxyde de carbone</h3>
+                    <div className="div_wrap_logo_prodimpact">
+                        <Leaf size={48} color="#1F4D4D" className="logo_article_choose" />
+                        <h3>Dioxyde de carbone capté</h3>
+                    </div>
                     <p className="impact_tree_specimen">{tree.impact_co2}kg/an</p>
                     <p className="description_impact">Absorption de carbone estimée sur un cycle de croissance de 10 ans.</p>
                 </article>
@@ -73,15 +86,18 @@ function Product() {
                     </div>
                 </div>
                 <section className="section_map_tree">
-                    <img src="/logoMap.webp" alt="logo geoposition" />
-                    <img src="/map.webp" alt="carte du monde d'origine des arbres" />
+                    <div className="wrap_div_map">
+                        <MapPin size={48} color="#1F4D4D" className="logo_article_choose" />
+                        <h3 className="h3_map">Aire d'origine & répartition</h3>
+                    </div>
+                    <img src="/map.png" alt="carte du monde d'origine des arbres" className="map_img" />
                     <div className="description_map">
                         <p className="origin">Origine de l'arbre : {tree.country}</p>
                         <p className="description_origin">Cultivé durablement dans notre pépinière</p>
                     </div>
                 </section>
             </section >
-        </>
+        </main>
     )
 }
 

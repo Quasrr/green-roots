@@ -1,0 +1,251 @@
+:root {
+  --bg-color-primary: #F6F8F7;
+  --bg-color-secondary: #1A4231;
+  --bg-color-tercary: #0D0D0C;
+  --bg-color-quartary: #151D1A;
+  --text-color: #6F777A;
+  --font-primary: 'Inter', sans-serif;
+}
+
+main {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 2rem 3rem;
+  font-family: var(--font-primary);
+}
+
+h3 {
+  font-size: 1.5rem;
+  margin: 0;
+}
+
+/* === Bannière === */
+
+.product_banner {
+  width: 100%;
+  height: 340px;
+  object-fit: cover;
+  border-radius: 1rem;
+  display: block;
+  margin-bottom: 1.5rem;
+}
+
+/* === Bloc nom / prix / bouton === */
+
+.add_cart_tree {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 2rem;
+}
+
+.add_cart_tree h2 {
+  font-size: 2rem;
+  font-weight: bold;
+  color: var(--bg-color-tercary);
+  margin-bottom: 0.75rem;
+}
+
+.add_cart_right {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 0.75rem;
+}
+
+.price_stock_row {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.price_tree {
+  font-size: 1.6rem;
+  font-weight: bold;
+  color: var(--bg-color-tercary);
+  margin: 0;
+}
+
+.stock_badge {
+  font-size: 0.75rem;
+  font-weight: bold;
+  padding: 0.25rem 0.6rem;
+  border-radius: 0.4rem;
+  letter-spacing: 0.05em;
+}
+
+.stock_badge.in_stock {
+  background-color: #e6f4ec;
+  color: var(--bg-color-secondary);
+}
+
+.stock_badge.out_stock {
+  background-color: #fde8e8;
+  color: #c0392b;
+}
+
+.btn_add_to_cart {
+  background-color: var(--bg-color-secondary);
+  color: var(--bg-color-primary);
+  font-size: 1.3rem;
+  font-weight: bold;
+  padding: 0.6rem 1.5rem;
+  border-radius: 1rem;
+  border: 1px solid #1A4231;
+  cursor: pointer;
+}
+
+/* === Impact === */
+
+.impact {
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 2rem;
+}
+
+.impact_tree {
+  background-color: white;
+  border-radius: 0.75rem;
+  padding: 1.25rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  flex: 1;
+}
+
+.impact_tree img {
+  width: 28px;
+  height: 28px;
+  margin-bottom: 0.25rem;
+}
+
+.impact_label {
+  font-size: 0.7rem;
+  font-weight: bold;
+  letter-spacing: 0.08em;
+  color: var(--text-color);
+  margin: 0;
+}
+
+.impact_tree_specimen {
+  font-size: 1.8rem;
+  font-weight: bold;
+  color: var(--bg-color-tercary);
+  margin: 0;
+}
+
+.description_impact {
+  font-size: 0.85rem;
+  color: var(--text-color);
+  line-height: 1.5;
+  margin: 0;
+}
+
+.div_wrap_logo_prodimpact {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+/* === Description === */
+
+.section_description_tree h4 {
+  font-size: 1rem;
+  font-weight: bold;
+  color: var(--bg-color-tercary);
+  padding-bottom: 0.5rem;
+  border-bottom: 2px solid var(--bg-color-secondary);
+  display: inline-block;
+  margin-bottom: 1rem;
+}
+
+.description_tree {
+  font-size: 0.95rem;
+  color: var(--text-color);
+  line-height: 1.7;
+  margin-bottom: 1.5rem;
+}
+
+/* === Mesures === */
+
+.measure_tree {
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 2rem;
+}
+
+.measure_tree_value {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  flex: 1;
+}
+
+.information_tree {
+  font-size: 0.7rem;
+  font-weight: bold;
+  letter-spacing: 0.08em;
+  color: var(--text-color);
+  margin: 0;
+}
+
+.information_tree_value {
+  font-size: 0.95rem;
+  font-weight: bold;
+  color: var(--bg-color-tercary);
+  margin: 0;
+}
+
+/* === Carte === */
+
+.section_map_tree {
+  border-radius: 1rem;
+  overflow: hidden;
+}
+
+.section_map_tree img {
+  width: 100%;
+  display: block;
+}
+
+.map_title {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 1rem;
+  font-weight: bold;
+  color: var(--bg-color-tercary);
+  padding: 1rem 1.25rem 0.5rem;
+  margin: 0;
+}
+
+.map_img {
+  width: 100%;
+  height: 220px;
+  object-fit: cover;
+  display: block;
+}
+
+.wrap_div_map {
+  display: flex;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+.description_map {
+  padding: 1rem 1.25rem;
+}
+
+.origin {
+  font-size: 0.9rem;
+  font-weight: bold;
+  color: var(--bg-color-tercary);
+  margin: 0 0 0.25rem;
+}
+
+.description_origin {
+  font-size: 0.85rem;
+  color: var(--text-color);
+  margin: 0;
+}

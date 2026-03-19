@@ -32,6 +32,8 @@ a {
 
 .div_logo_header {
   display: flex;
+  align-items: center;
+  gap: 1rem;
 }
 
 .logo_greenroots {
@@ -61,4 +63,5 @@ a {
   padding: 0.6rem;
   border-radius: 1rem;
   border: 1px solid #1A4231;
+  cursor: pointer;
 }

@@ -1,3 +1,5 @@
+import './Legals.css'
+
 function Legals() {
     return (
         <main className="legals">
