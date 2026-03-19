@@ -1,14 +1,15 @@
 import { createContext, useContext, useEffect, useState } from 'react';
 
-// === Type de l'utilisateur connecté ===
+// Type de l'utilisateur connecté 
 type User = {
+    id: number;
     email: string;
     firstname: string;
     lastname: string;
     role: number; // 1 = admin, 2 = user
 };
 
-// === Ce qu'on expose à tous les composants ===
+// Ce qu'on expose à tous les composants 
 type AuthContextType = {
     user: User | null;       // null = pas connecté
     isLoggedIn: boolean;
@@ -19,10 +20,10 @@ type AuthContextType = {
 
 const AuthContext = createContext<AuthContextType | null>(null);
 
-//Provider : enveloppe l'app et fournit l'état auth à tous les composants ===
+//Provider : enveloppe l'app et fournit l'état auth à tous les composants qui en ont besoin
 export function AuthProvider({ children }: { children: React.ReactNode }) {
     const [user, setUser] = useState<User | null>(null);
-    const [isLoading, setIsLoading] = useState(true); // on attend la vérification initiale
+    const [isLoading, setIsLoading] = useState(true); 
 
     // Au démarrage de l'app, on vérifie si un cookie valide existe déjà
     // Si oui → l'utilisateur reste connecté même après un refresh de page

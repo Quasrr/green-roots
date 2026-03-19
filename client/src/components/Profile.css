@@ -1,0 +1,236 @@
+/* Les variables :root sont dans index.css */
+
+.profile_wrapper {
+    max-width: 900px;
+    margin: 3rem auto;
+    padding: 0 2rem 4rem;
+    font-family: var(--font-primary);
+}
+
+.profile_wrapper h1 {
+    font-size: 2rem;
+    font-weight: bold;
+    color: var(--bg-color-tercary);
+    margin-bottom: 0.25rem;
+}
+
+.profile_description {
+    color: var(--text-color);
+    font-size: 1rem;
+    margin-bottom: 2.5rem;
+}
+
+/* === Layout : carte résumé + formulaire === */
+
+.profile_layout {
+    display: flex;
+    gap: 2.5rem;
+    align-items: flex-start;
+}
+
+/* === Carte résumé (gauche) === */
+
+.profile_card_summary {
+    background-color: white;
+    border-radius: 1rem;
+    padding: 2rem 1.5rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.5rem;
+    min-width: 200px;
+    text-align: center;
+    position: sticky;
+    top: 1rem;
+}
+
+.profile_avatar {
+    background-color: var(--bg-color-secondary);
+    color: white;
+    font-size: 1.6rem;
+    font-weight: bold;
+    width: 72px;
+    height: 72px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 0.5rem;
+}
+
+.profile_name {
+    font-size: 1rem;
+    font-weight: 700;
+    color: var(--bg-color-tercary);
+    margin: 0;
+}
+
+.profile_email {
+    font-size: 0.85rem;
+    color: var(--text-color);
+    margin: 0;
+}
+
+.profile_role_badge {
+    font-size: 0.7rem;
+    font-weight: bold;
+    letter-spacing: 0.07em;
+    background-color: #e6f4ec;
+    color: var(--bg-color-secondary);
+    padding: 0.2rem 0.6rem;
+    border-radius: 0.4rem;
+    margin-top: 0.25rem;
+}
+
+/* === Formulaire (droite) === */
+
+.profile_form {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+}
+
+.profile_form h4 {
+    font-size: 0.95rem;
+    font-weight: bold;
+    color: var(--bg-color-tercary);
+    padding-bottom: 0.5rem;
+    border-bottom: 2px solid var(--bg-color-secondary);
+    display: inline-block;
+    margin-bottom: 0;
+}
+
+.profile_form h4::before {
+    display: none; /* annule le ::before global de h4 */
+}
+
+.profile_hint {
+    font-size: 0.85rem;
+    color: var(--text-color);
+    margin: -0.5rem 0 0;
+}
+
+.profile_form_row {
+    display: flex;
+    gap: 1rem;
+}
+
+.profile_form_row .profile_field {
+    flex: 1;
+}
+
+.profile_field {
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+}
+
+.profile_label {
+    font-size: 0.85rem;
+    font-weight: bold;
+    color: var(--bg-color-tercary);
+}
+
+.profile_input {
+    width: 100%;
+    background-color: var(--bg-color-primary);
+    border: 1px solid #e0e8e4;
+    border-radius: 0.5rem;
+    padding: 0.65rem 0.9rem;
+    font-size: 0.95rem;
+    font-family: var(--font-primary);
+    color: var(--bg-color-tercary);
+    outline: none;
+    transition: border-color 0.15s;
+}
+
+.profile_input:focus {
+    border-color: var(--bg-color-secondary);
+}
+
+.profile_input_error {
+    border-color: #c0392b;
+}
+
+.profile_error_inline {
+    font-size: 0.8rem;
+    color: #c0392b;
+    margin: 0;
+}
+
+.profile_error {
+    font-size: 0.85rem;
+    color: #c0392b;
+    background-color: #fde8e8;
+    padding: 0.6rem 0.9rem;
+    border-radius: 0.5rem;
+    margin: 0;
+}
+
+.profile_success {
+    font-size: 0.85rem;
+    color: var(--bg-color-secondary);
+    background-color: #e6f4ec;
+    padding: 0.6rem 0.9rem;
+    border-radius: 0.5rem;
+    margin: 0;
+}
+
+.profile_btn {
+    background-color: var(--bg-color-secondary);
+    color: white;
+    border: none;
+    border-radius: 0.5rem;
+    padding: 0.6rem 1.4rem;
+    font-size: 0.9rem;
+    font-weight: 600;
+    font-family: var(--font-primary);
+    cursor: pointer;
+    transition: background 0.15s;
+    align-self: flex-end;
+}
+
+.profile_btn:hover {
+    background-color: #2D6A4F;
+}
+
+.profile_btn:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+/* ===================================================
+   RESPONSIVE — MOBILE (≤ 768px)
+   =================================================== */
+@media (max-width: 768px) {
+    .profile_wrapper {
+        margin: 1.5rem auto;
+        padding: 0 1rem 3rem;
+    }
+
+    .profile_wrapper h1 {
+        font-size: 1.6rem;
+    }
+
+    /* Carte résumé + formulaire en colonne */
+    .profile_layout {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .profile_card_summary {
+        position: static;
+        min-width: unset;
+    }
+
+    /* Champs prénom/nom en colonne */
+    .profile_form_row {
+        flex-direction: column;
+    }
+
+    .profile_btn {
+        align-self: stretch;
+        text-align: center;
+    }
+}
