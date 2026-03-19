@@ -56,8 +56,8 @@ class AuthController {
             ErrorHandler.sendError(res, error);
         }
     }
-    async login(req: Request, res: Response) {
 
+    async login(req: Request, res: Response) {
         // schéma pour valider les données entrantes dans notre controller
         const schema = z.object({
             email: z.string().email(),
@@ -83,6 +83,12 @@ class AuthController {
                 process.env.JWT_SECRET,
                 { expiresIn: "1h" }
             );
+
+            // Avant de créer un nouveau refresh token, on supprime les anciens refresh
+            // Afin d'avoir un token / utilisateur
+            await prisma.refreshToken.deleteMany({
+                where: { userId: user.id }
+            });
 
             const refreshToken = jwt.sign(
                 { email, id: user.id },
@@ -123,6 +129,39 @@ class AuthController {
         };
     };
 
+    async refreshAccessToken(req: Request, res: Response) {
+        try {
+            const refreshToken = req.cookies?.refresh_token;
+            if (!refreshToken) throw new UnauthorizedError('No refresh token');
+
+            const decoded = jwt.verify(refreshToken, process.env.JWT_SECRET as string) as { email: string, id: string };
+
+            // Vérifier que le refresh token existe bien en BDD
+            const storedToken = await prisma.refreshToken.findUnique({ where: { token: refreshToken } });
+            if (!storedToken) throw new UnauthorizedError('Invalid refresh token');
+
+            // Générer un nouvel access token
+            const newAccessToken = jwt.sign(
+                { email: decoded.email, id: decoded.id },
+                process.env.JWT_SECRET as string,
+                { expiresIn: "1h" }
+            );
+
+            res.cookie("access_token", newAccessToken, {
+                httpOnly: true,
+                secure: process.env.NODE_ENV === "production",
+                sameSite: "lax",
+                path: "/api",
+                maxAge: 1000 * 60 * 60
+            });
+
+            return res.send({ message: "Token refreshed" });
+
+        } catch (error) {
+            return ErrorHandler.sendError(res, error);
+        }
+    };
+
     async logout(req: Request, res: Response) {
         const refreshToken = req.cookies?.refresh_token;
         // Supression access token
@@ -138,9 +177,10 @@ class AuthController {
         });
 
         // On supprime également le refreshToken dans la DB (celui qui avait été confié au client et qu'il nous renvoie sur la route logout via cookie) pour forcer le relogin
+        // Suppression via l'userId récupéré depuis le token (authMiddleware)
         if (refreshToken) {
             await prisma.refreshToken.deleteMany({
-                where: { token: refreshToken }
+                where: { userId: Number(req.user.id) }
             });
         }
         res.sendStatus(204);
