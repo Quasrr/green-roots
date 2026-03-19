@@ -14,6 +14,7 @@ import Login from './components/Login.tsx';
 import Register from './components/Register.tsx';
 import Cart from './components/Cart.tsx';
 import { CartProvider } from './context/CartContext.tsx';
+import { AuthProvider } from './context/AuthContext.tsx';
 import './App.css';
 
 // Sélecteurs des éléments à animer au scroll
@@ -62,6 +63,7 @@ function App() {
   }, [location.pathname]);
 
   return (
+    <AuthProvider>
     <CartProvider>
       <div className="app_layout">
         <Header />
@@ -83,6 +85,7 @@ function App() {
         <Footer />
       </div>
     </CartProvider>
+    </AuthProvider>
   )
 
 }
