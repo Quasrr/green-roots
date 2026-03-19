@@ -41,7 +41,7 @@ function LandingPage() {
                 <section className="article_mission">
                     <article className="article_reasons_choose">
                         <div className="icon_wrapper">
-                            <Leaf size={48} color="#1F4D4D" className="logo_article_choose" />
+                            <Leaf size={28} color="#1F4D4D" className="logo_article_choose" />
                         </div>
                         <div className="description_article">
                             <h3>Capture de CO2</h3>
@@ -49,7 +49,7 @@ function LandingPage() {
                         </div></article>
                     <article className="article_reasons_choose">
                         <div className="icon_wrapper">
-                            <Bird size={48} color="#1F4D4D" className="logo_article_choose" />
+                            <Bird size={28} color="#1F4D4D" className="logo_article_choose" />
                         </div>
                         <div className="description_article">
                             <h3>Biodiversité</h3>
@@ -58,7 +58,7 @@ function LandingPage() {
                     </article>
                     <article className="article_reasons_choose">
                         <div className="icon_wrapper">
-                            <MountainSnow size={48} color="#1F4D4D" className="logo_article_choose" />
+                            <MountainSnow size={28} color="#1F4D4D" className="logo_article_choose" />
                         </div>
                         <div className="description_article">
                             <h3>Restauration des sols</h3>
@@ -83,50 +83,21 @@ function LandingPage() {
                     </article>
                 ))}
                 <section className="section_article_trees">
-                    <article className="article_reasons_choose">
-                        <img src="/banniere.webp" alt="image d'un chene" className="chene" />
-                        <h3 className='title_tree_popular'>Big chene de fou</h3>
-                        <p className="label_tree">un tres tres gros chene qui fait des glands</p>
-                        <div className="div_price_cart">
-                            <p className="price_tree">40.50€</p>
-                            <div className="icon_wrapper_cart">
-                                <ShoppingCart size={32} color="#F6F8F7" className="logo_cart" />
+                    {[1,2,3,4].map((i) => (
+                        <article key={i} className="article_reasons_choose">
+                            <img src="/banniere.webp" alt="image d'un chene" className="chene" />
+                            <div className="tree_card_body">
+                                <h3 className='title_tree_popular'>Big chene de fou</h3>
+                                <p className="label_tree">un tres tres gros chene qui fait des glands</p>
                             </div>
-                        </div>
-                    </article>
-                    <article className="article_reasons_choose">
-                        <img src="/banniere.webp" alt="image d'un chene" className="chene" />
-                        <h3 className='title_tree_popular'>Big chene de fou</h3>
-                        <p className="label_tree">un tres tres gros chene qui fait des glands</p>
-                        <div className="div_price_cart">
-                            <p className="price_tree">40.50€</p>
-                            <div className="icon_wrapper_cart">
-                                <ShoppingCart size={32} color="#F6F8F7" className="logo_cart" />
+                            <div className="div_price_cart">
+                                <p className="price_tree">40.50€</p>
+                                <div className="icon_wrapper_cart">
+                                    <ShoppingCart size={18} color="#F6F8F7" className="logo_cart" />
+                                </div>
                             </div>
-                        </div>
-                    </article>
-                    <article className="article_reasons_choose">
-                        <img src="/banniere.webp" alt="image d'un chene" className="chene" />
-                        <h3 className='title_tree_popular'>Big chene de fou</h3>
-                        <p className="label_tree">un tres tres gros chene qui fait des glands</p>
-                        <div className="div_price_cart">
-                            <p className="price_tree">40.50€</p>
-                            <div className="icon_wrapper_cart">
-                                <ShoppingCart size={32} color="#F6F8F7" className="logo_cart" />
-                            </div>
-                        </div>
-                    </article>
-                    <article className="article_reasons_choose">
-                        <img src="/banniere.webp" alt="image d'un chene" className="chene" />
-                        <h3 className='title_tree_popular'>Big chene de fou</h3>
-                        <p className="label_tree">un tres tres gros chene qui fait des glands</p>
-                        <div className="div_price_cart">
-                            <p className="price_tree">40.50€</p>
-                            <div className="icon_wrapper_cart">
-                                <ShoppingCart size={32} color="#F6F8F7" className="logo_cart" />
-                            </div>
-                        </div>
-                    </article>
+                        </article>
+                    ))}
                 </section>
             </section>
         </>

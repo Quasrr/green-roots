@@ -1,21 +1,4 @@
-:root {
-  --bg-color-primary: #F6F8F7;
-  --bg-color-secondary: #1A4231;
-  --bg-color-tercary: #0D0D0C;
-  --bg-color-quartary: #151D1A;
-  --font-primary: 'Inter', sans-serif;
-}
-
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-}
-
-body {
-  font-family: var(--font-primary);
-  background-color: var(--bg-color-primary);
-}
+/* Les variables :root et le reset * sont dans index.css */
 
 header {
   display: flex;
@@ -31,7 +14,8 @@ nav {
   gap: 2rem;
 }
 
-a {
+/* Scoped à header a — évite d'écraser les liens du reste de l'app */
+header a {
   color: var(--bg-color-quartary);
   text-decoration: none;
   font-weight: bold;
@@ -60,16 +44,39 @@ a {
   flex-direction: row;
   align-items: center;
   gap: 1rem;
+  margin-left: 2rem;
 }
 
 .login,
 .register {
-  color: var(--bg-color-quartary);
-  font-size: 1.3rem;
-  font-weight: bold;
-  background-color: var(--bg-color-primary);
-  padding: 0.6rem;
-  border-radius: 1rem;
-  border: 1px solid #1A4231;
+  font-size: 0.9rem;
+  font-weight: 600;
+  padding: 0.45rem 1rem;
+  border-radius: 0.5rem;
   cursor: pointer;
+  transition: background 0.15s, color 0.15s;
+}
+
+/* Inscription : fond vert en permanence */
+.register {
+  background-color: var(--bg-color-secondary);
+  color: var(--bg-color-primary);
+  border: 1px solid var(--bg-color-secondary);
+}
+
+.register:hover {
+  background-color: #2D6A4F;
+  border-color: #2D6A4F;
+}
+
+/* Connexion : fond clair avec bordure verte */
+.login {
+  background-color: var(--bg-color-primary);
+  color: var(--bg-color-quartary);
+  border: 1px solid var(--bg-color-secondary);
+}
+
+.login:hover {
+  background-color: var(--bg-color-secondary);
+  color: var(--bg-color-primary);
 }

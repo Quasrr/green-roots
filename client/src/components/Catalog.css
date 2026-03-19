@@ -1,11 +1,4 @@
-:root {
-  --bg-color-primary: #F6F8F7;
-  --bg-color-secondary: #1A4231;
-  --bg-color-tercary: #0D0D0C;
-  --bg-color-quartary: #151D1A;
-  --text-color: #6F777A;
-  --font-primary: 'Inter', sans-serif;
-}
+/* Les variables :root sont dans index.css */
 
 /* === Layout global === */
 
@@ -145,11 +138,12 @@
   overflow: hidden;
   display: flex;
   flex-direction: column;
-  transition: box-shadow 0.2s;
+  transition: box-shadow 0.2s, transform 0.2s;
 }
 
 .article_tree:hover {
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.12);
+  transform: scale(1.03);
 }
 
 .article_tree_img_wrapper {
@@ -187,54 +181,49 @@
 }
 
 .article_tree_info h2 {
-  font-size: 1.5rem;
-  font-weight: bold;
+  font-size: 1.1rem;
+  font-weight: 700;
   color: var(--bg-color-tercary);
   margin: 0;
 }
 
 .label_tree {
-  font-size: 1.2rem;
+  font-size: 0.85rem;
   color: var(--text-color);
   align-self: flex-start;
   padding: 0;
+  margin: 0;
 }
 
 .price_cart_row {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-top: 0.5rem;
+  margin-top: auto;
+  padding-top: 0.75rem;
 }
 
 .price_tree {
-  font-size: 1.3rem;
-  font-weight: bold;
-  color: var(--bg-color-tercary);
+  font-size: 1.2rem;
+  font-weight: 800;
+  color: var(--bg-color-secondary);
   margin: 0;
 }
 
-.btn_addCart {
+.icon_wrapper_cart {
   background-color: var(--bg-color-secondary);
-  color: white;
-  border: none;
   border-radius: 50%;
-  width: 36px;
-  height: 36px;
-  display: flex;
+  width: 34px;
+  height: 34px;
+  display: inline-flex;
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  font-size: 1rem;
   transition: background 0.15s;
 }
 
-.btn_addCart:hover {
+.icon_wrapper_cart:hover {
   background-color: #2D6A4F;
-}
-
-.icon_wrapper_cart {
-  cursor: pointer;
 }
 
 /* === Pagination === */

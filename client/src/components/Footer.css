@@ -1,17 +1,4 @@
-:root {
-  --bg-color-primary: #F6F8F7;
-  --bg-color-secondary: #1A4231;
-  --bg-color-tercary: #0D0D0C;
-  --bg-color-quartary: #151D1A;
-  --text-color: #6F777A;
-  --font-primary: 'Inter', sans-serif;
-}
-
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-}
+/* Les variables :root et le reset * sont dans index.css */
 
 footer {
   background-color: #0D1F18;
@@ -49,7 +36,7 @@ footer {
 
 .description_footer {
   color: var(--text-color);
-  font-size: 1.1rem;
+  font-size: 0.9rem;
   line-height: 1.6;
   width: 80%;
 }
@@ -64,13 +51,14 @@ footer {
 .nav_categorie {
   color: var(--bg-color-primary);
   font-weight: bold;
-  font-size: 1.4rem;
+  font-size: 0.95rem;
+  letter-spacing: 0.05em;
   margin-bottom: 0.5rem;
 }
 
 .nav_footer a {
   text-decoration: none;
-  font-size: 1.2rem;
+  font-size: 0.9rem;
   color: var(--text-color);
 }
 
@@ -87,7 +75,7 @@ footer {
 
 .copyright_text {
   color: var(--text-color);
-  font-size: 1.1rem;
+  font-size: 0.85rem;
 }
 
 .nav_footer_copyright {

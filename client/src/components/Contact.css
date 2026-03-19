@@ -1,11 +1,4 @@
-:root {
-    --bg-color-primary: #F6F8F7;
-    --bg-color-secondary: #1A4231;
-    --bg-color-tercary: #0D0D0C;
-    --bg-color-quartary: #151D1A;
-    --text-color: #6F777A;
-    --font-primary: 'Inter', sans-serif;
-}
+/* Les variables :root sont dans index.css */
 
 .contact_wrapper {
     max-width: 900px;
@@ -124,9 +117,9 @@
     color: white;
     border: none;
     border-radius: 0.5rem;
-    padding: 0.75rem 2rem;
-    font-size: 1rem;
-    font-weight: bold;
+    padding: 0.55rem 1.4rem;
+    font-size: 0.9rem;
+    font-weight: 600;
     font-family: var(--font-primary);
     cursor: pointer;
     transition: background 0.15s;

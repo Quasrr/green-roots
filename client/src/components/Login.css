@@ -1,11 +1,4 @@
-:root {
-    --bg-color-primary: #F6F8F7;
-    --bg-color-secondary: #1A4231;
-    --bg-color-tercary: #0D0D0C;
-    --bg-color-quartary: #151D1A;
-    --text-color: #6F777A;
-    --font-primary: 'Inter', sans-serif;
-}
+/* Les variables :root sont dans index.css */
 
 .login_wrapper {
     min-height: 80vh;
@@ -83,9 +76,9 @@
     color: white;
     border: none;
     border-radius: 0.5rem;
-    padding: 0.75rem;
-    font-size: 1rem;
-    font-weight: bold;
+    padding: 0.6rem;
+    font-size: 0.9rem;
+    font-weight: 600;
     font-family: var(--font-primary);
     cursor: pointer;
     transition: background 0.15s;
@@ -105,10 +98,11 @@
 
 .login_redirect a {
     color: var(--bg-color-secondary);
-    font-weight: bold;
-    text-decoration: underline;
+    font-weight: 600;
+    text-decoration: none;
 }
 
 .login_redirect a:hover {
+    text-decoration: underline;
     color: var(--bg-color-quartary);
 }

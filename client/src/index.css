@@ -1,13 +1,55 @@
+/* =====================================================
+   VARIABLES GLOBALES — définies ici une seule fois
+   Tous les autres fichiers CSS les utilisent directement
+   ===================================================== */
 :root {
-    --text: #9ca3af;
-    --text-h: #f3f4f6;
-    --bg: #16171d;
-    --border: #2e303a;
-    --code-bg: #1f2028;
-    --accent: #c084fc;
-    --accent-bg: rgba(192, 132, 252, 0.15);
-    --accent-border: rgba(192, 132, 252, 0.5);
-    --social-bg: rgba(47, 48, 58, 0.5);
-    --shadow:
-      rgba(0, 0, 0, 0.4) 0 10px 15px -3px, rgba(0, 0, 0, 0.25) 0 4px 6px -2px;
-  }
+  --bg-color-primary: #F6F8F7;
+  --bg-color-secondary: #1A4231;
+  --bg-color-tercary: #0D0D0C;
+  --bg-color-quartary: #151D1A;
+  --text-color: #6F777A;
+  --font-primary: 'Inter', sans-serif;
+
+  --border-color: #e0e8e4;
+  --shadow-card: 0 4px 20px rgba(0, 0, 0, 0.08);
+  --transition-fast: 0.15s ease;
+  --transition-medium: 0.3s ease;
+  --radius: 1rem;
+}
+
+/* =====================================================
+   RESET DE BASE
+   ===================================================== */
+*, *::before, *::after {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  font-family: var(--font-primary);
+  background-color: var(--bg-color-primary);
+  color: var(--bg-color-tercary);
+}
+
+/* =====================================================
+   ANIMATIONS AU SCROLL
+   Principe : on ajoute la classe .reveal aux éléments
+   que l'on veut animer. Quand ils entrent dans le
+   viewport, on ajoute .visible via IntersectionObserver
+   dans App.tsx
+   ===================================================== */
+.reveal {
+  opacity: 0;
+  transform: translateY(22px);
+  transition: opacity 0.55s ease, transform 0.55s ease;
+}
+
+.reveal.visible {
+  opacity: 1;
+  transform: translateY(0);
+}

@@ -1,11 +1,4 @@
-:root {
-    --bg-color-primary: #F6F8F7;
-    --bg-color-secondary: #1A4231;
-    --bg-color-tercary: #0D0D0C;
-    --bg-color-quartary: #151D1A;
-    --text-color: #6F777A;
-    --font-primary: 'Inter', sans-serif;
-}
+/* Les variables :root sont dans index.css */
 
 .about_wrapper {
     max-width: 900px;

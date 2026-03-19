@@ -129,7 +129,7 @@ function Catalog() {
                                         <div className="price_cart_row">
                                             <p className="price_tree">{tree.price}€</p>
                                             <div className="icon_wrapper_cart">
-                                                <ShoppingCart size={32} color="#F6F8F7" className="logo_cart" />
+                                                <ShoppingCart size={18} color="#F6F8F7" className="logo_cart" />
                                             </div>
                                         </div>
                                     </div>

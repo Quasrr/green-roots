@@ -1,4 +1,5 @@
-import { Routes, Route } from 'react-router-dom';
+import { useEffect } from 'react';
+import { Routes, Route, useLocation } from 'react-router-dom';
 import Header from './components/Header.tsx';
 import LandingPage from './components/LandingPage.tsx';
 import Footer from './components/Footer.tsx';
@@ -13,7 +14,50 @@ import Login from './components/Login.tsx';
 import Register from './components/Register.tsx';
 import './App.css';
 
+// Sélecteurs des éléments à animer au scroll
+const REVEAL_SELECTORS = [
+  'section',
+  '.article_tree',
+  '.article_reasons_choose',
+  '.about_value_card',
+  '.about_team_card',
+  '.impact_tree',
+  '.login_card',
+  '.register_card',
+  '.contact_layout',
+].join(', ');
+
 function App() {
+  const location = useLocation();
+
+  // Active l'animation .reveal → .visible quand l'élément entre dans le viewport
+  // useLocation permet de relancer l'observer à chaque changement de page (SPA)
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add('visible');
+            observer.unobserve(entry.target); // anime une seule fois
+          }
+        });
+      },
+      { threshold: 0.08, rootMargin: '0px 0px -40px 0px' }
+    );
+
+    // Petit délai pour laisser React rendre la nouvelle page
+    const timer = setTimeout(() => {
+      document.querySelectorAll(REVEAL_SELECTORS).forEach((el) => {
+        el.classList.add('reveal');
+        observer.observe(el);
+      });
+    }, 50);
+
+    return () => {
+      clearTimeout(timer);
+      observer.disconnect();
+    };
+  }, [location.pathname]);
 
   return (
     <>
