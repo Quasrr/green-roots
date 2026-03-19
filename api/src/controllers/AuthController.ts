@@ -6,8 +6,14 @@ import { prisma } from '../models/index.ts';
 import { ConflictError, NotFoundError, UnauthorizedError } from '../utils/Error.ts';
 import ErrorHandler from '../ErrorHandler.ts';
 
+function getJwtSecret() {
+    const secret = process.env.JWT_SECRET;
+    if (!secret) {
+        throw new UnauthorizedError('JWT secret is not configured');
+    }
 
-
+    return secret;
+}
 
 class AuthController {
     async register(req: Request, res: Response) {
@@ -78,9 +84,10 @@ class AuthController {
 
             if (!isPasswordValid) throw new UnauthorizedError('Invalid credentials');
 
+            const jwtSecret = getJwtSecret();
             const token = jwt.sign(
                 { email, id: user.id },
-                process.env.JWT_SECRET,
+                jwtSecret,
                 { expiresIn: "1h" }
             );
 
@@ -92,7 +99,7 @@ class AuthController {
 
             const refreshToken = jwt.sign(
                 { email, id: user.id },
-                process.env.JWT_SECRET,
+                jwtSecret,
                 { expiresIn: "7d" }
             );
 
@@ -134,7 +141,8 @@ class AuthController {
             const refreshToken = req.cookies?.refresh_token;
             if (!refreshToken) throw new UnauthorizedError('No refresh token');
 
-            const decoded = jwt.verify(refreshToken, process.env.JWT_SECRET as string) as { email: string, id: string };
+            const jwtSecret = getJwtSecret();
+            const decoded = jwt.verify(refreshToken, jwtSecret) as { email: string, id: string };
 
             // Vérifier que le refresh token existe bien en BDD
             const storedToken = await prisma.refreshToken.findUnique({ where: { token: refreshToken } });
@@ -143,7 +151,7 @@ class AuthController {
             // Générer un nouvel access token
             const newAccessToken = jwt.sign(
                 { email: decoded.email, id: decoded.id },
-                process.env.JWT_SECRET as string,
+                jwtSecret,
                 { expiresIn: "1h" }
             );
 
