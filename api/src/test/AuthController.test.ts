@@ -9,7 +9,7 @@ const testUser = {
     firstname: "Green",
     lastname: "Roots",
     email: "test.user@greenroots.fr",
-    password: "GreenRoots123"
+    password: "GreenRoots123!"
 };
 
 async function createUser(email = testUser.email, password = testUser.password) {
@@ -46,8 +46,7 @@ describe("POST /api/auth/register", () => {
                 lastname: testUser.lastname,
                 firstname: testUser.firstname,
                 email: testUser.email,
-                password: testUser.password,
-                passwordConfirm: testUser.password
+                password: testUser.password
             })
         });
 
@@ -63,7 +62,7 @@ describe("POST /api/auth/register", () => {
         });
     });
 
-    it("returns 409 when passwords do not match", async () => {
+    it("returns 422 when password format is invalid", async () => {
         const response = await fetch(`${baseUrl}/api/auth/register`, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
@@ -71,13 +70,12 @@ describe("POST /api/auth/register", () => {
                 lastname: testUser.lastname,
                 firstname: testUser.firstname,
                 email: testUser.email,
-                password: testUser.password,
-                passwordConfirm: "secret456"
+                password: "greenroots123"
             })
         });
 
-        assert.equal(response.status, 409);
-        assert.match(await response.text(), /Passwords don't match/);
+        assert.equal(response.status, 422);
+        assert.match(await response.text(), /Invalid password format/);
     });
 
     it("returns 409 when email is already used", async () => {
@@ -90,8 +88,7 @@ describe("POST /api/auth/register", () => {
                 lastname: testUser.lastname,
                 firstname: testUser.firstname,
                 email: testUser.email,
-                password: testUser.password,
-                passwordConfirm: testUser.password
+                password: testUser.password
             })
         });
 
@@ -107,8 +104,7 @@ describe("POST /api/auth/register", () => {
                 lastname: "D",
                 firstname: "J",
                 email: "not-an-email",
-                password: "123",
-                passwordConfirm: "123"
+                password: "123"
             })
         });
 
