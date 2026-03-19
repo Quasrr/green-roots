@@ -15,11 +15,13 @@ h1 {
 .banniere_landing {
   position: relative;
   height: 50dvh;
+  margin-top: 0.75rem;
 }
 
 .banniere {
   width: 100%;
   height: 100%;
+  margin-top: 0.75rem;
   object-fit: cover;
 }
 
@@ -288,6 +290,7 @@ h3 {
   /* Bannière plus petite sur mobile */
   .banniere_landing {
     height: 55dvh;
+    margin-top: 0.5rem;
   }
 
   /* Le texte occupe toute la largeur */
