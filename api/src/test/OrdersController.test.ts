@@ -212,6 +212,108 @@ describe("POST /api/orders", () => {
     });
 });
 
+describe("GET /api/orders/:id", () => {
+    it("retourne la commande si elle appartient à l'utilisateur connecté", async () => {
+        await createUser({ email: "user@greenroots.fr", roleId: 2 });
+        const tree = await createTree(10);
+        const cookie = await loginAndGetCookie("user@greenroots.fr", "GreenRoots123");
+
+        // On crée une commande
+        const created = await fetch(`${baseUrl}/api/orders`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json", Cookie: cookie },
+            body: JSON.stringify([{ treeId: tree.id, quantity: 2 }]),
+        });
+        const order = await created.json();
+
+        const response = await fetch(`${baseUrl}/api/orders/${order.id}`, {
+            headers: { Cookie: cookie },
+        });
+
+        assert.equal(response.status, 200);
+        const data = await response.json();
+        assert.equal(data.id, order.id);
+    });
+
+    it("retourne la commande pour un admin même si elle ne lui appartient pas", async () => {
+        // Un user crée une commande
+        await createUser({ email: "user@greenroots.fr", roleId: 2 });
+        const tree = await createTree(10);
+        const cookieUser = await loginAndGetCookie("user@greenroots.fr", "GreenRoots123");
+
+        const created = await fetch(`${baseUrl}/api/orders`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json", Cookie: cookieUser },
+            body: JSON.stringify([{ treeId: tree.id, quantity: 1 }]),
+        });
+        const order = await created.json();
+
+        // L'admin essaie de la lire
+        await createUser({ email: "admin@greenroots.fr", roleId: 1 });
+        const cookieAdmin = await loginAndGetCookie("admin@greenroots.fr", "GreenRoots123");
+
+        const response = await fetch(`${baseUrl}/api/orders/${order.id}`, {
+            headers: { Cookie: cookieAdmin },
+        });
+
+        assert.equal(response.status, 200);
+        const data = await response.json();
+        assert.equal(data.id, order.id);
+    });
+
+    it("retourne 401 si non connecté", async () => {
+        const response = await fetch(`${baseUrl}/api/orders/1`);
+
+        assert.equal(response.status, 401);
+    });
+
+    it("retourne 400 si l'id est invalide (texte)", async () => {
+        await createUser({ email: "user@greenroots.fr", roleId: 2 });
+        const cookie = await loginAndGetCookie("user@greenroots.fr", "GreenRoots123");
+
+        const response = await fetch(`${baseUrl}/api/orders/abc`, {
+            headers: { Cookie: cookie },
+        });
+
+        assert.equal(response.status, 400);
+    });
+
+    it("retourne 404 si la commande n'existe pas", async () => {
+        await createUser({ email: "user@greenroots.fr", roleId: 2 });
+        const cookie = await loginAndGetCookie("user@greenroots.fr", "GreenRoots123");
+
+        const response = await fetch(`${baseUrl}/api/orders/9999`, {
+            headers: { Cookie: cookie },
+        });
+
+        assert.equal(response.status, 404);
+    });
+
+    it("retourne 404 si la commande appartient à un autre utilisateur (pas de fuite d'info)", async () => {
+        // "other" crée une commande
+        await createUser({ email: "other@greenroots.fr", roleId: 2 });
+        const tree = await createTree(10);
+        const cookieOther = await loginAndGetCookie("other@greenroots.fr", "GreenRoots123");
+
+        const created = await fetch(`${baseUrl}/api/orders`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json", Cookie: cookieOther },
+            body: JSON.stringify([{ treeId: tree.id, quantity: 1 }]),
+        });
+        const order = await created.json();
+
+        // "user" essaie de lire la commande d'un autre → doit recevoir 404 (pas 403)
+        await createUser({ email: "user@greenroots.fr", roleId: 2 });
+        const cookieUser = await loginAndGetCookie("user@greenroots.fr", "GreenRoots123");
+
+        const response = await fetch(`${baseUrl}/api/orders/${order.id}`, {
+            headers: { Cookie: cookieUser },
+        });
+
+        assert.equal(response.status, 404);
+    });
+});
+
 describe("GET /api/orders/me", () => {
     it("retourne un tableau vide si l'utilisateur n'a pas de commandes", async () => {
         await createUser({ email: "user@greenroots.fr", roleId: 2 });

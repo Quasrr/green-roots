@@ -2,7 +2,7 @@ import type { Request, Response } from "express";
 import { prisma } from '../models/index.ts';
 import ErrorHandler from "../ErrorHandler.ts";
 import z from 'zod';
-import { NotFoundError } from "../utils/Error.ts";
+import { BadRequestError, NotFoundError } from "../utils/Error.ts";
 
 
 const schemas = z.array(
@@ -125,6 +125,53 @@ class OrdersController {
                 }
             });
             res.send(orders);
+        } catch (error) {
+            ErrorHandler.sendError(res, error);
+        };
+    };
+    async getOrderById(req: Request, res: Response) {
+        try {
+            const userId = Number(req.user?.id);
+            const orderId = Number(req.params.id);
+
+            if (!Number.isInteger(orderId) || orderId <= 0) {
+                throw new BadRequestError('Invalid order id');
+            }
+
+            const order = await prisma.order.findUnique({
+                where: { id: orderId },
+                include: {
+                    lines: {
+                        include: {
+                            tree: {
+                                select: {
+                                    id: true,
+                                    name: true,
+                                    price: true
+                                }
+                            }
+                        }
+                    },
+                    user: {
+                        select: {
+                            id: true,
+                            firstname: true,
+                            lastname: true,
+                            email: true
+                        }
+                    }
+                }
+            });
+
+            const currentUser = await prisma.user.findUnique({
+                where: { id: userId },
+                select: { roleId: true }
+            });
+            const isAdmin = currentUser?.roleId === 1;
+
+            if (!order || (!isAdmin && order.userId !== userId)) throw new NotFoundError('Order not found');
+
+            res.send(order);
         } catch (error) {
             ErrorHandler.sendError(res, error);
         };
