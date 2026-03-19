@@ -121,9 +121,11 @@ function Catalog() {
                                 <article className="article_tree" key={tree.id}>
                                     <div className="article_tree_img_wrapper">
                                         <img src={`/${tree.image}`} alt={tree.name} />
-                                        {tree.categories.map(category => (
-                                            <span key={category.id} className="category_badge">{category.name}</span>
-                                        ))}
+                                        <div className="category_badges">
+                                            {tree.categories.map(category => (
+                                                <span key={category.id} className="category_badge">{category.name}</span>
+                                            ))}
+                                        </div>
                                     </div>
                                     <div className="article_tree_info">
                                         <h2>{tree.name}</h2>

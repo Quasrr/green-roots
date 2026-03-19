@@ -149,19 +149,31 @@
 .article_tree_img_wrapper {
   position: relative;
   width: 100%;
-  aspect-ratio: 16/9;
+  height: clamp(220px, 18vw, 300px);
+  overflow: hidden;
+  flex-shrink: 0;
+  background-color: #edf2ee;
 }
 
 .article_tree_img_wrapper img {
   width: 100%;
   height: 100%;
   object-fit: cover;
+  display: block;
 }
 
-.category_badge {
+.category_badges {
   position: absolute;
   top: 0.6rem;
   left: 0.6rem;
+  right: 0.6rem;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+  pointer-events: none;
+}
+
+.category_badge {
   background-color: rgba(255, 255, 255, 0.85);
   color: var(--bg-color-tercary);
   font-size: 0.7rem;
@@ -308,5 +320,9 @@
   /* Grille : 1 colonne sur mobile */
   .section_catalog {
     grid-template-columns: 1fr;
+  }
+
+  .article_tree_img_wrapper {
+    height: 240px;
   }
 }
