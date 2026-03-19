@@ -198,7 +198,7 @@ h3 {
 
 .chene {
   width: 100%;
-  aspect-ratio: 4/3;
+  aspect-ratio: 16/9;
   object-fit: cover;
   border-radius: 1rem 1rem 0 0;
   display: block;
