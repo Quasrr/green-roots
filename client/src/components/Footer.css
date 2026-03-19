@@ -99,3 +99,49 @@ footer {
 .nav_footer_copyright a:hover {
   color: var(--bg-color-primary);
 }
+
+/* ===================================================
+   RESPONSIVE — TABLETTE (≤ 1200px)
+   =================================================== */
+@media (max-width: 1200px) {
+  footer {
+    padding: 3rem 4rem;
+  }
+}
+
+/* ===================================================
+   RESPONSIVE — MOBILE (≤ 768px)
+   =================================================== */
+@media (max-width: 768px) {
+  footer {
+    padding: 2rem 1.5rem;
+  }
+
+  /* Les colonnes du footer s'empilent verticalement */
+  .footer_copyright_out {
+    flex-direction: column;
+    gap: 2rem;
+  }
+
+  .div_logo_footer {
+    flex-direction: column;
+    gap: 1.5rem;
+  }
+
+  .description_footer {
+    width: 100%;
+  }
+
+  /* Copyright : colonne sur mobile */
+  .copyright {
+    flex-direction: column;
+    gap: 1rem;
+    text-align: center;
+  }
+
+  .nav_footer_copyright {
+    flex-direction: column;
+    gap: 0.5rem;
+    align-items: center;
+  }
+}

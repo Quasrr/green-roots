@@ -125,3 +125,26 @@
     text-decoration: underline;
     color: var(--bg-color-quartary);
 }
+
+/* ===================================================
+   RESPONSIVE — MOBILE (≤ 768px)
+   =================================================== */
+@media (max-width: 768px) {
+  .register_wrapper {
+    padding: 1rem;
+  }
+
+  .register_card {
+    padding: 1.5rem;
+  }
+
+  /* Les 2 champs prénom/nom côte à côte deviennent 1 colonne */
+  .register_form_row {
+    flex-direction: column;
+  }
+
+  /* Inputs pleine largeur */
+  .register_input {
+    width: 100%;
+  }
+}

@@ -256,3 +256,74 @@ h3 {
   background-color: #2D6A4F;
   cursor: pointer;
 }
+
+/* ===================================================
+   RESPONSIVE — TABLETTE (≤ 1200px)
+   =================================================== */
+@media (max-width: 1200px) {
+  .why_choose,
+  .trees_popular {
+    margin-right: 4rem;
+    margin-left: 4rem;
+  }
+
+  .section_article_trees {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+/* ===================================================
+   RESPONSIVE — MOBILE (≤ 768px)
+   =================================================== */
+@media (max-width: 768px) {
+  h1 {
+    font-size: 1.8rem;
+  }
+
+  h2 {
+    font-size: 1.4rem;
+  }
+
+  /* Bannière plus petite sur mobile */
+  .banniere_landing {
+    height: 55dvh;
+  }
+
+  /* Le texte occupe toute la largeur */
+  .banniere_landing_content {
+    width: 90%;
+  }
+
+  .hero_banniere {
+    font-size: 1rem;
+  }
+
+  /* Boutons de la bannière en colonne */
+  .div_buttons_banniere {
+    flex-direction: column;
+    gap: 0.75rem;
+    align-items: center;
+  }
+
+  /* Sections avec marges réduites */
+  .why_choose,
+  .trees_popular {
+    margin-right: 1rem;
+    margin-left: 1rem;
+  }
+
+  /* Description sous le titre prend toute la largeur */
+  .description_h2 {
+    width: 100%;
+  }
+
+  /* Cards "pourquoi nous choisir" en colonne */
+  .article_mission {
+    flex-direction: column;
+  }
+
+  /* Grille des arbres populaires : 1 colonne */
+  .section_article_trees {
+    grid-template-columns: 1fr;
+  }
+}

@@ -269,3 +269,44 @@
   opacity: 0.3;
   cursor: not-allowed;
 }
+
+/* ===================================================
+   RESPONSIVE — TABLETTE (≤ 1024px)
+   =================================================== */
+@media (max-width: 1024px) {
+  .catalog_layout {
+    padding: 1.5rem 2rem;
+  }
+
+  .section_catalog {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+/* ===================================================
+   RESPONSIVE — MOBILE (≤ 768px)
+   =================================================== */
+@media (max-width: 768px) {
+  /* Layout en colonne : filtres au-dessus, catalogue en dessous */
+  .catalog_layout {
+    flex-direction: column;
+    padding: 1rem;
+    gap: 1rem;
+  }
+
+  /* Sidebar pleine largeur, plus sticky */
+  .filter_catalog {
+    width: 100%;
+    min-width: unset;
+    position: static;
+  }
+
+  .catalog_main h1 {
+    font-size: 1.5rem;
+  }
+
+  /* Grille : 1 colonne sur mobile */
+  .section_catalog {
+    grid-template-columns: 1fr;
+  }
+}
