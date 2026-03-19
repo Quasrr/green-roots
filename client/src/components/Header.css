@@ -3,25 +3,14 @@
 header {
   display: flex;
   justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
   margin: 0 1rem;
-  align-items: center;
   padding: 0.75rem 2rem;
+  position: relative;
 }
 
-nav {
-  display: flex;
-  align-items: center;
-  gap: 2rem;
-}
-
-/* Scoped à header a — évite d'écraser les liens du reste de l'app */
-header a {
-  color: var(--bg-color-quartary);
-  text-decoration: none;
-  font-weight: bold;
-  font-size: 1.2rem;
-}
-
+/* === Logo === */
 .div_logo_header {
   display: flex;
   align-items: center;
@@ -39,14 +28,31 @@ header a {
   font-weight: bold;
 }
 
-.div_buttons_header {
+/* === Nav (liens uniquement) === */
+nav {
   display: flex;
-  flex-direction: row;
   align-items: center;
-  gap: 1rem;
-  margin-left: 2rem;
+  gap: 2rem;
+  order: 1; /* visuellement au centre entre logo et header_actions */
 }
 
+/* Scoped aux liens de nav uniquement — évite d'affecter les icônes */
+header nav a {
+  color: var(--bg-color-quartary);
+  text-decoration: none;
+  font-weight: bold;
+  font-size: 1.2rem;
+}
+
+/* === Actions droite (panier + user OU login/register) === */
+.header_actions {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  order: 2; /* visuellement à droite */
+}
+
+/* === Boutons Inscription / Connexion === */
 .login,
 .register {
   font-size: 0.9rem;
@@ -57,7 +63,6 @@ header a {
   transition: background 0.15s, color 0.15s;
 }
 
-/* Inscription : fond vert en permanence */
 .register {
   background-color: var(--bg-color-secondary);
   color: var(--bg-color-primary);
@@ -69,7 +74,6 @@ header a {
   border-color: #2D6A4F;
 }
 
-/* Connexion : fond clair avec bordure verte */
 .login {
   background-color: var(--bg-color-primary);
   color: var(--bg-color-quartary);
@@ -105,6 +109,70 @@ header a {
   justify-content: center;
 }
 
+/* === Icône utilisateur + dropdown === */
+.user_menu {
+  position: relative;
+}
+
+.user_icon_btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  color: var(--bg-color-quartary);
+  padding: 0;
+  transition: color 0.15s;
+}
+
+.user_icon_btn:hover {
+  color: var(--bg-color-secondary);
+}
+
+.user_dropdown {
+  position: absolute;
+  top: calc(100% + 0.6rem);
+  right: 0;
+  background-color: white;
+  border-radius: 0.75rem;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.12);
+  padding: 0.4rem;
+  min-width: 170px;
+  display: flex;
+  flex-direction: column;
+  gap: 0.1rem;
+  z-index: 200;
+}
+
+.user_dropdown_item {
+  display: block;
+  width: 100%;
+  text-align: left;
+  padding: 0.55rem 0.9rem;
+  border-radius: 0.5rem;
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--bg-color-tercary);
+  text-decoration: none;
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-family: var(--font-primary);
+  transition: background 0.15s;
+}
+
+.user_dropdown_item:hover {
+  background-color: var(--bg-color-primary);
+}
+
+.user_dropdown_logout {
+  color: #c0392b;
+}
+
+.user_dropdown_logout:hover {
+  background-color: #fde8e8;
+}
+
 /* === Hamburger (caché sur desktop) === */
 .hamburger {
   display: none;
@@ -114,7 +182,6 @@ header a {
   border: none;
   cursor: pointer;
   padding: 0.5rem;
-  z-index: 101;
 }
 
 .hamburger span {
@@ -136,9 +203,17 @@ header a {
   transform: translateY(-7px) rotate(-45deg);
 }
 
-/* Boutons dans le menu mobile — cachés sur desktop */
-.div_buttons_header_mobile {
+/* Boutons auth dans le burger — cachés sur desktop */
+.nav_auth_mobile {
   display: none;
+}
+
+
+/* Boutons auth dans header_actions — visibles sur desktop */
+.auth_desktop {
+  display: flex;
+  gap: 1rem;
+  align-items: center;
 }
 
 /* ===================================================
@@ -146,46 +221,68 @@ header a {
    =================================================== */
 @media (max-width: 768px) {
   header {
-    flex-wrap: wrap;
     padding: 0.75rem 1rem;
-    position: relative;
   }
 
-  /* Affiche le bouton hamburger */
+  /* Affiche le burger */
   .hamburger {
     display: flex;
   }
 
-  /* Cache les boutons desktop */
-  .div_buttons_header {
+  /* Le logo prend tout l'espace disponible → pousse les icônes à droite */
+  .div_logo_header {
+    flex: 1;
+    min-width: 0;
+  }
+
+  .logo_greenroots {
+    width: 40px;
+    height: 40px;
+  }
+
+  .name_enterprise {
+    font-size: 1.1rem;
+  }
+
+  /* header_actions : seulement le burger visible sur mobile */
+  .header_actions {
+    gap: 0.75rem;
+  }
+
+  /* Boutons auth cachés dans header_actions sur mobile */
+  .auth_desktop {
     display: none;
   }
 
-  /* Menu de navigation : masqué par défaut, glisse vers le bas quand ouvert */
-  /* "header nav" cible UNIQUEMENT le nav du header, pas ceux du footer */
+  /* Boutons auth affichés dans le burger sur mobile */
+  .nav_auth_mobile {
+    display: flex;
+    gap: 0.75rem;
+    margin-top: 0.5rem;
+  }
+
+  /* Nav en position absolue — se superpose sans pousser header_actions */
   header nav {
     display: none;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    width: 100%;
     flex-direction: column;
     align-items: flex-start;
     gap: 1rem;
-    width: 100%;
     background-color: var(--bg-color-primary);
     padding: 1rem 1.5rem 1.5rem;
     border-top: 1px solid var(--border-color);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    z-index: 100;
   }
 
   header nav.open {
     display: flex;
   }
 
-  header a {
+  header nav a {
     font-size: 1rem;
-  }
-
-  /* Boutons login/register dans le menu mobile */
-  .div_buttons_header_mobile {
-    display: flex;
-    gap: 0.75rem;
-    margin-top: 0.5rem;
   }
 }

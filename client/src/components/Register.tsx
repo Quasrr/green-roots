@@ -1,22 +1,40 @@
 import { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import './Register.css';
 
 function Register() {
+    const navigate = useNavigate();
 
     const [firstname, setFirstname] = useState<string>('');
     const [lastname, setLastname] = useState<string>('');
     const [email, setEmail] = useState<string>('');
     const [password, setPassword] = useState<string>('');
     const [confirmPassword, setConfirmPassword] = useState<string>('');
+    const [error, setError] = useState<string>('');
+    const [isLoading, setIsLoading] = useState(false);
 
-    function handleSubmit(e: React.FormEvent) {
+    async function handleSubmit(e: React.FormEvent) {
         e.preventDefault();
-        if (password !== confirmPassword) {
-            console.error('Les mots de passe ne correspondent pas');
-            return;
+        if (password !== confirmPassword) return;
+
+        setError('');
+        setIsLoading(true);
+        try {
+            const res = await fetch('http://localhost:3000/api/auth/register', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ firstname, lastname, email, password, passwordConfirm: confirmPassword }),
+            });
+            if (!res.ok) {
+                const data = await res.json();
+                throw new Error(data.message || 'Erreur lors de la création du compte');
+            }
+            navigate('/login'); // compte créé → redirige vers la connexion
+        } catch (err) {
+            setError(err instanceof Error ? err.message : 'Une erreur est survenue');
+        } finally {
+            setIsLoading(false);
         }
-        console.log({ firstname, lastname, email, password });
     }
 
     return (
@@ -81,7 +99,10 @@ function Register() {
                             <p className="register_error">Les mots de passe ne correspondent pas.</p>
                         )}
                     </div>
-                    <button type="submit" className="register_btn">Créer mon compte</button>
+                    {error && <p className="register_error">{error}</p>}
+                    <button type="submit" className="register_btn" disabled={isLoading}>
+                        {isLoading ? 'Création...' : 'Créer mon compte'}
+                    </button>
                 </form>
 
                 <p className="register_redirect">

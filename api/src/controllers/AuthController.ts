@@ -206,7 +206,7 @@ class AuthController {
         if (!user) throw new NotFoundError('User not found');
 
         // Renvoyer les informations de l'utilisateur au client
-        res.json({ email: user.email, firstname: user.firstname, lastname: user.lastname, role: user.roleId });
+        res.json({ id: user.id, email: user.email, firstname: user.firstname, lastname: user.lastname, role: user.roleId });
     }
 
 };
