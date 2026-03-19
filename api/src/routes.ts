@@ -35,6 +35,6 @@ router.delete('/api/trees/:id', authMiddleware, adminMiddleware, TreesController
 router.get('/api/orders', authMiddleware, adminMiddleware, OrdersController.getOrders);
 router.post('/api/orders', authMiddleware, OrdersController.createOrder);
 router.get('/api/orders/me', authMiddleware, OrdersController.getMyOrders);
-
+router.get('/api/orders/me/:id', authMiddleware, OrdersController.getOrderById);
 
 export default router;
