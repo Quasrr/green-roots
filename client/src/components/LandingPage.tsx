@@ -75,7 +75,7 @@ function LandingPage() {
                 {/* Récupérer les 4 premiers arbres avec slice et map pour chaque arbre dans notre catalogue d'arbres */}
                 {trees.slice(0, 4).map(tree => (
                     <article key={tree.id} className="article_reasons_choose">
-                        <img src={tree.image} alt="image d'un chene" className={tree.name} />
+                        <img src={`/${tree.image}`} alt={tree.name} className="chene" />
                         <h3 className='title_tree_popular'>{tree.name}</h3>
                         <p className="label_tree">{tree.label}</p>
                         <p className="price_tree">{tree.price}</p>

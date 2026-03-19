@@ -2,7 +2,7 @@
 
 footer {
   background-color: #0D1F18;
-  padding: 2rem 18rem;
+  padding: 4rem 18rem;
 }
 
 .footer_copyright_out {
@@ -15,6 +15,13 @@ footer {
 .div_logo_footer {
   display: flex;
   gap: 2rem;
+}
+
+.wrap_logo_description {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+  margin-top: -1rem;
 }
 
 .div_logo_description {
