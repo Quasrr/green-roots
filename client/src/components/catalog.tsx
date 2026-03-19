@@ -118,7 +118,7 @@ function Catalog() {
                             {paginatedTrees.map(tree => ( // AJOUT PAGINATION - paginatedTrees à la place de filteredTrees
                                 <article className="article_tree" key={tree.id}>
                                     <div className="article_tree_img_wrapper">
-                                        <img src={tree.image} alt={tree.name} />
+                                        <img src={`/${tree.image}`} alt={tree.name} />
                                         {tree.categories.map(category => (
                                             <span key={category.id} className="category_badge">{category.name}</span>
                                         ))}

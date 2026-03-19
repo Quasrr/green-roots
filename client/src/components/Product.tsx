@@ -33,7 +33,7 @@ function Product() {
 
     return (
         <main className="main_product">
-            <img src={tree.image} alt={tree.name} className="product_banner" />
+            <img src={`/${tree.image}`} alt={tree.name} className="product_banner" />
             <div className="add_cart_tree">
                 <h2>{tree.name}</h2>
                 <div className="add_cart_right">
