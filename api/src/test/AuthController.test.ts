@@ -5,6 +5,7 @@ import { prisma } from "../models/index.ts";
 
 const baseUrl = `http://localhost:${process.env.PORT}`;
 const testUser = {
+    id: 1,
     firstname: "Green",
     lastname: "Roots",
     email: "test.user@greenroots.fr",
@@ -216,6 +217,7 @@ describe("GET /api/auth/me", () => {
 
         assert.equal(response.status, 200);
         assert.deepEqual(await response.json(), {
+            id: testUser.id,
             email: testUser.email,
             firstname: testUser.firstname,
             lastname: testUser.lastname,
