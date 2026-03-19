@@ -1,0 +1,133 @@
+:root {
+    --bg-color-primary: #F6F8F7;
+    --bg-color-secondary: #1A4231;
+    --bg-color-tercary: #0D0D0C;
+    --bg-color-quartary: #151D1A;
+    --text-color: #6F777A;
+    --font-primary: 'Inter', sans-serif;
+}
+
+.register_wrapper {
+    min-height: 80vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: var(--font-primary);
+    padding: 2rem;
+}
+
+.register_card {
+    background-color: white;
+    border-radius: 1rem;
+    padding: 2.5rem;
+    width: 100%;
+    max-width: 480px;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.register_card h1 {
+    font-size: 1.8rem;
+    font-weight: bold;
+    color: var(--bg-color-tercary);
+    margin: 0;
+}
+
+.register_description {
+    color: var(--text-color);
+    font-size: 0.95rem;
+    margin: 0 0 0.5rem;
+}
+
+.register_form {
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+}
+
+.register_form_row {
+    display: flex;
+    gap: 1rem;
+}
+
+.register_form_row .register_field {
+    flex: 1;
+}
+
+.register_field {
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+}
+
+.register_label {
+    font-size: 0.85rem;
+    font-weight: bold;
+    color: var(--bg-color-tercary);
+}
+
+.register_input {
+    background-color: var(--bg-color-primary);
+    border: 1px solid #e0e8e4;
+    border-radius: 0.5rem;
+    padding: 0.65rem 0.9rem;
+    font-size: 0.95rem;
+    font-family: var(--font-primary);
+    color: var(--bg-color-tercary);
+    outline: none;
+    transition: border-color 0.15s;
+}
+
+.register_input:focus {
+    border-color: var(--bg-color-secondary);
+}
+
+.register_input::placeholder {
+    color: var(--text-color);
+}
+
+.register_input_error {
+    border-color: #c0392b;
+}
+
+.register_error {
+    font-size: 0.8rem;
+    color: #c0392b;
+    margin: 0;
+}
+
+.register_btn {
+    background-color: var(--bg-color-secondary);
+    color: white;
+    border: none;
+    border-radius: 0.5rem;
+    padding: 0.75rem;
+    font-size: 1rem;
+    font-weight: bold;
+    font-family: var(--font-primary);
+    cursor: pointer;
+    transition: background 0.15s;
+    margin-top: 0.5rem;
+}
+
+.register_btn:hover {
+    background-color: #2D6A4F;
+}
+
+.register_redirect {
+    text-align: center;
+    font-size: 0.9rem;
+    color: var(--text-color);
+    margin: 0;
+}
+
+.register_redirect a {
+    color: var(--bg-color-secondary);
+    font-weight: bold;
+    text-decoration: underline;
+}
+
+.register_redirect a:hover {
+    color: var(--bg-color-quartary);
+}
