@@ -212,7 +212,7 @@ describe("POST /api/orders", () => {
     });
 });
 
-describe("GET /api/orders/:id", () => {
+describe("GET /api/orders/me/:id", () => {
     it("retourne la commande si elle appartient à l'utilisateur connecté", async () => {
         await createUser({ email: "user@greenroots.fr", roleId: 2 });
         const tree = await createTree(10);
@@ -226,7 +226,7 @@ describe("GET /api/orders/:id", () => {
         });
         const order = await created.json();
 
-        const response = await fetch(`${baseUrl}/api/orders/${order.id}`, {
+        const response = await fetch(`${baseUrl}/api/orders/me/${order.id}`, {
             headers: { Cookie: cookie },
         });
 
@@ -252,7 +252,7 @@ describe("GET /api/orders/:id", () => {
         await createUser({ email: "admin@greenroots.fr", roleId: 1 });
         const cookieAdmin = await loginAndGetCookie("admin@greenroots.fr", "GreenRoots123");
 
-        const response = await fetch(`${baseUrl}/api/orders/${order.id}`, {
+        const response = await fetch(`${baseUrl}/api/orders/me/${order.id}`, {
             headers: { Cookie: cookieAdmin },
         });
 
@@ -262,7 +262,7 @@ describe("GET /api/orders/:id", () => {
     });
 
     it("retourne 401 si non connecté", async () => {
-        const response = await fetch(`${baseUrl}/api/orders/1`);
+        const response = await fetch(`${baseUrl}/api/orders/me/1`);
 
         assert.equal(response.status, 401);
     });
@@ -271,7 +271,7 @@ describe("GET /api/orders/:id", () => {
         await createUser({ email: "user@greenroots.fr", roleId: 2 });
         const cookie = await loginAndGetCookie("user@greenroots.fr", "GreenRoots123");
 
-        const response = await fetch(`${baseUrl}/api/orders/abc`, {
+        const response = await fetch(`${baseUrl}/api/orders/me/abc`, {
             headers: { Cookie: cookie },
         });
 
@@ -282,7 +282,7 @@ describe("GET /api/orders/:id", () => {
         await createUser({ email: "user@greenroots.fr", roleId: 2 });
         const cookie = await loginAndGetCookie("user@greenroots.fr", "GreenRoots123");
 
-        const response = await fetch(`${baseUrl}/api/orders/9999`, {
+        const response = await fetch(`${baseUrl}/api/orders/me/9999`, {
             headers: { Cookie: cookie },
         });
 
@@ -306,7 +306,7 @@ describe("GET /api/orders/:id", () => {
         await createUser({ email: "user@greenroots.fr", roleId: 2 });
         const cookieUser = await loginAndGetCookie("user@greenroots.fr", "GreenRoots123");
 
-        const response = await fetch(`${baseUrl}/api/orders/${order.id}`, {
+        const response = await fetch(`${baseUrl}/api/orders/me/${order.id}`, {
             headers: { Cookie: cookieUser },
         });
 
