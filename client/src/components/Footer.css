@@ -28,6 +28,8 @@ footer {
   display: flex;
   gap: 1rem;
   align-items: center;
+  text-decoration: none;
+  color: inherit;
 }
 
 .logo_greenroots {
