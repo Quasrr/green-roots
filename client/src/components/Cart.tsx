@@ -7,8 +7,6 @@ function Cart() {
     const { items, removeFromCart, updateQuantity } = useCart();
 
     const subtotal = items.reduce((sum, item) => sum + item.tree.price * item.quantity, 0);
-    const shipping = items.length > 0 ? 15 : 0;
-    const total = subtotal + shipping;
 
     if (items.length === 0) {
         return (
@@ -76,13 +74,9 @@ function Cart() {
                         <span>Sous-total</span>
                         <span>{subtotal.toFixed(2)}€</span>
                     </div>
-                    <div className="cart_summary_row">
-                        <span>Livraison</span>
-                        <span>{shipping.toFixed(2)}€</span>
-                    </div>
                     <div className="cart_summary_total">
                         <span>Total</span>
-                        <span>{total.toFixed(2)}€</span>
+                        <span>{subtotal.toFixed(2)}€</span>
                     </div>
                     <button className="cart_order_btn">Commander</button>
                 </aside>
