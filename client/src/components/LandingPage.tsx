@@ -73,22 +73,24 @@ function LandingPage() {
                 </div>
                 <div className="section_article_trees">
                     {trees.slice(0, 4).map(tree => (
-                        <article key={tree.id} className="article_reasons_choose">
-                            <img src={`/${tree.image}`} alt={tree.name} className="chene" />
-                            <div className="tree_card_body">
-                                <h3 className='title_tree_popular'>{tree.name}</h3>
-                                <p className="label_tree">{tree.label}</p>
-                            </div>
-                            <div className="div_price_cart">
-                                <p className="price_tree">{tree.price}€</p>
-                                <div className="icon_wrapper_cart">
-                                    <ShoppingCart size={18} color="#F6F8F7" className="logo_cart" />
+                        <Link to={`/catalog/${tree.id}`} key={tree.id} className="article_reasons_choose">
+                            <article key={tree.id} className="article_reasons_choose">
+                                <img src={`/${tree.image}`} alt={tree.name} className="chene" />
+                                <div className="tree_card_body">
+                                    <h3 className='title_tree_popular'>{tree.name}</h3>
+                                    <p className="label_tree">{tree.label}</p>
                                 </div>
-                            </div>
-                        </article>
+                                <div className="div_price_cart">
+                                    <p className="price_tree">{tree.price}€</p>
+                                    <div className="icon_wrapper_cart">
+                                        <ShoppingCart size={18} color="#F6F8F7" className="logo_cart" />
+                                    </div>
+                                </div>
+                            </article>
+                        </Link>
                     ))}
                 </div>
-            </section>
+            </section >
         </>
     )
 }
