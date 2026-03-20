@@ -37,6 +37,7 @@ function App() {
   // Active l'animation .reveal → .visible quand l'élément entre dans le viewport
   // useLocation permet de relancer l'observer à chaque changement de page (SPA)
   useEffect(() => {
+    window.scrollTo(0, 0);
     const observer = new IntersectionObserver(
       (entries) => {
         entries.forEach((entry) => {
@@ -65,28 +66,28 @@ function App() {
 
   return (
     <AuthProvider>
-    <CartProvider>
-      <div className="app_layout">
-        <Header />
-        <div className="app_content">
-          <Routes>
-            <Route path="/" element={<LandingPage />} />
-            <Route path="/privacy-policy" element={<PrivacyPolicy />} />
-            <Route path="/cgv" element={<CGV />} />
-            <Route path="/legals" element={<Legals />} />
-            <Route path="/catalog" element={<Catalog />} />
-            <Route path="/catalog/:id" element={<Product />} />
-            <Route path="/contact" element={<Contact />} />
-            <Route path="/about" element={<About />} />
-            <Route path="/login" element={<Login />} />
-            <Route path="/register" element={<Register />} />
-            <Route path="/cart" element={<Cart />} />
-            <Route path="/profile" element={<Profile />} />
-          </Routes>
+      <CartProvider>
+        <div className="app_layout">
+          <Header />
+          <div className="app_content">
+            <Routes>
+              <Route path="/" element={<LandingPage />} />
+              <Route path="/privacy-policy" element={<PrivacyPolicy />} />
+              <Route path="/cgv" element={<CGV />} />
+              <Route path="/legals" element={<Legals />} />
+              <Route path="/catalog" element={<Catalog />} />
+              <Route path="/catalog/:id" element={<Product />} />
+              <Route path="/contact" element={<Contact />} />
+              <Route path="/about" element={<About />} />
+              <Route path="/login" element={<Login />} />
+              <Route path="/register" element={<Register />} />
+              <Route path="/cart" element={<Cart />} />
+              <Route path="/profile" element={<Profile />} />
+            </Routes>
+          </div>
+          <Footer />
         </div>
-        <Footer />
-      </div>
-    </CartProvider>
+      </CartProvider>
     </AuthProvider>
   )
 

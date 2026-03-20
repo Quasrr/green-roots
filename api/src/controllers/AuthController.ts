@@ -23,17 +23,17 @@ class AuthController {
             lastname: z.string().min(2),
             firstname: z.string().min(2),
             email: z.string().email(),
-             password: z
+            password: z
                 .string()
                 .min(8, "Invalid password format (min. 8 characters)")
                 .refine(
                     (v) =>
-                    /[a-z]/.test(v) &&
-                    /[A-Z]/.test(v) &&
-                    /[0-9]/.test(v) &&
-                    /[^a-zA-Z0-9]/.test(v),
-                "Invalid password format. Please include uppercase, lowercase, a number, and a special character (min. 6 characters)"
-            ),
+                        /[a-z]/.test(v) &&
+                        /[A-Z]/.test(v) &&
+                        /[0-9]/.test(v) &&
+                        /[^a-zA-Z0-9]/.test(v),
+                    "Invalid password format. Please include uppercase, lowercase, a number, and a special character (min. 6 characters)"
+                ),
         });
 
         try {
