@@ -17,6 +17,8 @@ header {
   display: flex;
   align-items: center;
   gap: 1rem;
+  text-decoration: none;
+  color: inherit;
 }
 
 .logo_greenroots {
@@ -36,10 +38,9 @@ nav {
   display: flex;
   align-items: center;
   gap: 2rem;
-  order: 1; /* visuellement au centre entre logo et header_actions */
+  order: 1;
 }
 
-/* Scoped aux liens de nav uniquement — évite d'affecter les icônes */
 header nav a {
   color: var(--bg-color-quartary);
   text-decoration: none;
@@ -52,7 +53,8 @@ header nav a {
   display: flex;
   align-items: center;
   gap: 1rem;
-  order: 2; /* visuellement à droite */
+  order: 2;
+  /* visuellement à droite */
 }
 
 /* === Boutons Inscription / Connexion === */
@@ -199,9 +201,11 @@ header nav a {
 .hamburger.open span:nth-child(1) {
   transform: translateY(7px) rotate(45deg);
 }
+
 .hamburger.open span:nth-child(2) {
   opacity: 0;
 }
+
 .hamburger.open span:nth-child(3) {
   transform: translateY(-7px) rotate(-45deg);
 }
