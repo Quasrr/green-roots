@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
 import type { Category, Tree } from "../types";
 import { ShoppingCart } from 'lucide-react';
 import { useCart } from '../context/CartContext';
@@ -97,7 +98,7 @@ function Catalog() {
 
                         <p className="categories">PRIX (0€ - 300€)</p>
                         <div className="slider_wrapper">
-                            <input type="range" min={0} max={300} value={maxPrice} onChange={e => { setMaxPrice(Number(e.target.value)); setCurrentPage(1); }} /> {/* Convertir la value de l'input string en number pour la comparaison sur matchPrice + reset page 👈 AJOUT PAGINATION */}
+                            <input type="range" min={0} max={300} value={maxPrice} onChange={e => { setMaxPrice(Number(e.target.value)); setCurrentPage(1); }} /> {/* Convertir la value de l'input string en number pour la comparaison sur matchPrice + reset page */}
                             <div className="slider_labels">
                                 <span>0€</span>
                                 <span>{maxPrice}€</span>
@@ -106,7 +107,7 @@ function Catalog() {
 
                         <p className="categories">DISPONIBILITÉ</p>
                         <label className="stock_label">
-                            <input type="checkbox" checked={inStockOnly} onChange={e => { setInStockOnly(e.target.checked); setCurrentPage(1); }} /> {/* reset page au changement de filtre stock 👈 AJOUT PAGINATION */}
+                            <input type="checkbox" checked={inStockOnly} onChange={e => { setInStockOnly(e.target.checked); setCurrentPage(1); }} /> {/* reset page au changement de filtre stock AJOUT PAGINATION */}
                             En stock uniquement
                         </label>
                     </aside>
@@ -117,8 +118,9 @@ function Catalog() {
                         <p className="description_catalog">Découvrez notre sélection de spécimens exceptionnels pour magnifier votre jardin.</p>
 
                         <section className="section_catalog">
-                            {paginatedTrees.map(tree => ( // AJOUT PAGINATION - paginatedTrees à la place de filteredTrees
-                                <article className="article_tree" key={tree.id}>
+                            {paginatedTrees.map(tree => ( // paginatedTrees à la place de filteredTrees
+                                <Link to={`/catalog/${tree.id}`} key={tree.id} className="catalog_card_link">
+                                    <article className="article_tree">
                                     <div className="article_tree_img_wrapper">
                                         <img src={`/${tree.image}`} alt={tree.name} />
                                         <div className="category_badges">
@@ -132,16 +134,22 @@ function Catalog() {
                                         <p className="label_tree">{tree.label}</p>
                                         <div className="price_cart_row">
                                             <p className="price_tree">{tree.price}€</p>
-                                            <div className="icon_wrapper_cart" onClick={() => addToCart(tree)}>
+                                            <div
+                                                className="icon_wrapper_cart"
+                                                onClick={(event) => {
+                                                    event.preventDefault();
+                                                    addToCart(tree);
+                                                }}>
                                                 <ShoppingCart size={18} color="#F6F8F7" className="logo_cart" />
                                             </div>
                                         </div>
                                     </div>
-                                </article>
+                                    </article>
+                                </Link>
                             ))}
                         </section>
 
-                        {/* 👈 AJOUT PAGINATION - boutons de pagination, affichés uniquement si plus d'une page */}
+                        {/* boutons de pagination, affichés uniquement si plus d'une page */}
                         {totalPages > 1 && (
                             <div className="pagination">
                                 <button onClick={() => setCurrentPage(p => p - 1)} disabled={currentPage === 1}>←</button>

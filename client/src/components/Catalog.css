@@ -130,6 +130,11 @@
   gap: 1.5rem;
 }
 
+.catalog_card_link {
+  text-decoration: none;
+  color: inherit;
+}
+
 /* === Carte arbre === */
 
 .article_tree {
