@@ -39,8 +39,10 @@ function Header() {
     return (
         <header>
             <div className='div_logo_header'>
-                <img src="/logo_greenroots.webp" alt="Logo GreenRoots" className='logo_greenroots' />
-                <p className="name_enterprise">GreenRoots</p>
+                <Link to="/" className="div_logo_header">
+                    <img src="/logo_greenroots.webp" alt="Logo GreenRoots" className='logo_greenroots' />
+                    <p className="name_enterprise">GreenRoots</p>
+                </Link>
             </div>
 
             <div className="header_actions">

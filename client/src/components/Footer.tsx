@@ -6,10 +6,12 @@ function Footer() {
         <footer>
             <div className="footer_copyright_out">
                 <div className="wrap_logo_description">
-                    <div className="div_logo_description">
-                        <img src="/logo_greenroots.webp" alt="Logo GreenRoots" className='logo_greenroots' />
-                        <p className="name_enterprise_footer">GreenRoots</p>
-                    </div>
+                    <Link to="/" className="div_logo_description">
+                        <div className="div_logo_description">
+                            <img src="/logo_greenroots.webp" alt="Logo GreenRoots" className='logo_greenroots' />
+                            <p className="name_enterprise_footer">GreenRoots</p>
+                        </div>
+                    </Link>
                     <p className="description_footer">Redonnez vie à votre jardin avec nos arbres d'exception, sélectionnés avec soin auprès des meilleures pépinières mondiales</p>
                 </div>
                 <nav className='nav_footer'>
