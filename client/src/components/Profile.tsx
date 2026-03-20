@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useAuth } from '../context/AuthContext';
-import './Profile.css';
+import '../components/styles/Profile.css';
 
 function Profile() {
     const { user } = useAuth();
