@@ -1,4 +1,4 @@
-import './Legals.css'
+import '../components/styles/Legals.css'
 
 function Legals() {
     return (

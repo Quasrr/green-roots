@@ -3,7 +3,7 @@ import type { Category, Tree } from "../types";
 import { ShoppingCart } from 'lucide-react';
 import { useCart } from '../context/CartContext';
 
-import './Catalog.css'
+import '../components/styles/Catalog.css'
 
 function Catalog() {
     const { addToCart } = useCart();

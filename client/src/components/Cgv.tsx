@@ -1,4 +1,4 @@
-import './Cgv.css';
+import '../components/styles/Cgv.css';
 
 function CGV() {
     return (

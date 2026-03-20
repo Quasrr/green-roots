@@ -3,7 +3,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { ShoppingCart, UserCircle } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import { useCart } from '../context/CartContext';
-import './Header.css';
+import '../components/styles/Header.css';
 
 function Header() {
     const [menuOpen, setMenuOpen] = useState(false);       // burger (nav links)

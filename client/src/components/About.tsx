@@ -1,4 +1,5 @@
-import './About.css';
+import '../components/styles/About.css';
+
 import { Leaf, Users, TreePine, Heart } from 'lucide-react';
 
 function About() {

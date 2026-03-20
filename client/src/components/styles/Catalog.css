@@ -1,7 +1,3 @@
-/* Les variables :root sont dans index.css */
-
-/* === Layout global === */
-
 .catalog_layout {
   display: flex;
   gap: 2rem;

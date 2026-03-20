@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import type { Tree } from "../types";
 import { Leaf, Wind, MapPin } from 'lucide-react';
-import './Product.css';
+import '../components/styles/Product.css';
 
 function Product() {
 
