@@ -3,8 +3,8 @@ import { beforeEach, describe, it } from "node:test";
 import argon2 from "argon2";
 import redis from "../models/redis.ts";
 import { Growth, prisma } from "../models/index.ts";
+import { baseUrl, createTestSession, loginAndGetSession } from "./helpers/http.ts";
 
-const baseUrl = `http://localhost:${process.env.PORT}`;
 const testUser = {
     firstname: "Cart",
     lastname: "Tester",
@@ -26,16 +26,6 @@ async function createUser(email = testUser.email, password = testUser.password) 
             roleId: 2,
         },
     });
-}
-
-async function loginAndGetCookie(email = testUser.email, password = testUser.password) {
-    const response = await fetch(`${baseUrl}/api/auth/login`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, password }),
-    });
-
-    return response.headers.get("set-cookie") ?? "";
 }
 
 async function createTree(quantity = 10) {
@@ -65,11 +55,9 @@ beforeEach(async () => {
 describe("GET /api/cart", () => {
     it("returns an empty cart for an authenticated user", async () => {
         await createUser();
-        const cookie = await loginAndGetCookie();
+        const { session } = await loginAndGetSession(testUser.email, testUser.password);
 
-        const response = await fetch(`${baseUrl}/api/cart`, {
-            headers: { Cookie: cookie },
-        });
+        const response = await session.fetch(`${baseUrl}/api/cart`);
 
         assert.equal(response.status, 200);
         assert.deepEqual(await response.json(), { items: [] });
@@ -86,15 +74,12 @@ describe("GET /api/cart", () => {
 describe("PUT /api/cart", () => {
     it("adds an item to the cart", async () => {
         await createUser();
-        const cookie = await loginAndGetCookie();
+        const { session } = await loginAndGetSession(testUser.email, testUser.password);
         const tree = await createTree(10);
 
-        const response = await fetch(`${baseUrl}/api/cart`, {
+        const response = await session.csrfFetch(`${baseUrl}/api/cart`, {
             method: "PUT",
-            headers: {
-                "Content-Type": "application/json",
-                Cookie: cookie,
-            },
+            headers: { "Content-Type": "application/json" },
             body: JSON.stringify({
                 item: {
                     id: tree.id,
@@ -120,15 +105,12 @@ describe("PUT /api/cart", () => {
 
     it("increments quantity when the item already exists", async () => {
         await createUser();
-        const cookie = await loginAndGetCookie();
+        const { session } = await loginAndGetSession(testUser.email, testUser.password);
         const tree = await createTree(10);
 
-        await fetch(`${baseUrl}/api/cart`, {
+        await session.csrfFetch(`${baseUrl}/api/cart`, {
             method: "PUT",
-            headers: {
-                "Content-Type": "application/json",
-                Cookie: cookie,
-            },
+            headers: { "Content-Type": "application/json" },
             body: JSON.stringify({
                 item: {
                     id: tree.id,
@@ -137,12 +119,9 @@ describe("PUT /api/cart", () => {
             }),
         });
 
-        const response = await fetch(`${baseUrl}/api/cart`, {
+        const response = await session.csrfFetch(`${baseUrl}/api/cart`, {
             method: "PUT",
-            headers: {
-                "Content-Type": "application/json",
-                Cookie: cookie,
-            },
+            headers: { "Content-Type": "application/json" },
             body: JSON.stringify({
                 item: {
                     id: tree.id,
@@ -157,15 +136,12 @@ describe("PUT /api/cart", () => {
 
     it("decrements quantity and removes item when resulting quantity is <= 0", async () => {
         await createUser();
-        const cookie = await loginAndGetCookie();
+        const { session } = await loginAndGetSession(testUser.email, testUser.password);
         const tree = await createTree(10);
 
-        await fetch(`${baseUrl}/api/cart`, {
+        await session.csrfFetch(`${baseUrl}/api/cart`, {
             method: "PUT",
-            headers: {
-                "Content-Type": "application/json",
-                Cookie: cookie,
-            },
+            headers: { "Content-Type": "application/json" },
             body: JSON.stringify({
                 item: {
                     id: tree.id,
@@ -174,12 +150,9 @@ describe("PUT /api/cart", () => {
             }),
         });
 
-        const response = await fetch(`${baseUrl}/api/cart`, {
+        const response = await session.csrfFetch(`${baseUrl}/api/cart`, {
             method: "PUT",
-            headers: {
-                "Content-Type": "application/json",
-                Cookie: cookie,
-            },
+            headers: { "Content-Type": "application/json" },
             body: JSON.stringify({
                 item: {
                     id: tree.id,
@@ -194,15 +167,12 @@ describe("PUT /api/cart", () => {
 
     it("returns 400 when trying to add an out-of-stock tree", async () => {
         await createUser();
-        const cookie = await loginAndGetCookie();
+        const { session } = await loginAndGetSession(testUser.email, testUser.password);
         const tree = await createTree(0);
 
-        const response = await fetch(`${baseUrl}/api/cart`, {
+        const response = await session.csrfFetch(`${baseUrl}/api/cart`, {
             method: "PUT",
-            headers: {
-                "Content-Type": "application/json",
-                Cookie: cookie,
-            },
+            headers: { "Content-Type": "application/json" },
             body: JSON.stringify({
                 item: {
                     id: tree.id,
@@ -216,7 +186,8 @@ describe("PUT /api/cart", () => {
     });
 
     it("returns 401 when no auth cookie is provided", async () => {
-        const response = await fetch(`${baseUrl}/api/cart`, {
+        const session = await createTestSession();
+        const response = await session.csrfFetch(`${baseUrl}/api/cart`, {
             method: "PUT",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({

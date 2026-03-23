@@ -6,13 +6,25 @@ const AuthContext = createContext<AuthContextType | null>(null);
 export function AuthProvider({ children }: { children: React.ReactNode }) {
     const [user, setUser] = useState<User | null>(null);
 
-    // Au montage : vérifier si une session existe déjà (cookie httpOnly)
+    // Au montage : vérifier si une session existe déjà (cookie httpOnly) + récupération du token csrf
     useEffect(() => {
         checkAuth();
     }, []);
 
+    async function getCsrfToken() {
+        const res = await fetch(`${import.meta.env.VITE_API_URL}/api/csrf`, {
+            credentials: 'include',
+        });
+
+        const data = await res.json();
+
+        localStorage.setItem('csrfToken', data.csrfToken ?? '');
+    };
+
     async function checkAuth() {
         try {
+            await getCsrfToken();
+
             const res = await fetch(`${import.meta.env.VITE_API_URL}/api/auth/me`, {
                 credentials: 'include',
             });
@@ -31,7 +43,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     async function login(email: string, password: string) {
         const res = await fetch(`${import.meta.env.VITE_API_URL}/api/auth/login`, {
             method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
+            headers: {
+                'Content-Type': 'application/json',
+                'x-csrf-token': localStorage.getItem('csrfToken') || ''
+            },
             credentials: 'include',
             body: JSON.stringify({ email, password }),
         });
@@ -48,6 +63,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     async function logout() {
         await fetch(`${import.meta.env.VITE_API_URL}/api/auth/logout`, {
             method: 'POST',
+            headers: {
+                'x-csrf-token': localStorage.getItem('csrfToken') || ''
+            },
             credentials: 'include',
         });
 

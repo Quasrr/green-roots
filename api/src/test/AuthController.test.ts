@@ -2,14 +2,14 @@ import * as assert from "node:assert/strict";
 import { describe, it } from "node:test";
 import argon2 from "argon2";
 import { prisma } from "../models/index.ts";
+import { baseUrl, createTestSession, loginAndGetSession } from "./helpers/http.ts";
 
-const baseUrl = `http://localhost:${process.env.PORT}`;
 const testUser = {
     id: 1,
     firstname: "Green",
     lastname: "Roots",
     email: "test.user@greenroots.fr",
-    password: "GreenRoots123!"
+    password: "GreenRoots123!",
 };
 
 async function createUser(email = testUser.email, password = testUser.password) {
@@ -19,35 +19,23 @@ async function createUser(email = testUser.email, password = testUser.password) 
             firstname: testUser.firstname,
             email,
             password: await argon2.hash(password),
-            roleId: 2
-        }
+            roleId: 2,
+        },
     });
-};
-
-async function loginAndGetCookie(email = testUser.email, password = testUser.password) {
-    const response = await fetch(`${baseUrl}/api/auth/login`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, password })
-    });
-
-    return {
-        response,
-        cookie: response.headers.get("set-cookie") ?? ""
-    };
-};
+}
 
 describe("POST /api/auth/register", () => {
     it("creates a user and returns a sanitized payload", async () => {
-        const response = await fetch(`${baseUrl}/api/auth/register`, {
+        const session = await createTestSession();
+        const response = await session.csrfFetch(`${baseUrl}/api/auth/register`, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({
                 lastname: testUser.lastname,
                 firstname: testUser.firstname,
                 email: testUser.email,
-                password: testUser.password
-            })
+                password: testUser.password,
+            }),
         });
 
         assert.equal(response.status, 201);
@@ -58,20 +46,21 @@ describe("POST /api/auth/register", () => {
                 email: testUser.email,
                 firstname: testUser.firstname,
                 lastname: testUser.lastname,
-            }
+            },
         });
     });
 
     it("returns 422 when password format is invalid", async () => {
-        const response = await fetch(`${baseUrl}/api/auth/register`, {
+        const session = await createTestSession();
+        const response = await session.csrfFetch(`${baseUrl}/api/auth/register`, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({
                 lastname: testUser.lastname,
                 firstname: testUser.firstname,
                 email: testUser.email,
-                password: "greenroots123"
-            })
+                password: "greenroots123",
+            }),
         });
 
         assert.equal(response.status, 422);
@@ -81,15 +70,16 @@ describe("POST /api/auth/register", () => {
     it("returns 409 when email is already used", async () => {
         await createUser();
 
-        const response = await fetch(`${baseUrl}/api/auth/register`, {
+        const session = await createTestSession();
+        const response = await session.csrfFetch(`${baseUrl}/api/auth/register`, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({
                 lastname: testUser.lastname,
                 firstname: testUser.firstname,
                 email: testUser.email,
-                password: testUser.password
-            })
+                password: testUser.password,
+            }),
         });
 
         assert.equal(response.status, 409);
@@ -97,15 +87,16 @@ describe("POST /api/auth/register", () => {
     });
 
     it("returns 422 when payload is invalid", async () => {
-        const response = await fetch(`${baseUrl}/api/auth/register`, {
+        const session = await createTestSession();
+        const response = await session.csrfFetch(`${baseUrl}/api/auth/register`, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({
                 lastname: "D",
                 firstname: "J",
                 email: "not-an-email",
-                password: "123"
-            })
+                password: "123",
+            }),
         });
 
         assert.equal(response.status, 422);
@@ -116,13 +107,14 @@ describe("POST /api/auth/login", () => {
     it("returns the email and sets the auth cookie on success", async () => {
         await createUser();
 
-        const response = await fetch(`${baseUrl}/api/auth/login`, {
+        const session = await createTestSession();
+        const response = await session.csrfFetch(`${baseUrl}/api/auth/login`, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({
                 email: testUser.email,
-                password: testUser.password
-            })
+                password: testUser.password,
+            }),
         });
 
         assert.equal(response.status, 200);
@@ -131,13 +123,14 @@ describe("POST /api/auth/login", () => {
     });
 
     it("returns 404 when the user does not exist", async () => {
-        const response = await fetch(`${baseUrl}/api/auth/login`, {
+        const session = await createTestSession();
+        const response = await session.csrfFetch(`${baseUrl}/api/auth/login`, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({
                 email: testUser.email,
-                password: testUser.password
-            })
+                password: testUser.password,
+            }),
         });
 
         assert.equal(response.status, 404);
@@ -147,13 +140,14 @@ describe("POST /api/auth/login", () => {
     it("returns 401 when the password is invalid", async () => {
         await createUser();
 
-        const response = await fetch(`${baseUrl}/api/auth/login`, {
+        const session = await createTestSession();
+        const response = await session.csrfFetch(`${baseUrl}/api/auth/login`, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({
                 email: testUser.email,
-                password: "wrongpass"
-            })
+                password: "wrongpass",
+            }),
         });
 
         assert.equal(response.status, 401);
@@ -161,13 +155,14 @@ describe("POST /api/auth/login", () => {
     });
 
     it("returns 422 when payload is invalid", async () => {
-        const response = await fetch(`${baseUrl}/api/auth/login`, {
+        const session = await createTestSession();
+        const response = await session.csrfFetch(`${baseUrl}/api/auth/login`, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({
                 email: "not-an-email",
-                password: "123"
-            })
+                password: "123",
+            }),
         });
 
         assert.equal(response.status, 422);
@@ -177,13 +172,10 @@ describe("POST /api/auth/login", () => {
 describe("POST /api/auth/logout", () => {
     it("returns 204 and clears the auth cookie", async () => {
         await createUser();
-        const { cookie } = await loginAndGetCookie();
+        const { session } = await loginAndGetSession(testUser.email, testUser.password);
 
-        const response = await fetch(`${baseUrl}/api/auth/logout`, {
+        const response = await session.csrfFetch(`${baseUrl}/api/auth/logout`, {
             method: "POST",
-            headers: {
-                Cookie: cookie
-            }
         });
 
         assert.equal(response.status, 204);
@@ -191,8 +183,9 @@ describe("POST /api/auth/logout", () => {
     });
 
     it("returns 401 when no auth cookie is provided", async () => {
-        const response = await fetch(`${baseUrl}/api/auth/logout`, {
-            method: "POST"
+        const session = await createTestSession();
+        const response = await session.csrfFetch(`${baseUrl}/api/auth/logout`, {
+            method: "POST",
         });
 
         assert.equal(response.status, 401);
@@ -203,13 +196,9 @@ describe("POST /api/auth/logout", () => {
 describe("GET /api/auth/me", () => {
     it("returns the connected user profile", async () => {
         await createUser();
-        const { cookie } = await loginAndGetCookie();
+        const { session } = await loginAndGetSession(testUser.email, testUser.password);
 
-        const response = await fetch(`${baseUrl}/api/auth/me`, {
-            headers: {
-                Cookie: cookie
-            }
-        });
+        const response = await session.fetch(`${baseUrl}/api/auth/me`);
 
         assert.equal(response.status, 200);
         assert.deepEqual(await response.json(), {
@@ -217,7 +206,7 @@ describe("GET /api/auth/me", () => {
             email: testUser.email,
             firstname: testUser.firstname,
             lastname: testUser.lastname,
-            role: 2
+            role: 2,
         });
     });
 

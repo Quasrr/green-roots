@@ -32,7 +32,10 @@ function Profile() {
 
             const res = await fetch(`${import.meta.env.VITE_API_URL}/api/users/${user?.id}`, {
                 method: 'PATCH',
-                headers: { 'Content-Type': 'application/json' },
+                headers: {
+                    'Content-Type': 'application/json',
+                    'x-csrf-token': localStorage.getItem('csrfToken') || ''
+                },
                 credentials: 'include',
                 body: JSON.stringify(body),
             });
