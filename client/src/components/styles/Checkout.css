@@ -1,0 +1,359 @@
+/* ===================================================
+   CHECKOUT — Page avant paiement
+   Même style CSS que les autres pages (Cart, Login…)
+   =================================================== */
+
+.checkout_wrapper {
+    max-width: 1100px;
+    margin: 3rem auto;
+    padding: 0 2rem 4rem;
+    font-family: var(--font-primary);
+}
+
+/* === Layout : colonne gauche + colonne droite === */
+
+.checkout_layout {
+    display: flex;
+    gap: 3rem;
+    align-items: flex-start;
+}
+
+/* ===================================================
+   COLONNE GAUCHE — Articles du panier (lecture seule)
+   =================================================== */
+
+.checkout_left {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+/* === Liste des articles === */
+
+.checkout_items {
+    background-color: white;
+    border-radius: 1rem;
+    padding: 1.5rem;
+    display: flex;
+    flex-direction: column;
+}
+
+.checkout_item {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 0.75rem 0;
+}
+
+.checkout_item_img {
+    width: 80px;
+    height: 80px;
+    object-fit: cover;
+    border-radius: 0.5rem;
+    flex-shrink: 0;
+    background-color: var(--bg-color-primary);
+}
+
+.checkout_item_info {
+    flex: 1;
+    min-width: 0;
+}
+
+.checkout_item_name {
+    font-weight: 700;
+    color: var(--bg-color-tercary);
+    font-size: 0.95rem;
+    margin: 0 0 0.2rem;
+}
+
+.checkout_item_label {
+    color: var(--text-color);
+    font-size: 0.82rem;
+    margin: 0;
+}
+
+.checkout_item_price {
+    font-weight: 700;
+    color: var(--bg-color-tercary);
+    font-size: 0.95rem;
+    margin: 0;
+    white-space: nowrap;
+}
+
+/* Séparateur horizontal entre les articles */
+.checkout_divider {
+    border: none;
+    border-top: 1px solid var(--border-color);
+    margin: 0;
+}
+
+/* === Boîte sous-total === */
+
+.checkout_subtotal_box {
+    background-color: white;
+    border-radius: 1rem;
+    padding: 1.25rem 1.5rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.checkout_subtotal_label {
+    color: var(--text-color);
+    font-size: 0.95rem;
+    margin: 0;
+}
+
+.checkout_subtotal_amount {
+    font-weight: 700;
+    font-size: 1.1rem;
+    color: var(--bg-color-tercary);
+    margin: 0;
+}
+
+/* ===================================================
+   COLONNE DROITE — Formulaire de paiement
+   =================================================== */
+
+.checkout_right {
+    flex: 1;
+    background-color: white;
+    border-radius: 1rem;
+    padding: 2rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+    position: sticky;
+    top: 1rem;
+}
+
+/* Titre principal "Informations de paiement" */
+.checkout_form_title {
+    font-size: 1.4rem;
+    font-weight: bold;
+    color: var(--bg-color-tercary);
+    margin: 0 0 0.5rem;
+    text-align: center;
+}
+
+/* Sous-titre "Carte bancaire" */
+.checkout_card_title {
+    font-size: 1.15rem;
+    font-weight: bold;
+    color: var(--bg-color-tercary);
+    margin: 0.5rem 0 0;
+    text-align: center;
+}
+
+/* === Formulaire === */
+
+.checkout_form {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+/* Ligne avec 2 champs côte à côte */
+.checkout_row {
+    display: flex;
+    gap: 1rem;
+}
+
+.checkout_row .checkout_field {
+    flex: 1;
+}
+
+/* Champ individuel (label + input) */
+.checkout_field {
+    display: flex;
+    flex-direction: column;
+    gap: 0.35rem;
+}
+
+.checkout_label {
+    font-size: 0.82rem;
+    font-weight: 600;
+    color: var(--text-color);
+}
+
+/* Même style que login_input / register_input */
+.checkout_input {
+    background-color: var(--bg-color-primary);
+    border: 1px solid #e0e8e4;
+    border-radius: 0.5rem;
+    padding: 0.65rem 0.9rem;
+    font-size: 0.9rem;
+    font-family: var(--font-primary);
+    color: var(--bg-color-tercary);
+    outline: none;
+    transition: border-color var(--transition-fast);
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.checkout_input:focus {
+    border-color: var(--bg-color-secondary);
+}
+
+.checkout_input::placeholder {
+    color: var(--text-color);
+}
+
+/* Bouton payer — même style que cart_order_btn */
+.checkout_pay_btn {
+    margin-top: 0.75rem;
+    background-color: var(--bg-color-secondary);
+    color: white;
+    border: none;
+    border-radius: 0.5rem;
+    padding: 0.75rem;
+    font-size: 1rem;
+    font-weight: 600;
+    font-family: var(--font-primary);
+    cursor: pointer;
+    transition: background var(--transition-fast);
+    width: 100%;
+}
+
+.checkout_pay_btn:hover {
+    background-color: #2D6A4F;
+}
+
+/* === Panier vide === */
+
+.checkout_empty {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1.5rem;
+    padding: 5rem 0;
+    color: var(--text-color);
+}
+
+.checkout_empty_link {
+    background-color: var(--bg-color-secondary);
+    color: white;
+    padding: 0.65rem 1.5rem;
+    border-radius: 0.5rem;
+    font-weight: 600;
+    text-decoration: none;
+    transition: background var(--transition-fast);
+}
+
+.checkout_empty_link:hover {
+    background-color: #2D6A4F;
+}
+
+/* ===================================================
+   OVERLAY — Loader et succès après paiement
+   =================================================== */
+
+/* Fond semi-transparent qui couvre toute la page */
+.checkout_overlay {
+    position: fixed;
+    inset: 0; /* équivalent à top:0 right:0 bottom:0 left:0 */
+    background-color: rgba(0, 0, 0, 0.45);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 100;
+}
+
+/* Boîte blanche centrée (loader) */
+.checkout_loader_box {
+    background-color: white;
+    border-radius: 1rem;
+    padding: 2.5rem 3rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1.25rem;
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.15);
+}
+
+/* Cercle qui tourne — animation CSS pure */
+.checkout_spinner {
+    width: 52px;
+    height: 52px;
+    border: 5px solid var(--bg-color-primary);
+    border-top-color: var(--bg-color-secondary);
+    border-radius: 50%;
+    animation: spin 0.9s linear infinite;
+}
+
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}
+
+.checkout_loader_text {
+    color: var(--text-color);
+    font-size: 0.95rem;
+    margin: 0;
+}
+
+/* Boîte blanche centrée (succès) */
+.checkout_success_box {
+    background-color: white;
+    border-radius: 1rem;
+    padding: 2.5rem 3rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.75rem;
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.15);
+}
+
+/* Cercle vert avec la coche */
+.checkout_success_icon {
+    width: 64px;
+    height: 64px;
+    background-color: var(--bg-color-secondary);
+    color: white;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 2rem;
+    font-weight: bold;
+}
+
+.checkout_success_title {
+    font-size: 1.3rem;
+    font-weight: 700;
+    color: var(--bg-color-tercary);
+    margin: 0;
+}
+
+.checkout_success_sub {
+    color: var(--text-color);
+    font-size: 0.9rem;
+    margin: 0;
+}
+
+/* ===================================================
+   RESPONSIVE — MOBILE (≤ 768px)
+   =================================================== */
+
+@media (max-width: 768px) {
+    .checkout_wrapper {
+        margin: 1.5rem auto;
+        padding: 0 1rem 3rem;
+    }
+
+    /* Les deux colonnes passent en colonne */
+    .checkout_layout {
+        flex-direction: column;
+        gap: 1.5rem;
+    }
+
+    /* Le formulaire n'est plus sticky sur mobile */
+    .checkout_right {
+        position: static;
+    }
+
+    /* Les lignes à 2 colonnes passent en colonne */
+    .checkout_row {
+        flex-direction: column;
+    }
+}
