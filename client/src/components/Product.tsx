@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import type { Tree } from "../types";
 import { Leaf, Wind, MapPin } from 'lucide-react';
+import { useCart } from "../hooks/useCart";
 import '../components/styles/Product.css';
 
 function Product() {
@@ -10,6 +11,7 @@ function Product() {
     const { id } = useParams(); // Récupérer l'id avec le hook params
     const [isLoading, setIsLoading] = useState<boolean>(false); // Loader de chargement
     const [error, setError] = useState(false);
+    const { addToCart } = useCart();
 
     useEffect(() => {
         async function fetchTreeById() {
@@ -43,7 +45,13 @@ function Product() {
                             {tree.quantity > 0 ? 'EN STOCK' : 'RUPTURE'}
                         </span>
                     </div>
-                    <button className="btn_add_to_cart">Ajouter au panier</button>
+                    <button
+                        className="btn_add_to_cart"
+                        onClick={() => addToCart(tree)}
+                        disabled={tree.quantity <= 0}
+                    >
+                        Ajouter au panier
+                    </button>
                 </div>
             </div>
             <section className="impact">
