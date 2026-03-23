@@ -2,8 +2,7 @@ import * as assert from "node:assert/strict";
 import { describe, it } from "node:test";
 import argon2 from "argon2";
 import { prisma } from "../models/index.ts";
-
-const baseUrl = `http://localhost:${process.env.PORT}`;
+import { baseUrl, loginAndGetSession } from "./helpers/http.ts";
 
 async function createUser({
     firstname = "Test",
@@ -32,26 +31,13 @@ async function createUser({
     });
 }
 
-async function loginAndGetCookie(email: string, password: string) {
-    const response = await fetch(`${baseUrl}/api/auth/login`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, password }),
-    });
-
-    return response.headers.get("set-cookie") ?? "";
-}
-
 describe("GET /api/users", () => {
     it("returns all users for an admin", async () => {
         await createUser({ email: "admin@greenroots.fr", roleId: 1 });
         await createUser({ email: "user@greenroots.fr", roleId: 2 });
 
-        const cookie = await loginAndGetCookie("admin@greenroots.fr", "GreenRoots123");
-
-        const response = await fetch(`${baseUrl}/api/users`, {
-            headers: { Cookie: cookie },
-        });
+        const { session } = await loginAndGetSession("admin@greenroots.fr", "GreenRoots123");
+        const response = await session.fetch(`${baseUrl}/api/users`);
 
         assert.equal(response.status, 200);
 
@@ -64,11 +50,8 @@ describe("GET /api/users", () => {
     it("returns 403 for a non-admin user", async () => {
         await createUser({ email: "user@greenroots.fr", roleId: 2 });
 
-        const cookie = await loginAndGetCookie("user@greenroots.fr", "GreenRoots123");
-
-        const response = await fetch(`${baseUrl}/api/users`, {
-            headers: { Cookie: cookie },
-        });
+        const { session } = await loginAndGetSession("user@greenroots.fr", "GreenRoots123");
+        const response = await session.fetch(`${baseUrl}/api/users`);
 
         assert.equal(response.status, 403);
         assert.match(await response.text(), /Forbidden/);
@@ -87,11 +70,8 @@ describe("GET /api/users/:id", () => {
         const connectedUser = await createUser({ email: "viewer@greenroots.fr" });
         const targetUser = await createUser({ email: "target@greenroots.fr", firstname: "Target" });
 
-        const cookie = await loginAndGetCookie("viewer@greenroots.fr", "GreenRoots123");
-
-        const response = await fetch(`${baseUrl}/api/users/${targetUser.id}`, {
-            headers: { Cookie: cookie },
-        });
+        const { session } = await loginAndGetSession("viewer@greenroots.fr", "GreenRoots123");
+        const response = await session.fetch(`${baseUrl}/api/users/${targetUser.id}`);
 
         assert.equal(response.status, 200);
         assert.deepEqual(await response.json(), {
@@ -108,11 +88,9 @@ describe("GET /api/users/:id", () => {
 
     it("returns 404 when the user does not exist", async () => {
         await createUser({ email: "viewer@greenroots.fr" });
-        const cookie = await loginAndGetCookie("viewer@greenroots.fr", "GreenRoots123");
+        const { session } = await loginAndGetSession("viewer@greenroots.fr", "GreenRoots123");
 
-        const response = await fetch(`${baseUrl}/api/users/999`, {
-            headers: { Cookie: cookie },
-        });
+        const response = await session.fetch(`${baseUrl}/api/users/999`);
 
         assert.equal(response.status, 404);
         assert.match(await response.text(), /User not found/);
@@ -123,14 +101,11 @@ describe("PATCH /api/users/:id", () => {
     it("updates a user with a partial payload", async () => {
         await createUser({ email: "viewer@greenroots.fr" });
         const user = await createUser({ email: "target@greenroots.fr" });
-        const cookie = await loginAndGetCookie("viewer@greenroots.fr", "GreenRoots123");
+        const { session } = await loginAndGetSession("viewer@greenroots.fr", "GreenRoots123");
 
-        const response = await fetch(`${baseUrl}/api/users/${user.id}`, {
+        const response = await session.csrfFetch(`${baseUrl}/api/users/${user.id}`, {
             method: "PATCH",
-            headers: {
-                "Content-Type": "application/json",
-                Cookie: cookie,
-            },
+            headers: { "Content-Type": "application/json" },
             body: JSON.stringify({
                 firstname: "Updated",
                 address: "34 avenue des jardins",
@@ -150,14 +125,11 @@ describe("PATCH /api/users/:id", () => {
 
     it("returns 404 when the user does not exist", async () => {
         await createUser({ email: "viewer@greenroots.fr" });
-        const cookie = await loginAndGetCookie("viewer@greenroots.fr", "GreenRoots123");
+        const { session } = await loginAndGetSession("viewer@greenroots.fr", "GreenRoots123");
 
-        const response = await fetch(`${baseUrl}/api/users/999`, {
+        const response = await session.csrfFetch(`${baseUrl}/api/users/999`, {
             method: "PATCH",
-            headers: {
-                "Content-Type": "application/json",
-                Cookie: cookie,
-            },
+            headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ firstname: "Updated" }),
         });
 
@@ -168,14 +140,11 @@ describe("PATCH /api/users/:id", () => {
     it("returns 422 when payload is invalid", async () => {
         await createUser({ email: "viewer@greenroots.fr" });
         const user = await createUser({ email: "target@greenroots.fr" });
-        const cookie = await loginAndGetCookie("viewer@greenroots.fr", "GreenRoots123");
+        const { session } = await loginAndGetSession("viewer@greenroots.fr", "GreenRoots123");
 
-        const response = await fetch(`${baseUrl}/api/users/${user.id}`, {
+        const response = await session.csrfFetch(`${baseUrl}/api/users/${user.id}`, {
             method: "PATCH",
-            headers: {
-                "Content-Type": "application/json",
-                Cookie: cookie,
-            },
+            headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ firstname: "A" }),
         });
 
@@ -187,11 +156,10 @@ describe("DELETE /api/users/:id", () => {
     it("deletes an existing user", async () => {
         await createUser({ email: "viewer@greenroots.fr" });
         const user = await createUser({ email: "target@greenroots.fr" });
-        const cookie = await loginAndGetCookie("viewer@greenroots.fr", "GreenRoots123");
+        const { session } = await loginAndGetSession("viewer@greenroots.fr", "GreenRoots123");
 
-        const response = await fetch(`${baseUrl}/api/users/${user.id}`, {
+        const response = await session.csrfFetch(`${baseUrl}/api/users/${user.id}`, {
             method: "DELETE",
-            headers: { Cookie: cookie },
         });
 
         assert.equal(response.status, 204);
@@ -205,11 +173,10 @@ describe("DELETE /api/users/:id", () => {
 
     it("returns 404 when the user does not exist", async () => {
         await createUser({ email: "viewer@greenroots.fr" });
-        const cookie = await loginAndGetCookie("viewer@greenroots.fr", "GreenRoots123");
+        const { session } = await loginAndGetSession("viewer@greenroots.fr", "GreenRoots123");
 
-        const response = await fetch(`${baseUrl}/api/users/999`, {
+        const response = await session.csrfFetch(`${baseUrl}/api/users/999`, {
             method: "DELETE",
-            headers: { Cookie: cookie },
         });
 
         assert.equal(response.status, 404);

@@ -2,8 +2,7 @@ import * as assert from "node:assert/strict";
 import { describe, it } from "node:test";
 import argon2 from "argon2";
 import { Growth, prisma } from "../models/index.ts";
-
-const baseUrl = `http://localhost:${process.env.PORT}`;
+import { baseUrl, loginAndGetSession } from "./helpers/http.ts";
 
 function sortCategories<T extends { categories: Array<{ id: number; name: string }> }>(tree: T) {
     return {
@@ -36,16 +35,6 @@ async function createUser({
     });
 }
 
-async function loginAndGetCookie(email: string, password: string) {
-    const response = await fetch(`${baseUrl}/api/auth/login`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, password }),
-    });
-
-    return response.headers.get("set-cookie") ?? "";
-}
-
 async function createCategory(name: string) {
     return prisma.category.create({
         data: { name },
@@ -57,12 +46,12 @@ async function createTreeWithCategories(categoryIds: number[]) {
         data: {
             name: "Olivier",
             price: 49.9,
-            description: "Arbre méditerranéen",
+            description: "Arbre mediterraneen",
             impact_co2: 18,
             impact_o2: 14,
             image: "olivier.webp",
             quantity: 10,
-            label: "Esprit méditerranéen persistant",
+            label: "Esprit mediterraneen persistant",
             country: "Italie",
             height: 6,
             growth: Growth.slow,
@@ -95,12 +84,12 @@ describe("GET /api/trees", () => {
                 id: 1,
                 name: "Olivier",
                 price: "49.9",
-                description: "Arbre méditerranéen",
+                description: "Arbre mediterraneen",
                 impact_co2: "18",
                 impact_o2: "14",
                 image: "olivier.webp",
                 quantity: 10,
-                label: "Esprit méditerranéen persistant",
+                label: "Esprit mediterraneen persistant",
                 country: "Italie",
                 height: "6",
                 growth: "slow",
@@ -127,12 +116,12 @@ describe("GET /api/trees/:id", () => {
             id: tree.id,
             name: "Olivier",
             price: "49.9",
-            description: "Arbre méditerranéen",
+            description: "Arbre mediterraneen",
             impact_co2: "18",
             impact_o2: "14",
             image: "olivier.webp",
             quantity: 10,
-            label: "Esprit méditerranéen persistant",
+            label: "Esprit mediterraneen persistant",
             country: "Italie",
             height: "6",
             growth: "slow",
@@ -155,23 +144,20 @@ describe("POST /api/trees", () => {
         await createUser({ email: "admin@greenroots.fr", roleId: 1 });
         const fruitier = await createCategory("Fruitier");
         const persistant = await createCategory("Persistant");
-        const cookie = await loginAndGetCookie("admin@greenroots.fr", "GreenRoots123");
+        const { session } = await loginAndGetSession("admin@greenroots.fr", "GreenRoots123");
 
-        const response = await fetch(`${baseUrl}/api/trees`, {
+        const response = await session.csrfFetch(`${baseUrl}/api/trees`, {
             method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-                Cookie: cookie,
-            },
+            headers: { "Content-Type": "application/json" },
             body: JSON.stringify({
                 name: "Olivier",
                 price: 49.9,
-                description: "Arbre méditerranéen",
+                description: "Arbre mediterraneen",
                 impact_co2: 18,
                 impact_o2: 14,
                 image: "olivier.webp",
                 quantity: 10,
-                label: "Esprit méditerranéen persistant",
+                label: "Esprit mediterraneen persistant",
                 country: "Italie",
                 height: 6,
                 growth: "slow",
@@ -186,12 +172,12 @@ describe("POST /api/trees", () => {
             id: 1,
             name: "Olivier",
             price: "49.9",
-            description: "Arbre méditerranéen",
+            description: "Arbre mediterraneen",
             impact_co2: "18",
             impact_o2: "14",
             image: "olivier.webp",
             quantity: 10,
-            label: "Esprit méditerranéen persistant",
+            label: "Esprit mediterraneen persistant",
             country: "Italie",
             height: "6",
             growth: "slow",
@@ -207,23 +193,20 @@ describe("POST /api/trees", () => {
     it("returns 403 for a non-admin user", async () => {
         await createUser({ email: "user@greenroots.fr", roleId: 2 });
         await createCategory("Fruitier");
-        const cookie = await loginAndGetCookie("user@greenroots.fr", "GreenRoots123");
+        const { session } = await loginAndGetSession("user@greenroots.fr", "GreenRoots123");
 
-        const response = await fetch(`${baseUrl}/api/trees`, {
+        const response = await session.csrfFetch(`${baseUrl}/api/trees`, {
             method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-                Cookie: cookie,
-            },
+            headers: { "Content-Type": "application/json" },
             body: JSON.stringify({
                 name: "Olivier",
                 price: 49.9,
-                description: "Arbre méditerranéen",
+                description: "Arbre mediterraneen",
                 impact_co2: 18,
                 impact_o2: 14,
                 image: "olivier.webp",
                 quantity: 10,
-                label: "Esprit méditerranéen persistant",
+                label: "Esprit mediterraneen persistant",
                 country: "Italie",
                 height: 6,
                 growth: "slow",
@@ -239,14 +222,11 @@ describe("POST /api/trees", () => {
 
     it("returns 422 when payload is invalid", async () => {
         await createUser({ email: "admin@greenroots.fr", roleId: 1 });
-        const cookie = await loginAndGetCookie("admin@greenroots.fr", "GreenRoots123");
+        const { session } = await loginAndGetSession("admin@greenroots.fr", "GreenRoots123");
 
-        const response = await fetch(`${baseUrl}/api/trees`, {
+        const response = await session.csrfFetch(`${baseUrl}/api/trees`, {
             method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-                Cookie: cookie,
-            },
+            headers: { "Content-Type": "application/json" },
             body: JSON.stringify({
                 name: "",
                 price: -1,
@@ -262,14 +242,11 @@ describe("PATCH /api/trees/:id", () => {
         await createUser({ email: "admin@greenroots.fr", roleId: 1 });
         const fruitier = await createCategory("Fruitier");
         const tree = await createTreeWithCategories([fruitier.id]);
-        const cookie = await loginAndGetCookie("admin@greenroots.fr", "GreenRoots123");
+        const { session } = await loginAndGetSession("admin@greenroots.fr", "GreenRoots123");
 
-        const response = await fetch(`${baseUrl}/api/trees/${tree.id}`, {
+        const response = await session.csrfFetch(`${baseUrl}/api/trees/${tree.id}`, {
             method: "PATCH",
-            headers: {
-                "Content-Type": "application/json",
-                Cookie: cookie,
-            },
+            headers: { "Content-Type": "application/json" },
             body: JSON.stringify({
                 price: 600,
             }),
@@ -284,14 +261,11 @@ describe("PATCH /api/trees/:id", () => {
         const fruitier = await createCategory("Fruitier");
         const persistant = await createCategory("Persistant");
         const tree = await createTreeWithCategories([fruitier.id]);
-        const cookie = await loginAndGetCookie("admin@greenroots.fr", "GreenRoots123");
+        const { session } = await loginAndGetSession("admin@greenroots.fr", "GreenRoots123");
 
-        const response = await fetch(`${baseUrl}/api/trees/${tree.id}`, {
+        const response = await session.csrfFetch(`${baseUrl}/api/trees/${tree.id}`, {
             method: "PATCH",
-            headers: {
-                "Content-Type": "application/json",
-                Cookie: cookie,
-            },
+            headers: { "Content-Type": "application/json" },
             body: JSON.stringify({
                 categories: [persistant.id],
             }),
@@ -305,14 +279,11 @@ describe("PATCH /api/trees/:id", () => {
 
     it("returns 404 when the tree does not exist", async () => {
         await createUser({ email: "admin@greenroots.fr", roleId: 1 });
-        const cookie = await loginAndGetCookie("admin@greenroots.fr", "GreenRoots123");
+        const { session } = await loginAndGetSession("admin@greenroots.fr", "GreenRoots123");
 
-        const response = await fetch(`${baseUrl}/api/trees/999`, {
+        const response = await session.csrfFetch(`${baseUrl}/api/trees/999`, {
             method: "PATCH",
-            headers: {
-                "Content-Type": "application/json",
-                Cookie: cookie,
-            },
+            headers: { "Content-Type": "application/json" },
             body: JSON.stringify({
                 price: 600,
             }),
@@ -327,11 +298,10 @@ describe("DELETE /api/trees/:id", () => {
         await createUser({ email: "admin@greenroots.fr", roleId: 1 });
         const fruitier = await createCategory("Fruitier");
         const tree = await createTreeWithCategories([fruitier.id]);
-        const cookie = await loginAndGetCookie("admin@greenroots.fr", "GreenRoots123");
+        const { session } = await loginAndGetSession("admin@greenroots.fr", "GreenRoots123");
 
-        const response = await fetch(`${baseUrl}/api/trees/${tree.id}`, {
+        const response = await session.csrfFetch(`${baseUrl}/api/trees/${tree.id}`, {
             method: "DELETE",
-            headers: { Cookie: cookie },
         });
 
         assert.equal(response.status, 204);
@@ -345,11 +315,10 @@ describe("DELETE /api/trees/:id", () => {
 
     it("returns 404 when the tree does not exist", async () => {
         await createUser({ email: "admin@greenroots.fr", roleId: 1 });
-        const cookie = await loginAndGetCookie("admin@greenroots.fr", "GreenRoots123");
+        const { session } = await loginAndGetSession("admin@greenroots.fr", "GreenRoots123");
 
-        const response = await fetch(`${baseUrl}/api/trees/999`, {
+        const response = await session.csrfFetch(`${baseUrl}/api/trees/999`, {
             method: "DELETE",
-            headers: { Cookie: cookie },
         });
 
         assert.equal(response.status, 404);
