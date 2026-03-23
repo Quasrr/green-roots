@@ -1,10 +1,11 @@
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { Trash2, Minus, Plus } from 'lucide-react';
 import { useCart } from '../hooks/useCart';
 import '../components/styles/Cart.css';
 
 function Cart() {
     const { items, removeFromCart, updateQuantity } = useCart();
+    const navigate = useNavigate();
 
     const subtotal = items.reduce((sum, item) => sum + item.tree.price * item.quantity, 0);
 
@@ -78,7 +79,7 @@ function Cart() {
                         <span>Total</span>
                         <span>{subtotal.toFixed(2)}€</span>
                     </div>
-                    <button className="cart_order_btn">Commander</button>
+                    <button className="cart_order_btn" onClick={() => navigate('/checkout')}>Commander</button>
                 </aside>
             </div>
         </main>
