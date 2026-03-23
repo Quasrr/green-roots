@@ -14,8 +14,8 @@ import Login from './components/Login.tsx';
 import Register from './components/Register.tsx';
 import Cart from './components/Cart.tsx';
 import Profile from './components/Profile.tsx';
-import { CartProvider } from './context/CartContext.tsx';
-import { AuthProvider } from './context/AuthContext.tsx';
+import { CartProvider } from './hooks/useCart.tsx';
+import { AuthProvider } from './hooks/useAuth.tsx';
 import './App.css';
 
 // Sélecteurs des éléments à animer au scroll

@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import type { Category, Tree } from "../types";
 import { ShoppingCart } from 'lucide-react';
-import { useCart } from '../context/CartContext';
+import { useCart } from '../hooks/useCart';
 
 import '../components/styles/Catalog.css'
 

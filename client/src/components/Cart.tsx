@@ -1,6 +1,6 @@
 import { Link } from 'react-router-dom';
 import { Trash2, Minus, Plus } from 'lucide-react';
-import { useCart } from '../context/CartContext';
+import { useCart } from '../hooks/useCart';
 import '../components/styles/Cart.css';
 
 function Cart() {

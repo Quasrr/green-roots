@@ -1,8 +1,8 @@
 import { useState, useRef, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { ShoppingCart, UserCircle } from 'lucide-react';
-import { useAuth } from '../context/AuthContext';
-import { useCart } from '../context/CartContext';
+import { useAuth } from '../hooks/useAuth';
+import { useCart } from '../hooks/useCart';
 import '../components/styles/Header.css';
 
 function Header() {
