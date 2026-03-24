@@ -3,7 +3,7 @@ import z from "zod";
 import redis from "../models/redis.ts";
 import { prisma } from "../models/index.ts";
 import ErrorHandler from "../ErrorHandler.ts";
-import { BadRequestError, NotFoundError, UnauthorizedError } from "../utils/Error.ts";
+import { BadRequestError, NotFoundError } from "../utils/Error.ts";
 
 type CartItem = {
     id: number;
@@ -106,6 +106,7 @@ class CartController {
                     price: true,
                     image: true,
                     quantity: true,
+                    label: true
                 },
             });
 
@@ -119,6 +120,7 @@ class CartController {
                 image: tree.image,
                 price: Number(tree.price),
                 inStock: true,
+                label: tree.label
             };
 
             if (itemIndex >= 0) {

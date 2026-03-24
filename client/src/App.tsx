@@ -14,10 +14,12 @@ import Login from './components/Login.tsx';
 import Register from './components/Register.tsx';
 import Cart from './components/Cart.tsx';
 import Checkout from './components/Checkout.tsx';
-import Profile from './components/Profile.tsx';
+import AdminDashboard from './components/AdminDashboard.tsx';
 import { CartProvider } from './hooks/useCart.tsx';
 import { AuthProvider } from './hooks/useAuth.tsx';
 import './App.css';
+import Orders from './components/Orders.tsx';
+import Account from './components/Account.tsx';
 
 // Sélecteurs des éléments à animer au scroll
 const REVEAL_SELECTORS = [
@@ -32,10 +34,10 @@ const REVEAL_SELECTORS = [
   '.contact_layout',
 ].join(', ');
 
-function App() {
+export default function App() {
   const location = useLocation();
 
-  // Active l'animation .reveal → .visible quand l'élément entre dans le viewport
+  // Active l'animation .reveal = .visible quand l'élément entre dans le viewport
   // useLocation permet de relancer l'observer à chaque changement de page (SPA)
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -84,15 +86,14 @@ function App() {
               <Route path="/register" element={<Register />} />
               <Route path="/cart" element={<Cart />} />
               <Route path="/checkout" element={<Checkout />} />
-              <Route path="/profile" element={<Profile />} />
+              <Route path="/account" element={<Account />} />
+              <Route path="/account/orders" element={<Orders />} />
+              <Route path="/admin" element={<AdminDashboard />} />
             </Routes>
           </div>
           <Footer />
         </div>
       </CartProvider>
     </AuthProvider>
-  )
-
-}
-
-export default App
+  );
+};

@@ -1,13 +1,25 @@
 import { Link, useNavigate } from 'react-router-dom';
 import { Trash2, Minus, Plus } from 'lucide-react';
 import { useCart } from '../hooks/useCart';
+import { useAuth } from '../hooks/useAuth';
 import '../components/styles/Cart.css';
+import { useEffect } from 'react';
 
 function Cart() {
+    const { isLoggedIn } = useAuth();
     const { items, removeFromCart, updateQuantity } = useCart();
     const navigate = useNavigate();
 
-    const subtotal = items.reduce((sum, item) => sum + item.tree.price * item.quantity, 0);
+    const subtotal = items.reduce((sum, item) => sum + item.price * item.quantity, 0);
+
+    // Vérification de connexion pour être sur la page panier, sinon redirection
+
+    useEffect(() => {
+        if (!isLoggedIn) {
+            navigate('/');
+            return;
+        }
+    }, [isLoggedIn, navigate]);
 
     if (items.length === 0) {
         return (
@@ -30,36 +42,36 @@ function Cart() {
                 {/* Liste des articles */}
                 <div className="cart_items">
                     {items.map(item => (
-                        <div className="cart_item" key={item.tree.id}>
+                        <div className="cart_item" key={item.id}>
                             <img
-                                src={`/${item.tree.image}`}
-                                alt={item.tree.name}
+                                src={`/${item.image}`}
+                                alt={item.title}
                                 className="cart_item_img"
                             />
                             <div className="cart_item_info">
-                                <p className="cart_item_name">{item.tree.name}</p>
-                                <p className="cart_item_label">{item.tree.label}</p>
-                                <p className="cart_item_price">{item.tree.price}€ / unité</p>
+                                <p className="cart_item_name">{item.title}</p>
+                                <p className="cart_item_label">{item.label}</p>
+                                <p className="cart_item_price">{item.price}€ / unité</p>
                             </div>
                             <div className="cart_item_controls">
                                 <button
                                     className="cart_qty_btn"
-                                    onClick={() => updateQuantity(item.tree.id, item.quantity - 1)}
+                                    onClick={() => updateQuantity(item.id, item.quantity - 1)}
                                 >
                                     <Minus size={14} />
                                 </button>
                                 <span className="cart_qty">{item.quantity}</span>
                                 <button
                                     className="cart_qty_btn"
-                                    onClick={() => updateQuantity(item.tree.id, item.quantity + 1)}
+                                    onClick={() => updateQuantity(item.id, item.quantity + 1)}
                                 >
                                     <Plus size={14} />
                                 </button>
                             </div>
-                            <p className="cart_item_subtotal">{(item.tree.price * item.quantity).toFixed(2)}€</p>
+                            <p className="cart_item_subtotal">{(item.price * item.quantity).toFixed(2)}€</p>
                             <button
                                 className="cart_remove_btn"
-                                onClick={() => removeFromCart(item.tree.id)}
+                                onClick={() => removeFromCart(item.id)}
                                 aria-label="Supprimer"
                             >
                                 <Trash2 size={16} />

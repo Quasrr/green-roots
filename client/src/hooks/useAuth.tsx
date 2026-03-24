@@ -1,10 +1,12 @@
 import { createContext, useContext, useEffect, useState } from 'react';
 import type { AuthContextType, User } from '../types';
+import { useCart } from './useCart';
 
 const AuthContext = createContext<AuthContextType | null>(null);
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
     const [user, setUser] = useState<User | null>(null);
+    const { loadCart } = useCart();
 
     // Au montage : vérifier si une session existe déjà (cookie httpOnly) + récupération du token csrf
     useEffect(() => {
@@ -56,8 +58,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
             throw new Error(data.message || 'Identifiants incorrects');
         };
 
-        // Récupérer les infos user après connexion
-        await checkAuth();
+        await checkAuth(); // Récupérer les infos user après connexion
+        await loadCart(); // Charge le panier directement après la connexion
     };
 
     async function logout() {
