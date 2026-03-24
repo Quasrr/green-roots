@@ -9,7 +9,7 @@ function Header() {
     const [menuOpen, setMenuOpen] = useState(false);       // burger (nav links)
     const [userMenuOpen, setUserMenuOpen] = useState(false); // dropdown profil
 
-    const { isLoggedIn, logout } = useAuth();
+    const { user, isLoggedIn, logout } = useAuth();
     const { totalItems } = useCart();
     const navigate = useNavigate();
     const userMenuRef = useRef<HTMLDivElement>(null);
@@ -66,6 +66,11 @@ function Header() {
 
                             {userMenuOpen && (
                                 <div className="user_dropdown">
+                                    {user?.role === 1 && (
+                                        <Link to="/admin" className="user_dropdown_item" onClick={closeAll}>
+                                            Dashboard
+                                        </Link>
+                                    )}
                                     <Link to="/profile" className="user_dropdown_item" onClick={closeAll}>
                                         Mon compte
                                     </Link>

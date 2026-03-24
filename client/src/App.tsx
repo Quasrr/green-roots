@@ -15,6 +15,7 @@ import Register from './components/Register.tsx';
 import Cart from './components/Cart.tsx';
 import Checkout from './components/Checkout.tsx';
 import Profile from './components/Profile.tsx';
+import AdminDashboard from './components/AdminDashboard.tsx';
 import { CartProvider } from './hooks/useCart.tsx';
 import { AuthProvider } from './hooks/useAuth.tsx';
 import './App.css';
@@ -85,6 +86,7 @@ function App() {
               <Route path="/cart" element={<Cart />} />
               <Route path="/checkout" element={<Checkout />} />
               <Route path="/profile" element={<Profile />} />
+              <Route path="/admin" element={<AdminDashboard />} />
             </Routes>
           </div>
           <Footer />
