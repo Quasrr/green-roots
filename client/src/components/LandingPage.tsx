@@ -1,11 +1,19 @@
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import type { Tree } from '../types';
+import { useCart } from '../hooks/useCart';
 import '../components/styles/LandingPage.css';
 import { Leaf, Bird, MountainSnow, ShoppingCart } from 'lucide-react';
 
 function LandingPage() {
     const [trees, setTrees] = useState<Tree[]>([]); //State des arbres
+    const { setItems, loadCart } = useCart();
+
+
+    // Charger le panier depuis Redis au montage de la landing page
+    useEffect(() => {
+        loadCart()
+    }, [setItems, loadCart]);
 
     useEffect(() => {
         async function fetchTrees() {

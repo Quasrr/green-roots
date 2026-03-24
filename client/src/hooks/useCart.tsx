@@ -1,4 +1,4 @@
-import { createContext, useEffect, useContext, useState } from 'react';
+import { createContext, useContext, useState } from 'react';
 import type { CartContextType, RedisCartItem, Tree } from '../types';
 
 const CartContext = createContext<CartContextType | null>(null);
@@ -8,25 +8,19 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
 
     const totalItems = items.reduce((sum, item) => sum + item.quantity, 0);
 
-    // Charger le panier depuis Redis au montage
-async function loadCart() {
-    try {
-        const res = await fetch(`${import.meta.env.VITE_API_URL}/api/cart`, {
-            credentials: 'include',
-        });
-        if (res.ok) {
-            const data = await res.json();
-            setItems(Array.isArray(data.items) ? data.items : []);
+    async function loadCart() {
+        try {
+            const res = await fetch(`${import.meta.env.VITE_API_URL}/api/cart`, {
+                credentials: 'include',
+            });
+            if (res.ok) {
+                const data = await res.json();
+                setItems(Array.isArray(data.items) ? data.items : []);
+            }
+        } catch (error) {
+            console.error(error);
         }
-    } catch (error) {
-        console.error(error);
     }
-}
-
-// Dans le useEffect appeller loadCart() pour l'exposer au provider et l'appeler depuis AuthContext
-useEffect(() => {
-    loadCart();
-}, []);
 
     async function sendToBack(id: number, quantity: number) {
         try {
@@ -82,7 +76,7 @@ useEffect(() => {
     }
 
     return (
-        <CartContext.Provider value={{ items, totalItems, addToCart, removeFromCart, updateQuantity, clearCart, loadCart}}>
+        <CartContext.Provider value={{ items, totalItems, addToCart, removeFromCart, updateQuantity, clearCart, setItems, loadCart}}>
             {children}
         </CartContext.Provider>
     );
