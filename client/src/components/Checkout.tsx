@@ -1,11 +1,65 @@
-import { useState } from 'react';
+import { useActionState, useEffect } from 'react';
+import { useFormStatus } from 'react-dom';
 import { Link, useNavigate } from 'react-router-dom';
 import { useCart } from '../hooks/useCart';
 import { useAuth } from '../hooks/useAuth';
-import { useEffect } from 'react';
 import './styles/Checkout.css';
 
-function Checkout() {
+type CheckoutActionState = {
+    error: string;
+    success: boolean;
+};
+
+const genericCheckoutError = "Le paiement n'a pas pu être finalisé. Veuillez réessayer.";
+
+const initialActionState: CheckoutActionState = {
+    error: '',
+    success: false,
+};
+
+function wait(duration: number) {
+    return new Promise((resolve) => {
+        window.setTimeout(resolve, duration);
+    });
+}
+
+function CheckoutSubmitButton() {
+    const { pending } = useFormStatus();
+
+    return (
+        <button type="submit" className="checkout_pay_btn" disabled={pending}>
+            {pending ? 'Traitement...' : 'Payer'}
+        </button>
+    );
+}
+
+function CheckoutFeedbackOverlay({ isSuccess }: { isSuccess: boolean }) {
+    const { pending } = useFormStatus();
+
+    if (!pending && !isSuccess) {
+        return null;
+    }
+
+    return (
+        <div className="checkout_overlay">
+            {pending && (
+                <div className="checkout_loader_box">
+                    <div className="checkout_spinner" />
+                    <p className="checkout_loader_text">Traitement du paiement...</p>
+                </div>
+            )}
+            {isSuccess && !pending && (
+                <div className="checkout_success_box">
+                    <div className="checkout_success_icon">✓</div>
+                    <p className="checkout_success_title">Paiement accepte !</p>
+                    <p className="checkout_success_sub">Merci pour votre commande.</p>
+                </div>
+            )}
+        </div>
+    );
+}
+
+export default function Checkout() {
     const { isLoggedIn } = useAuth();
     const { items, clearCart } = useCart();
     const navigate = useNavigate();
@@ -13,29 +67,80 @@ function Checkout() {
     const subtotal = items.reduce((sum, item) => sum + item.price * item.quantity, 0);
     const totalItems = items.reduce((sum, item) => sum + item.quantity, 0);
 
-    const [isLoading, setIsLoading] = useState(false);
-    const [isSuccess, setIsSuccess] = useState(false);
+    const [actionState, submitOrder] = useActionState(async (_previousState: CheckoutActionState, formData: FormData) => {
+        const email = String(formData.get('email') || '').trim();
+        const address = String(formData.get('address') || '').trim();
+        const zipCode = String(formData.get('zipCode') || '').trim();
+        const city = String(formData.get('city') || '').trim();
+        const cardNumber = String(formData.get('cardNumber') || '').trim();
+        const expiration = String(formData.get('expiration') || '').trim();
+        const cvv = String(formData.get('cvv') || '').trim();
 
-    const [form, setForm] = useState({
-        email: '',
-        address: '',
-        zipCode: '',
-        city: '',
-        supplement: '',
-        cardNumber: '',
-        expiration: '',
-        cvv: '',
-    });
+        if (!email || !address || !zipCode || !city || !cardNumber || !expiration || !cvv) {
+            return {
+                error: 'Le formulaire de paiement est incomplet.',
+                success: false,
+            };
+        }
 
-    // Vérification de connexion pour être sur la page paiement, sinon redirection
+        if (items.length === 0) {
+            return {
+                error: 'Votre panier est vide.',
+                success: false,
+            };
+        }
+
+        await wait(2500);
+
+        const response = await fetch(`${import.meta.env.VITE_API_URL}/api/orders`, {
+            method: 'POST',
+            credentials: 'include',
+            headers: {
+                'Content-Type': 'application/json',
+                'x-csrf-token': localStorage.getItem('csrfToken') || '',
+            },
+            body: JSON.stringify(
+                items.map((item) => ({
+                    treeId: item.id,
+                    quantity: item.quantity,
+                }))
+            ),
+        });
+
+        if (!response.ok) {
+            return {
+                error: genericCheckoutError,
+                success: false,
+            };
+        }
+
+        return {
+            error: '',
+            success: true,
+        };
+    }, initialActionState);
+
     useEffect(() => {
         if (!isLoggedIn) {
             navigate('/');
-            return;
         }
     }, [isLoggedIn, navigate]);
 
-    // Si le panier est vide, on redirige vers le catalogue
+    useEffect(() => {
+        if (!actionState.success) {
+            return;
+        }
+
+        const timeoutId = window.setTimeout(() => {
+            clearCart();
+            navigate('/account/orders');
+        }, 2000);
+
+        return () => {
+            window.clearTimeout(timeoutId);
+        };
+    }, [actionState.success, clearCart, navigate]);
+
     if (items.length === 0) {
         return (
             <main className="checkout_wrapper">
@@ -47,32 +152,9 @@ function Checkout() {
         );
     }
 
-    function handleChange(e: React.ChangeEvent<HTMLInputElement>) {
-        setForm(prev => ({ ...prev, [e.target.name]: e.target.value }));
-    }
-
-    function handleSubmit(e: React.FormEvent) {
-        e.preventDefault();
-        setIsLoading(true);
-
-        // Simule un traitement de paiement de 2,5 secondes
-        setTimeout(() => {
-            setIsLoading(false);
-            setIsSuccess(true);
-
-            // Après 2 secondes sur l'écran "Paiement accepté", on vide le panier et on redirige
-            setTimeout(() => {
-                clearCart();
-                navigate('/');
-            }, 2000);
-        }, 2500);
-    }
-
     return (
         <main className="checkout_wrapper">
             <div className="checkout_layout">
-
-                {/* === Colonne gauche : résumé des articles === */}
                 <div className="checkout_left">
                     <div className="checkout_items">
                         {items.map((item, index) => (
@@ -91,13 +173,11 @@ function Checkout() {
                                         {(item.price * item.quantity).toFixed(2)}€
                                     </p>
                                 </div>
-                                {/* Séparateur entre les articles (pas après le dernier) */}
                                 {index < items.length - 1 && <hr className="checkout_divider" />}
                             </div>
                         ))}
                     </div>
 
-                    {/* Boîte sous-total */}
                     <div className="checkout_subtotal_box">
                         <p className="checkout_subtotal_label">
                             Sous-total ({totalItems} article{totalItems > 1 ? 's' : ''})
@@ -106,13 +186,10 @@ function Checkout() {
                     </div>
                 </div>
 
-                {/* === Colonne droite : formulaire de paiement === */}
                 <div className="checkout_right">
                     <h2 className="checkout_form_title">Informations de paiement</h2>
 
-                    <form className="checkout_form" onSubmit={handleSubmit}>
-
-                        {/* Email */}
+                    <form className="checkout_form" action={submitOrder}>
                         <div className="checkout_field">
                             <label className="checkout_label" htmlFor="email">
                                 Email de facturation
@@ -123,13 +200,10 @@ function Checkout() {
                                 type="email"
                                 className="checkout_input"
                                 placeholder="Email"
-                                value={form.email}
-                                onChange={handleChange}
                                 required
                             />
                         </div>
 
-                        {/* Adresse + Code postal */}
                         <div className="checkout_row">
                             <div className="checkout_field">
                                 <label className="checkout_label" htmlFor="address">
@@ -141,8 +215,6 @@ function Checkout() {
                                     type="text"
                                     className="checkout_input"
                                     placeholder="1 avenue d'Oclock"
-                                    value={form.address}
-                                    onChange={handleChange}
                                     required
                                 />
                             </div>
@@ -156,14 +228,11 @@ function Checkout() {
                                     type="text"
                                     className="checkout_input"
                                     placeholder="95000"
-                                    value={form.zipCode}
-                                    onChange={handleChange}
                                     required
                                 />
                             </div>
                         </div>
 
-                        {/* Ville + Supplément */}
                         <div className="checkout_row">
                             <div className="checkout_field">
                                 <label className="checkout_label" htmlFor="city">
@@ -175,8 +244,6 @@ function Checkout() {
                                     type="text"
                                     className="checkout_input"
                                     placeholder="Paris"
-                                    value={form.city}
-                                    onChange={handleChange}
                                     required
                                 />
                             </div>
@@ -189,17 +256,13 @@ function Checkout() {
                                     name="supplement"
                                     type="text"
                                     className="checkout_input"
-                                    placeholder="Bât - Rce"
-                                    value={form.supplement}
-                                    onChange={handleChange}
+                                    placeholder="Bat - Rce"
                                 />
                             </div>
                         </div>
 
-                        {/* Section carte bancaire */}
                         <h3 className="checkout_card_title">Carte bancaire</h3>
 
-                        {/* Numéro de carte + Expiration */}
                         <div className="checkout_row">
                             <div className="checkout_field">
                                 <label className="checkout_label" htmlFor="cardNumber">
@@ -211,8 +274,6 @@ function Checkout() {
                                     type="text"
                                     className="checkout_input"
                                     placeholder="1234 4567 8910 1234"
-                                    value={form.cardNumber}
-                                    onChange={handleChange}
                                     maxLength={19}
                                     required
                                 />
@@ -227,15 +288,12 @@ function Checkout() {
                                     type="text"
                                     className="checkout_input"
                                     placeholder="01/01"
-                                    value={form.expiration}
-                                    onChange={handleChange}
                                     maxLength={5}
                                     required
                                 />
                             </div>
                         </div>
 
-                        {/* Code de sécurité */}
                         <div className="checkout_field">
                             <label className="checkout_label" htmlFor="cvv">
                                 Code de sécurité
@@ -246,41 +304,18 @@ function Checkout() {
                                 type="text"
                                 className="checkout_input"
                                 placeholder="123"
-                                value={form.cvv}
-                                onChange={handleChange}
                                 maxLength={4}
                                 required
                             />
                         </div>
 
-                        <button type="submit" className="checkout_pay_btn">
-                            Payer
-                        </button>
+                        {actionState.error && <p className="checkout_error">{actionState.error}</p>}
+
+                        <CheckoutSubmitButton />
+                        <CheckoutFeedbackOverlay isSuccess={actionState.success} />
                     </form>
                 </div>
-
             </div>
-
-            {/* === Overlay loader / succès === */}
-            {(isLoading || isSuccess) && (
-                <div className="checkout_overlay">
-                    {isLoading && (
-                        <div className="checkout_loader_box">
-                            <div className="checkout_spinner" />
-                            <p className="checkout_loader_text">Traitement du paiement…</p>
-                        </div>
-                    )}
-                    {isSuccess && (
-                        <div className="checkout_success_box">
-                            <div className="checkout_success_icon">✓</div>
-                            <p className="checkout_success_title">Paiement accepté !</p>
-                            <p className="checkout_success_sub">Merci pour votre commande.</p>
-                        </div>
-                    )}
-                </div>
-            )}
         </main>
     );
 }
-
-export default Checkout;

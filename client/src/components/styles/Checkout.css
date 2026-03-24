@@ -220,6 +220,18 @@
     background-color: #2D6A4F;
 }
 
+.checkout_pay_btn:disabled {
+    opacity: 0.7;
+    cursor: wait;
+}
+
+.checkout_error {
+    margin: 0;
+    color: #b42318;
+    font-size: 0.9rem;
+    line-height: 1.4;
+}
+
 /* === Panier vide === */
 
 .checkout_empty {

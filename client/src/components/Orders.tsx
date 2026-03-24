@@ -33,15 +33,16 @@ function getStatusClassName(status: OrderStatus) {
 };
 
 export default function Orders() {
-    const { user, isLoggedIn } = useAuth();
+    const { user, isLoggedIn, isLoading } = useAuth();
     const navigate = useNavigate();
     const [orders, setOrders] = useState<Array<Order>>([]);
-    const [isLoading, setIsLoading] = useState(true);
+    const [loading, setLoading] = useState(true);
     const [error, setError] = useState('');
     const [refreshIndex, setRefreshIndex] = useState(0);
 
     useEffect(() => {
         // Un utilisateur non connecté est redirigé sur la page d'accueil
+        if (isLoading) return;
         if (!isLoggedIn) {
             navigate('/');
             return;
@@ -50,7 +51,7 @@ export default function Orders() {
         let isCancelled = false;
 
         async function loadOrders() {
-            setIsLoading(true);
+            setLoading(true);
             setError('');
 
             try {
@@ -74,7 +75,7 @@ export default function Orders() {
                 };
             } finally {
                 if (!isCancelled) {
-                    setIsLoading(false);
+                    setLoading(false);
                 };
             };
         };
@@ -164,14 +165,14 @@ export default function Orders() {
                         </article>
                     </div>
 
-                    {isLoading && (
+                    {loading && (
                         <div className="orders_state_card">
                             <LoaderCircle className="orders_state_spinner" size={24} />
                             <p>Chargement de vos commandes...</p>
                         </div>
                     )}
 
-                    {!isLoading && error && (
+                    {!loading && error && (
                         <div className="orders_state_card">
                             <PackageSearch size={30} />
                             <h2>Impossible de charger vos commandes</h2>
@@ -186,7 +187,7 @@ export default function Orders() {
                         </div>
                     )}
 
-                    {!isLoading && !error && orders.length === 0 && (
+                    {!loading && !error && orders.length === 0 && (
                         <div className="orders_state_card">
                             <PackageSearch size={30} />
                             <h2>Aucune commande pour le moment</h2>
@@ -197,16 +198,17 @@ export default function Orders() {
                         </div>
                     )}
 
-                    {!isLoading && !error && orders.length > 0 && (
+                    {!loading && !error && orders.length > 0 && (
                         <div className="orders_list">
-                            {orders.map((order) => {
+                            {orders.map((order, index) => {
                                 const itemCount = order.lines.reduce((sum, line) => sum + line.quantity, 0);
-
+                                const orderNumber = totalOrders - index;
+                                
                                 return (
                                     <article key={order.id} className="orders_card">
                                         <div className="orders_card_header">
                                             <div>
-                                                <p className="orders_card_eyebrow">Commande #{order.id}</p>
+                                                <p className="orders_card_eyebrow">Commande #{orderNumber}</p>
                                                 <h2 className="orders_card_title">
                                                     {itemCount} article{itemCount > 1 ? 's' : ''} dans cette commande
                                                 </h2>
@@ -257,11 +259,11 @@ export default function Orders() {
                                         </div>
                                     </article>
                                 );
-                            })};
+                            })}
                         </div>
-                    )};
+                    )}
                 </section>
             </div>
         </main>
     );
-};
+}
