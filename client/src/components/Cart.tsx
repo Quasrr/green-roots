@@ -6,20 +6,38 @@ import '../components/styles/Cart.css';
 import { useEffect } from 'react';
 
 function Cart() {
-    const { isLoggedIn } = useAuth();
-    const { items, removeFromCart, updateQuantity } = useCart();
+    const { isLoggedIn, isLoading } = useAuth();
+    const { items, removeFromCart, updateQuantity, setItems } = useCart();
     const navigate = useNavigate();
 
     const subtotal = items.reduce((sum, item) => sum + item.price * item.quantity, 0);
 
     // Vérification de connexion pour être sur la page panier, sinon redirection
-
     useEffect(() => {
+        if (isLoading) return;
         if (!isLoggedIn) {
             navigate('/');
-            return;
         }
-    }, [isLoggedIn, navigate]);
+    }, [isLoggedIn, isLoading, navigate]);
+
+    useEffect(() => {
+        if (isLoading || !isLoggedIn) return;
+
+        async function loadCart() {
+            try {
+                const res = await fetch(`${import.meta.env.VITE_API_URL}/api/cart`, {
+                    credentials: 'include',
+                });
+                if (res.ok) {
+                    const data = await res.json();
+                    setItems(Array.isArray(data.items) ? data.items : []);
+                }
+            } catch (error) {
+                console.error(error);
+            }
+        }
+        loadCart();
+    }, [isLoggedIn, isLoading, setItems]);
 
     if (items.length === 0) {
         return (
