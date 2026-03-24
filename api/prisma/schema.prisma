@@ -94,9 +94,10 @@ model TreeCategory {
 }
 
 model Order {
-  id     Int         @id @default(autoincrement())
-  status OrderStatus @default(waiting)
-  total  Decimal
+  id        Int         @id @default(autoincrement())
+  status    OrderStatus @default(waiting)
+  total     Decimal
+  createdAt DateTime    @default(now())
 
   userId Int
   user   User @relation(fields: [userId], references: [id])

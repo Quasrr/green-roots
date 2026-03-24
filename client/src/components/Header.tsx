@@ -9,7 +9,7 @@ function Header() {
     const [menuOpen, setMenuOpen] = useState(false);       // burger (nav links)
     const [userMenuOpen, setUserMenuOpen] = useState(false); // dropdown profil
 
-    const { isLoggedIn, logout } = useAuth();
+    const { user, isLoggedIn, logout } = useAuth();
     const { totalItems } = useCart();
     const navigate = useNavigate();
     const userMenuRef = useRef<HTMLDivElement>(null);
@@ -66,8 +66,16 @@ function Header() {
 
                             {userMenuOpen && (
                                 <div className="user_dropdown">
-                                    <Link to="/profile" className="user_dropdown_item" onClick={closeAll}>
+                                    {user?.role === 1 && (
+                                        <Link to="/admin" className="user_dropdown_item" onClick={closeAll}>
+                                            Dashboard
+                                        </Link>
+                                    )}
+                                    <Link to="/account" className="user_dropdown_item" onClick={closeAll}>
                                         Mon compte
+                                    </Link>
+                                    <Link to="/account/orders" className="user_dropdown_item" onClick={closeAll}>
+                                        Mes commandes
                                     </Link>
                                     <button className="user_dropdown_item user_dropdown_logout" onClick={handleLogout}>
                                         Déconnexion
@@ -106,7 +114,7 @@ function Header() {
             <nav className={menuOpen ? 'open' : ''}>
                 <Link to="/" onClick={closeAll}>Accueil</Link>
                 <Link to="/catalog" onClick={closeAll}>Catalogue</Link>
-                <Link to="/about" onClick={closeAll}>A propos</Link>
+                <Link to="/about" onClick={closeAll}>À propos</Link>
                 <Link to="/contact" onClick={closeAll}>Contact</Link>
 
                 {/* Non connecté : inscription + connexion dans le burger (mobile uniquement) */}
