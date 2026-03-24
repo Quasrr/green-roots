@@ -52,7 +52,7 @@ class OrdersController {
             const lines = schemas.parse(req.body);
             const userId = Number(req.user?.id);
 
-            //Aller chercher les arbres 
+            //Aller chercher les arbres
             const trees = await prisma.tree.findMany({
                 where: { id: { in: lines.map(l => l.treeId) } },
                 select: { id: true, price: true, quantity: true }
@@ -63,10 +63,11 @@ class OrdersController {
 
             for (const line of lines) {
                 let found = false;
+
                 for (const tree of trees) {
                     if (tree.id === line.treeId) {
                         if (tree.quantity < line.quantity) {
-                            throw new Error(`Stock insuffisant pour l'arbre ${line.treeId} (disponible: ${tree.quantity})`);
+                            throw new BadRequestError(`Stock insuffisant pour l'arbre ${line.treeId} (disponible: ${tree.quantity})`);
                         };
 
                         total += tree.price.toNumber() * line.quantity;
@@ -78,31 +79,35 @@ class OrdersController {
             };
 
             //Créer la commande + ses lignes
-            const order = await prisma.order.create({
-                data: {
-                    userId,
-                    total,
-                    lines: {
-                        create: lines.map(line => ({
-                            treeId: line.treeId,
-                            quantity: line.quantity
-                        }))
+            const order = await prisma.$transaction(async (tx) => {
+                const createdOrder = await tx.order.create({
+                    data: {
+                        userId,
+                        total,
+                        lines: {
+                            create: lines.map(line => ({
+                                treeId: line.treeId,
+                                quantity: line.quantity
+                            }))
+                        }
+                    },
+                    include: {
+                        lines: true
                     }
-                },
-                include: {
-                    lines: true
-                }
-            });
+                });
 
-            // Décrémenter le stock de chaque arbre commandé
-            await Promise.all(
-                lines.map(line =>
-                    prisma.tree.update({
-                        where: { id: line.treeId },
-                        data: { quantity: { decrement: line.quantity } }
-                    })
-                )
-            );
+                // Décrémenter le stock de chaque arbre commandé
+                await Promise.all(
+                    lines.map(line =>
+                        tx.tree.update({
+                            where: { id: line.treeId },
+                            data: { quantity: { decrement: line.quantity } }
+                        })
+                    )
+                );
+
+                return createdOrder;
+            });
 
             res.status(201).send(order);
 
