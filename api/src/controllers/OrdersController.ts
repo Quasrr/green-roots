@@ -4,7 +4,6 @@ import ErrorHandler from "../ErrorHandler.ts";
 import z from 'zod';
 import { BadRequestError, NotFoundError } from "../utils/Error.ts";
 
-
 const schemas = z.array(
     z.object({
         treeId: z.number().int().positive(),
@@ -12,11 +11,13 @@ const schemas = z.array(
     })
 ).min(1);
 
-
 class OrdersController {
     async getOrders(req: Request, res: Response) {
         try {
             const orders = await prisma.order.findMany({
+                orderBy: {
+                    createdAt: 'desc'
+                },
                 include: {
                     user: {
                         select: {
@@ -39,11 +40,13 @@ class OrdersController {
                     }
                 }
             });
+
             res.send(orders);
         } catch (error) {
             ErrorHandler.sendError(res, error);
         };
     };
+
     async createOrder(req: Request, res: Response) {
         try {
             const lines = schemas.parse(req.body);
@@ -57,19 +60,22 @@ class OrdersController {
 
             //Calculer le total de la commande
             let total = 0;
+
             for (const line of lines) {
                 let found = false;
                 for (const tree of trees) {
                     if (tree.id === line.treeId) {
                         if (tree.quantity < line.quantity) {
                             throw new Error(`Stock insuffisant pour l'arbre ${line.treeId} (disponible: ${tree.quantity})`);
-                        }
+                        };
+
                         total += tree.price.toNumber() * line.quantity;
                         found = true;
-                    }
-                }
+                    };
+                };
+
                 if (!found) throw new NotFoundError(`Tree ${line.treeId} not found`);
-            }
+            };
 
             //Créer la commande + ses lignes
             const order = await prisma.order.create({
@@ -105,11 +111,15 @@ class OrdersController {
         };
 
     };
+
     async getMyOrders(req: Request, res: Response) {
         try {
             const userId = Number(req.user?.id);
             const orders = await prisma.order.findMany({
                 where: { userId },
+                orderBy: {
+                    createdAt: 'desc'
+                },
                 include: {
                     lines: {
                         include: {
@@ -124,11 +134,13 @@ class OrdersController {
                     }
                 }
             });
+
             res.send(orders);
         } catch (error) {
             ErrorHandler.sendError(res, error);
         };
     };
+
     async getOrderById(req: Request, res: Response) {
         try {
             const userId = Number(req.user?.id);
@@ -136,7 +148,7 @@ class OrdersController {
 
             if (!Number.isInteger(orderId) || orderId <= 0) {
                 throw new BadRequestError('Invalid order id');
-            }
+            };
 
             const order = await prisma.order.findUnique({
                 where: { id: orderId },
@@ -167,6 +179,7 @@ class OrdersController {
                 where: { id: userId },
                 select: { roleId: true }
             });
+            
             const isAdmin = currentUser?.roleId === 1;
 
             if (!order || (!isAdmin && order.userId !== userId)) throw new NotFoundError('Order not found');
