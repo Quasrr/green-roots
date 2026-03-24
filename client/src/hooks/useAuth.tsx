@@ -5,6 +5,7 @@ const AuthContext = createContext<AuthContextType | null>(null);
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
     const [user, setUser] = useState<User | null>(null);
+    const [isLoading, setIsLoading] = useState(true);
 
     // Au montage : vérifier si une session existe déjà (cookie httpOnly) + récupération du token csrf
     useEffect(() => {
@@ -37,8 +38,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
             };
         } catch {
             setUser(null);
-        };
-    };
+        } finally {
+            setIsLoading(false);
+        }
+    }
 
     async function login(email: string, password: string) {
         const res = await fetch(`${import.meta.env.VITE_API_URL}/api/auth/login`, {
@@ -57,7 +60,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         };
 
         await checkAuth(); // Récupérer les infos user après connexion
- // Charge le panier directement après la connexion
+        // Charge le panier directement après la connexion
     };
 
     async function logout() {
@@ -73,7 +76,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     };
 
     return (
-        <AuthContext.Provider value={{ user, isLoggedIn: !!user, login, logout }}>
+        <AuthContext.Provider value={{ user, isLoggedIn: !!user, isLoading, login, logout }}>
             {children}
         </AuthContext.Provider>
     );

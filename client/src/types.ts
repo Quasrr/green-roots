@@ -34,6 +34,7 @@ export type User = {
 export type AuthContextType = {
     user: User | null;
     isLoggedIn: boolean;
+    isLoading: boolean;
     login: (email: string, password: string) => Promise<void>;
     logout: () => Promise<void>;
 };
