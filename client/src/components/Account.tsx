@@ -1,8 +1,8 @@
 import { useState } from 'react';
 import { useAuth } from '../hooks/useAuth';
-import '../components/styles/Profile.css';
+import '../components/styles/Account.css';
 
-function Profile() {
+export default function Account() {
     const { user } = useAuth();
 
     const [firstname, setFirstname] = useState(user?.firstname ?? '');
@@ -22,7 +22,7 @@ function Profile() {
         if (password && password !== confirmPassword) {
             setError('Les mots de passe ne correspondent pas.');
             return;
-        }
+        };
 
         setIsLoading(true);
         try {
@@ -43,7 +43,7 @@ function Profile() {
             if (!res.ok) {
                 const data = await res.json();
                 throw new Error(data.message || 'Erreur lors de la mise à jour');
-            }
+            };
 
             setSuccess('Vos informations ont bien été mises à jour.');
             setPassword('');
@@ -52,8 +52,8 @@ function Profile() {
             setError(err instanceof Error ? err.message : 'Une erreur est survenue');
         } finally {
             setIsLoading(false);
-        }
-    }
+        };
+    };
 
     return (
         <main className="profile_wrapper">
@@ -147,6 +147,4 @@ function Profile() {
             </div>
         </main>
     );
-}
-
-export default Profile;
+};
