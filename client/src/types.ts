@@ -38,19 +38,25 @@ export type AuthContextType = {
     logout: () => Promise<void>;
 };
 
-// Un article du panier = un arbre + une quantité
-export type CartItem = {
-    tree: Tree;
+// Type CartItem tel que stocké dans Redis (format back)
+export type RedisCartItem = {
+    id: number;
+    title: string;
+    image: string;
+    price: number;
+    inStock: boolean;
     quantity: number;
+    label: string;
 };
 
 export type CartContextType = {
-    items: CartItem[];
+    items: RedisCartItem[];
     totalItems: number;
     addToCart: (tree: Tree) => void;
     removeFromCart: (treeId: number) => void;
     updateQuantity: (treeId: number, quantity: number) => void;
     clearCart: () => void;
+    loadCart:() => Promise<void>;
 };
 
 // Types pour le dashboard admin

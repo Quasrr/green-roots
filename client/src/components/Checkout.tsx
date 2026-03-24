@@ -1,13 +1,16 @@
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useCart } from '../hooks/useCart';
+import { useAuth } from '../hooks/useAuth';
+import { useEffect } from 'react';
 import './styles/Checkout.css';
 
 function Checkout() {
+    const { isLoggedIn } = useAuth();
     const { items, clearCart } = useCart();
     const navigate = useNavigate();
 
-    const subtotal = items.reduce((sum, item) => sum + item.tree.price * item.quantity, 0);
+    const subtotal = items.reduce((sum, item) => sum + item.price * item.quantity, 0);
     const totalItems = items.reduce((sum, item) => sum + item.quantity, 0);
 
     const [isLoading, setIsLoading] = useState(false);
@@ -23,6 +26,14 @@ function Checkout() {
         expiration: '',
         cvv: '',
     });
+
+    // Vérification de connexion pour être sur la page paiement, sinon redirection
+    useEffect(() => {
+        if (!isLoggedIn) {
+            navigate('/');
+            return;
+        }
+    }, [isLoggedIn, navigate]);
 
     // Si le panier est vide, on redirige vers le catalogue
     if (items.length === 0) {
@@ -65,19 +76,19 @@ function Checkout() {
                 <div className="checkout_left">
                     <div className="checkout_items">
                         {items.map((item, index) => (
-                            <div key={item.tree.id}>
+                            <div key={item.id}>
                                 <div className="checkout_item">
                                     <img
-                                        src={`/${item.tree.image}`}
-                                        alt={item.tree.name}
+                                        src={`/${item.image}`}
+                                        alt={item.title}
                                         className="checkout_item_img"
                                     />
                                     <div className="checkout_item_info">
-                                        <p className="checkout_item_name">{item.tree.name}</p>
-                                        <p className="checkout_item_label">{item.tree.label}</p>
+                                        <p className="checkout_item_name">{item.title}</p>
+                                        <p className="checkout_item_label">{item.label}</p>
                                     </div>
                                     <p className="checkout_item_price">
-                                        {(item.tree.price * item.quantity).toFixed(2)}€
+                                        {(item.price * item.quantity).toFixed(2)}€
                                     </p>
                                 </div>
                                 {/* Séparateur entre les articles (pas après le dernier) */}
