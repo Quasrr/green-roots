@@ -73,9 +73,11 @@ export type OrderLine = {
     };
 };
 
+export type OrderStatus = 'waiting' | 'paid' | 'canceled';
+
 export type Order = {
     id: number;
-    status: string;
+    status: OrderStatus;
     total: number;
     createdAt: string;
     user: {
@@ -84,7 +86,7 @@ export type Order = {
         lastname: string;
         email: string;
     };
-    lines: OrderLine[];
+    lines: Array<OrderLine>;
 };
 
 export type Tab = 'users' | 'orders';

@@ -71,8 +71,11 @@ function Header() {
                                             Dashboard
                                         </Link>
                                     )}
-                                    <Link to="/profile" className="user_dropdown_item" onClick={closeAll}>
+                                    <Link to="/account" className="user_dropdown_item" onClick={closeAll}>
                                         Mon compte
+                                    </Link>
+                                    <Link to="/account/orders" className="user_dropdown_item" onClick={closeAll}>
+                                        Mes commandes
                                     </Link>
                                     <button className="user_dropdown_item user_dropdown_logout" onClick={handleLogout}>
                                         Déconnexion
@@ -111,7 +114,7 @@ function Header() {
             <nav className={menuOpen ? 'open' : ''}>
                 <Link to="/" onClick={closeAll}>Accueil</Link>
                 <Link to="/catalog" onClick={closeAll}>Catalogue</Link>
-                <Link to="/about" onClick={closeAll}>A propos</Link>
+                <Link to="/about" onClick={closeAll}>À propos</Link>
                 <Link to="/contact" onClick={closeAll}>Contact</Link>
 
                 {/* Non connecté : inscription + connexion dans le burger (mobile uniquement) */}
