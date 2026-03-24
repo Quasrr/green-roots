@@ -1,0 +1,273 @@
+/* ===================================================
+   ADMIN DASHBOARD
+   =================================================== */
+
+.admin_wrapper {
+    max-width: 1100px;
+    margin: 3rem auto;
+    padding: 0 2rem 4rem;
+    font-family: var(--font-primary);
+}
+
+.admin_wrapper h1 {
+    font-size: 2rem;
+    font-weight: bold;
+    color: var(--bg-color-tercary);
+    margin-bottom: 0.25rem;
+}
+
+.admin_description {
+    color: var(--text-color);
+    font-size: 1rem;
+    margin-bottom: 2rem;
+}
+
+/* === Onglets === */
+
+.admin_tabs {
+    display: flex;
+    gap: 0.5rem;
+    margin-bottom: 2rem;
+    border-bottom: 2px solid #e0e8e4;
+    padding-bottom: 0;
+}
+
+.admin_tab {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.7rem 1.4rem;
+    font-size: 0.9rem;
+    font-weight: 600;
+    font-family: var(--font-primary);
+    background: none;
+    border: none;
+    border-bottom: 3px solid transparent;
+    color: var(--text-color);
+    cursor: pointer;
+    transition: color 0.15s, border-color 0.15s;
+    margin-bottom: -2px;
+}
+
+.admin_tab:hover {
+    color: var(--bg-color-secondary);
+}
+
+.admin_tab.active {
+    color: var(--bg-color-secondary);
+    border-bottom-color: var(--bg-color-secondary);
+}
+
+/* === Table === */
+
+.admin_table_wrapper {
+    overflow-x: auto;
+}
+
+.admin_table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.9rem;
+}
+
+.admin_table thead {
+    background-color: var(--bg-color-secondary);
+    color: white;
+}
+
+.admin_table th {
+    padding: 0.8rem 1rem;
+    text-align: left;
+    font-weight: 600;
+    font-size: 0.8rem;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+}
+
+.admin_table td {
+    padding: 0.75rem 1rem;
+    color: var(--bg-color-tercary);
+    border-bottom: 1px solid #e0e8e4;
+}
+
+.admin_table tbody tr:hover {
+    background-color: #f0f5f2;
+}
+
+.admin_price {
+    font-weight: 600;
+}
+
+/* === Badges === */
+
+.admin_role_badge {
+    font-size: 0.7rem;
+    font-weight: bold;
+    letter-spacing: 0.05em;
+    padding: 0.2rem 0.6rem;
+    border-radius: 0.4rem;
+    background-color: #e6f4ec;
+    color: var(--bg-color-secondary);
+}
+
+.admin_role_badge.admin {
+    background-color: #fff3e0;
+    color: #e67e22;
+}
+
+.admin_status_badge {
+    font-size: 0.7rem;
+    font-weight: bold;
+    letter-spacing: 0.05em;
+    padding: 0.2rem 0.6rem;
+    border-radius: 0.4rem;
+    background-color: #e6f4ec;
+    color: var(--bg-color-secondary);
+    text-transform: capitalize;
+}
+
+.admin_status_badge.pending {
+    background-color: #fff3e0;
+    color: #e67e22;
+}
+
+.admin_status_badge.cancelled {
+    background-color: #fde8e8;
+    color: #c0392b;
+}
+
+/* === Bouton expand commande === */
+
+.admin_expand_btn {
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: var(--text-color);
+    padding: 0.25rem;
+    border-radius: 0.3rem;
+    display: flex;
+    align-items: center;
+    transition: color 0.15s, background 0.15s;
+}
+
+.admin_expand_btn:hover {
+    color: var(--bg-color-secondary);
+    background-color: #e6f4ec;
+}
+
+/* === Détail commande (ligne dépliée) === */
+
+.admin_order_detail_row td {
+    padding: 0 !important;
+    border-bottom: 2px solid var(--bg-color-secondary);
+}
+
+.admin_order_detail {
+    background-color: #f8faf9;
+    padding: 1rem 1.5rem;
+}
+
+.admin_order_detail h4 {
+    font-size: 0.85rem;
+    font-weight: bold;
+    color: var(--bg-color-tercary);
+    margin-bottom: 0.75rem;
+    padding-bottom: 0.4rem;
+    border-bottom: 1px solid #e0e8e4;
+}
+
+.admin_order_detail h4::before {
+    display: none;
+}
+
+.admin_order_detail ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+}
+
+.admin_order_detail li {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    font-size: 0.85rem;
+    color: var(--bg-color-tercary);
+}
+
+.admin_line_name {
+    flex: 1;
+    font-weight: 500;
+}
+
+.admin_line_qty {
+    color: var(--text-color);
+    min-width: 2rem;
+}
+
+.admin_line_price {
+    font-weight: 600;
+    min-width: 5rem;
+    text-align: right;
+}
+
+/* === États === */
+
+.admin_loading {
+    text-align: center;
+    color: var(--text-color);
+    padding: 3rem 0;
+    font-size: 1rem;
+}
+
+.admin_error {
+    font-size: 0.85rem;
+    color: #c0392b;
+    background-color: #fde8e8;
+    padding: 0.6rem 0.9rem;
+    border-radius: 0.5rem;
+    margin-bottom: 1.5rem;
+}
+
+.admin_empty {
+    text-align: center;
+    color: var(--text-color);
+    padding: 2rem 0;
+    font-size: 0.95rem;
+}
+
+/* ===================================================
+   RESPONSIVE — MOBILE (≤ 768px)
+   =================================================== */
+@media (max-width: 768px) {
+    .admin_wrapper {
+        margin: 1.5rem auto;
+        padding: 0 1rem 3rem;
+    }
+
+    .admin_wrapper h1 {
+        font-size: 1.6rem;
+    }
+
+    .admin_tabs {
+        gap: 0;
+    }
+
+    .admin_tab {
+        flex: 1;
+        justify-content: center;
+        padding: 0.6rem 0.5rem;
+        font-size: 0.8rem;
+    }
+
+    .admin_table {
+        font-size: 0.8rem;
+    }
+
+    .admin_table th,
+    .admin_table td {
+        padding: 0.5rem 0.6rem;
+    }
+}

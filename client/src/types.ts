@@ -52,3 +52,39 @@ export type CartContextType = {
     updateQuantity: (treeId: number, quantity: number) => void;
     clearCart: () => void;
 };
+
+// Types pour le dashboard admin
+export type AdminUser = {
+    id: number;
+    email: string;
+    firstname: string;
+    lastname: string;
+    address: string | null;
+    role: { nameRole: string };
+};
+
+export type OrderLine = {
+    id: number;
+    quantity: number;
+    tree: {
+        id: number;
+        name: string;
+        price: number;
+    };
+};
+
+export type Order = {
+    id: number;
+    status: string;
+    total: number;
+    createdAt: string;
+    user: {
+        id: number;
+        firstname: string;
+        lastname: string;
+        email: string;
+    };
+    lines: OrderLine[];
+};
+
+export type Tab = 'users' | 'orders';
