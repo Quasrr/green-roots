@@ -97,6 +97,7 @@ describe("PUT /api/cart", () => {
                     image: tree.image,
                     price: 49.9,
                     inStock: true,
+                    label: tree.label,
                     quantity: 2,
                 },
             ],
