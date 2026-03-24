@@ -54,11 +54,11 @@ export default function App() {
         );
 
         // Petit délai pour laisser React rendre la nouvelle page
-       const timer = setTimeout(() => {
+        const timer = setTimeout(() => {
             document.querySelectorAll(REVEAL_SELECTORS).forEach((el) => {
                 el.classList.add('reveal');
                 observer.observe(el);
-            }) ;
+            });
         }, 50);
 
         return () => {
