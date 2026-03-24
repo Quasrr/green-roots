@@ -151,7 +151,7 @@ describe("POST /api/orders", () => {
         assert.match(await response.text(), /Tree 9999 not found/);
     });
 
-    it("returns an error when stock is insufficient", async () => {
+    it("returns 400 when stock is insufficient", async () => {
         await createUser({ email: "user@greenroots.fr", roleId: 2 });
         const tree = await createTree(1);
         const { session } = await loginAndGetSession("user@greenroots.fr", "GreenRoots123");
@@ -162,7 +162,8 @@ describe("POST /api/orders", () => {
             body: JSON.stringify([{ treeId: tree.id, quantity: 5 }]),
         });
 
-        assert.notEqual(response.status, 201);
+        assert.equal(response.status, 400);
+        assert.match(await response.text(), /Stock insuffisant/);
     });
 });
 
