@@ -1,30 +1,28 @@
-import { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { useActionState } from 'react';
+import { Link, useNavigate, Navigate } from 'react-router-dom';
 import { useAuth } from '../hooks/useAuth';
 import '../components/styles/Login.css';
 
 function Login() {
-    const [email, setEmail] = useState('');
-    const [password, setPassword] = useState('');
-    const [error, setError] = useState('');
-    const [isLoading, setIsLoading] = useState(false);
-
-    const { login } = useAuth();
+    const { login, isLoggedIn } = useAuth();
     const navigate = useNavigate();
 
-    async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
-        e.preventDefault();
-        setError('');
-        setIsLoading(true);
+    async function loginAction(_prev: string, formData: FormData) {
+        const email = formData.get('email') as string;
+        const password = formData.get('password') as string;
+
         try {
             await login(email, password);
             navigate('/');
+            return '';
         } catch (err) {
-            setError(err instanceof Error ? err.message : 'Une erreur est survenue');
-        } finally {
-            setIsLoading(false);
+            return err instanceof Error ? err.message : 'Une erreur est survenue';
         }
     }
+
+    const [error, action, isPending] = useActionState(loginAction, '');
+
+    if (isLoggedIn) return <Navigate to="/" replace />;
 
     return (
         <main className="login_wrapper">
@@ -32,32 +30,30 @@ function Login() {
                 <h1>Connexion</h1>
                 <p className="login_description">Accédez à votre espace personnel GreenRoots.</p>
 
-                <form className="login_form" onSubmit={handleSubmit}>
+                <form className="login_form" action={action}>
                     <div className="login_field">
                         <label className="login_label">Email</label>
                         <input
+                            name="email"
                             type="email"
                             className="login_input"
                             placeholder="votre@email.fr"
-                            value={email}
-                            onChange={e => setEmail(e.target.value)}
                         />
                     </div>
                     <div className="login_field">
                         <label className="login_label">Mot de passe</label>
                         <input
+                            name="password"
                             type="password"
                             className="login_input"
                             placeholder="••••••••"
-                            value={password}
-                            onChange={e => setPassword(e.target.value)}
                         />
                     </div>
 
                     {error && <p className="login_error">{error}</p>}
 
-                    <button type="submit" className="login_btn" disabled={isLoading}>
-                        {isLoading ? 'Connexion...' : 'Se connecter'}
+                    <button type="submit" className="login_btn" disabled={isPending}>
+                        {isPending ? 'Connexion...' : 'Se connecter'}
                     </button>
                 </form>
 
