@@ -1,6 +1,7 @@
-import '../components/styles/Legals.css'
+import { Link } from 'react-router-dom';
+import '../components/styles/Legals.css';
 
-function Legals() {
+export default function Legals() {
     return (
         <main className="legals">
             <h1>Mentions légales</h1>
@@ -8,7 +9,7 @@ function Legals() {
 
             <section>
                 <h2>1. Éditeur du site</h2>
-                <p>Le site GreenRoots est édité dans le cadre d'un projet pédagogique — Titre Professionnel Concepteur Développeur d'Applications (CDA).</p>
+                <p>Le site GreenRoots est édité dans le cadre d'un projet pédagogique : Titre Professionnel Concepteur Développeur d'Applications (CDA).</p>
                 <ul>
                     <li><strong>Nom du projet :</strong> GreenRoots</li>
                     <li><strong>Équipe :</strong> Tony, Seb, Bruno</li>
@@ -28,12 +29,24 @@ function Legals() {
 
             <section>
                 <h2>4. Données personnelles</h2>
-                <p>Le traitement des données personnelles est détaillé dans notre <a href="/privacy-policy">politique de confidentialité</a>. Conformément au RGPD, vous disposez d'un droit d'accès, de rectification et de suppression de vos données.</p>
+                <p>
+                    Le traitement des données personnelles est détaillé dans notre{' '}
+                    <Link to="/privacy-policy">politique de confidentialité</Link>. Conformément au RGPD,
+                    vous disposez d'un droit d'accès, de rectification et de suppression de vos données.
+                </p>
             </section>
 
             <section>
                 <h2>5. Cookies</h2>
-                <p>GreenRoots utilise uniquement des cookies techniques nécessaires au fonctionnement de l'authentification. Aucun cookie publicitaire ou de tracking n'est déposé sur votre appareil.</p>
+                <p>
+                    GreenRoots utilise uniquement des cookies techniques nécessaires au fonctionnement de
+                    l'authentification et à la sécurité des échanges. Aucun cookie publicitaire ou de tracking
+                    n'est déposé sur votre appareil.
+                </p>
+                <p>
+                    Pour le détail des cookies utilisés, consultez notre{' '}
+                    <Link to="/cookies">politique de cookies</Link>.
+                </p>
             </section>
 
             <section>
@@ -41,7 +54,5 @@ function Legals() {
                 <p>GreenRoots s'efforce d'assurer l'exactitude des informations diffusées sur le site. Toutefois, GreenRoots ne peut garantir l'exhaustivité et l'absence d'erreurs des contenus publiés.</p>
             </section>
         </main>
-    )
+    );
 }
-
-export default Legals

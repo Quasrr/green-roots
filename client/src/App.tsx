@@ -6,6 +6,7 @@ import Footer from './components/Footer.tsx';
 import PrivacyPolicy from './components/PrivacyPolicy.tsx';
 import CGV from './components/Cgv.tsx';
 import Legals from './components/Legals.tsx';
+import Cookies from './components/Cookies.tsx';
 import Product from './components/Product.tsx';
 import Catalog from './components/Catalog.tsx';
 import Contact from './components/Contact.tsx';
@@ -47,7 +48,7 @@ export default function App() {
                     if (entry.isIntersecting) {
                         entry.target.classList.add('visible');
                         observer.unobserve(entry.target); // anime une seule fois
-                    }
+                    };
                 });
             },
             { threshold: 0.08, rootMargin: '0px 0px -40px 0px' }
@@ -76,6 +77,7 @@ export default function App() {
                         <Routes>
                             <Route path="/" element={<LandingPage />} />
                             <Route path="/privacy-policy" element={<PrivacyPolicy />} />
+                            <Route path="/cookies" element={<Cookies />} />
                             <Route path="/cgv" element={<CGV />} />
                             <Route path="/legals" element={<Legals />} />
                             <Route path="/catalog" element={<Catalog />} />

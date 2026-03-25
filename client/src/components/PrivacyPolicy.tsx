@@ -1,7 +1,7 @@
 import { Link } from 'react-router-dom';
-import '../components/styles/PrivacyPolicy.css'
+import '../components/styles/PrivacyPolicy.css';
 
-function PrivacyPolicy() {
+export default function PrivacyPolicy() {
     return (
         <main className="privacy_policy">
             <h1>Politique de confidentialité</h1>
@@ -42,10 +42,10 @@ function PrivacyPolicy() {
                 <h2>5. Vos droits</h2>
                 <p>Conformément au RGPD, vous disposez des droits suivants :</p>
                 <ul>
-                    <li><strong>Droit d'accès</strong> — consulter vos données depuis votre espace personnel</li>
-                    <li><strong>Droit de rectification</strong> — modifier vos informations depuis votre compte</li>
-                    <li><strong>Droit à l'effacement</strong> — supprimer votre compte et toutes vos données</li>
-                    <li><strong>Droit d'opposition</strong> — vous opposer à tout traitement de vos données</li>
+                    <li><strong>Droit d'accès</strong> : consulter vos données depuis votre espace personnel</li>
+                    <li><strong>Droit de rectification</strong> : modifier vos informations depuis votre compte</li>
+                    <li><strong>Droit à l'effacement</strong> : supprimer votre compte et toutes vos données</li>
+                    <li><strong>Droit d'opposition</strong> : vous opposer à tout traitement de vos données</li>
                 </ul>
                 <p>Pour exercer ces droits, rendez-vous dans <Link to="/login">votre espace personnel</Link> ou contactez-nous.</p>
             </section>
@@ -57,10 +57,16 @@ function PrivacyPolicy() {
 
             <section>
                 <h2>7. Cookies</h2>
-                <p>GreenRoots utilise uniquement des cookies techniques nécessaires <br /> au fonctionnement de l'authentification (token JWT en cookie httpOnly).<br />  Aucun cookie publicitaire ou de tracking n'est utilisé.</p>
+                <p>
+                    GreenRoots utilise uniquement des cookies techniques nécessaires au fonctionnement de
+                    l'authentification et à la protection CSRF. Aucun cookie publicitaire ou de tracking
+                    n'est utilisé.
+                </p>
+                <p>
+                    Le détail des cookies déposés, de leur finalité et de leur durée de conservation est
+                    disponible dans notre <Link to="/cookies">politique de cookies</Link>.
+                </p>
             </section>
         </main>
-    )
+    );
 }
-
-export default PrivacyPolicy;

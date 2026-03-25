@@ -1,0 +1,122 @@
+.cookies_policy {
+  max-width: 860px;
+  margin: 3rem auto;
+  padding: 0 2rem 4rem;
+  font-family: var(--font-primary);
+}
+
+.cookies_policy h1 {
+  color: var(--bg-color-tercary);
+  font-size: 2.2rem;
+  font-weight: bold;
+  margin-bottom: 0.5rem;
+}
+
+.cookies_policy .last_update {
+  color: var(--text-color);
+  font-size: 0.95rem;
+  margin-bottom: 2.5rem;
+}
+
+.cookies_policy section {
+  margin-bottom: 2rem;
+}
+
+.cookies_policy h2 {
+  color: var(--bg-color-secondary);
+  font-size: 1.6rem;
+  font-weight: bold;
+  margin-bottom: 0.75rem;
+  padding-bottom: 0.4rem;
+  border-bottom: 2px solid #e0e8e4;
+}
+
+.cookies_policy p {
+  color: var(--bg-color-tercary);
+  font-size: 1.1rem;
+  line-height: 1.7;
+  margin-bottom: 0.5rem;
+}
+
+.cookies_policy ul {
+  padding-left: 1.5rem;
+  margin: 0.5rem 0;
+}
+
+.cookies_policy ul li {
+  color: var(--bg-color-tercary);
+  font-size: 1rem;
+  line-height: 1.8;
+}
+
+.cookies_policy code {
+  background-color: #eef4f0;
+  border-radius: 0.35rem;
+  padding: 0.08rem 0.35rem;
+  font-size: 0.95em;
+}
+
+.cookies_policy a {
+  color: var(--bg-color-secondary);
+  font-weight: bold;
+  text-decoration: underline;
+}
+
+.cookies_policy a:hover {
+  color: var(--bg-color-quartary);
+}
+
+.cookies_table_wrapper {
+  margin-top: 1rem;
+  overflow-x: auto;
+  border: 1px solid #d9e4de;
+  border-radius: 1rem;
+}
+
+.cookies_table {
+  width: 100%;
+  border-collapse: collapse;
+  min-width: 620px;
+  background-color: #fff;
+}
+
+.cookies_table th,
+.cookies_table td {
+  padding: 1rem;
+  text-align: left;
+  color: var(--bg-color-tercary);
+  border-bottom: 1px solid #e6eeea;
+  vertical-align: top;
+  line-height: 1.6;
+}
+
+.cookies_table th {
+  background-color: #f3f8f5;
+  color: var(--bg-color-secondary);
+  font-size: 0.95rem;
+  letter-spacing: 0.03em;
+}
+
+.cookies_table tbody tr:last-child td {
+  border-bottom: none;
+}
+
+@media (max-width: 768px) {
+  .cookies_policy {
+    margin: 2rem auto;
+    padding: 0 1.25rem 3rem;
+  }
+
+  .cookies_policy h1 {
+    font-size: 1.9rem;
+  }
+
+  .cookies_policy h2 {
+    font-size: 1.35rem;
+  }
+
+  .cookies_policy p,
+  .cookies_policy ul li {
+    font-size: 1rem;
+  }
+}
