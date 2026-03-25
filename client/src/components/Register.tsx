@@ -32,6 +32,7 @@ function Register() {
         try {
             const res = await fetch(`${import.meta.env.VITE_API_URL}/api/auth/register`, {
                 method: 'POST',
+                credentials: 'include',
                 headers: {
                     'Content-Type': 'application/json',
                     'x-csrf-token': localStorage.getItem('csrfToken') || ''
