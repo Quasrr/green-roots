@@ -8,6 +8,7 @@ function Register() {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [confirmPassword, setConfirmPassword] = useState('');
+    const [hasAcceptedPolicies, setHasAcceptedPolicies] = useState(false);
     const [error, setError] = useState('');
     const [isLoading, setIsLoading] = useState(false);
 
@@ -19,6 +20,11 @@ function Register() {
 
         if (password !== confirmPassword) {
             setError('Les mots de passe ne correspondent pas.');
+            return;
+        }
+
+        if (!hasAcceptedPolicies) {
+            setError('Vous devez accepter les conditions et la politique de confidentialité pour créer un compte.');
             return;
         }
 
@@ -108,6 +114,20 @@ function Register() {
                             <p className="register_error">Les mots de passe ne correspondent pas.</p>
                         )}
                     </div>
+
+                    <label className="register_consent">
+                        <input
+                            type="checkbox"
+                            className="register_checkbox"
+                            checked={hasAcceptedPolicies}
+                            onChange={(e) => setHasAcceptedPolicies(e.target.checked)}
+                        />
+                        <span className="register_consent_text">
+                            J'accepte les <Link to="/cgv">CGV</Link>, la{' '}
+                            <Link to="/privacy-policy">politique de confidentialité</Link> et la{' '}
+                            <Link to="/cookies">politique de cookies</Link>.
+                        </span>
+                    </label>
 
                     {error && <p className="register_error_global">{error}</p>}
 
