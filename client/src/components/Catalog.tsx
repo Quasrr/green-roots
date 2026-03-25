@@ -134,13 +134,18 @@ function Catalog() {
                                         <p className="label_tree">{tree.label}</p>
                                         <div className="price_cart_row">
                                             <p className="price_tree">{tree.price}€</p>
-                                            <div
-                                                className="icon_wrapper_cart"
-                                                onClick={(event) => {
-                                                    event.preventDefault();
-                                                    addToCart(tree);
-                                                }}>
-                                                <ShoppingCart size={18} color="#F6F8F7" className="logo_cart" />
+                                            <div className="cart_stock_wrapper">
+                                                <span className={`stock_badge ${tree.quantity > 0 ? 'in_stock' : 'out_stock'}`}>
+                                                    {tree.quantity > 0 ? 'EN STOCK' : 'RUPTURE'}
+                                                </span>
+                                                <div
+                                                    className={`icon_wrapper_cart ${tree.quantity <= 0 ? 'disabled' : ''}`}
+                                                    onClick={(event) => {
+                                                        event.preventDefault();
+                                                        if (tree.quantity > 0) addToCart(tree);
+                                                    }}>
+                                                    <ShoppingCart size={18} color="#F6F8F7" className="logo_cart" />
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
