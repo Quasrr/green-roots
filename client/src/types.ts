@@ -58,7 +58,7 @@ export type CartContextType = {
     updateQuantity: (treeId: number, quantity: number) => void;
     clearCart: () => void;
     setItems: (items: RedisCartItem[]) => void;
-    loadCart:() => void;
+    loadCart: () => Promise<void>;
 };
 
 // Types pour le dashboard admin

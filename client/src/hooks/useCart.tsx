@@ -1,10 +1,12 @@
-import { createContext, useContext, useState } from 'react';
+import { createContext, useContext, useEffect, useState } from 'react';
 import type { CartContextType, RedisCartItem, Tree } from '../types';
+import { useAuth } from './useAuth';
 
 const CartContext = createContext<CartContextType | null>(null);
 
 export function CartProvider({ children }: { children: React.ReactNode }) {
     const [items, setItems] = useState<RedisCartItem[]>([]);
+    const { isLoading, isLoggedIn } = useAuth();
 
     const totalItems = items.reduce((sum, item) => sum + item.quantity, 0);
 
@@ -22,6 +24,17 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
         }
     }
 
+    useEffect(() => {
+        if (isLoading) return;
+
+        if (!isLoggedIn) {
+            setItems([]);
+            return;
+        };
+
+        loadCart();
+    }, [isLoading, isLoggedIn]);
+
     async function sendToBack(id: number, quantity: number) {
         try {
             await fetch(`${import.meta.env.VITE_API_URL}/api/cart`, {
@@ -35,8 +48,8 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
             });
         } catch (error) {
             console.error(error);
-        }
-    }
+        };
+    };
 
     function addToCart(tree: Tree) {
         setItems(prev => {
@@ -47,18 +60,19 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
             return [...prev, { id: tree.id, title: tree.name, image: tree.image, price: tree.price, inStock: tree.quantity > 0, quantity: 1, label: tree.label }];
         });
         sendToBack(tree.id, 1); // quantity = 1 = incrément
-    }
+    };
 
     function removeFromCart(treeId: number) {
         setItems(prev => prev.filter(i => i.id !== treeId));
         sendToBack(treeId, 0); // quantity = 0 = suppression
-    }
+    };
 
     function updateQuantity(treeId: number, quantity: number) {
         if (quantity <= 0) {
             removeFromCart(treeId);
             return;
-        }
+        };
+
         const existing = items.find(i => i.id === treeId);
         if (!existing) return;
 
@@ -68,22 +82,22 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
         setItems(prev => {
             return prev.map(i => i.id === treeId ? { ...i, quantity } : i);
         });
-    }
+    };
 
     function clearCart() {
         items.forEach(item => sendToBack(item.id, 0));
         setItems([]);
-    }
+    };
 
     return (
         <CartContext.Provider value={{ items, totalItems, addToCart, removeFromCart, updateQuantity, clearCart, setItems, loadCart}}>
             {children}
         </CartContext.Provider>
-    );
-}
+    )
+};
 
 export function useCart() {
     const ctx = useContext(CartContext);
     if (!ctx) throw new Error('useCart must be used inside CartProvider');
     return ctx;
-}
+};
