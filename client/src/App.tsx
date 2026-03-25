@@ -21,6 +21,7 @@ import { AuthProvider } from './hooks/useAuth.tsx';
 import './App.css';
 import Orders from './components/Orders.tsx';
 import Account from './components/Account.tsx';
+import ProtectedRoute from './components/ProtectedRoute.tsx';
 
 // Sélecteurs des éléments à animer au scroll
 const REVEAL_SELECTORS = [
@@ -75,6 +76,7 @@ export default function App() {
                     <Header />
                     <div className="app_content">
                         <Routes>
+                            {/* Routes publics */}
                             <Route path="/" element={<LandingPage />} />
                             <Route path="/privacy-policy" element={<PrivacyPolicy />} />
                             <Route path="/cookies" element={<Cookies />} />
@@ -86,11 +88,14 @@ export default function App() {
                             <Route path="/about" element={<About />} />
                             <Route path="/login" element={<Login />} />
                             <Route path="/register" element={<Register />} />
-                            <Route path="/cart" element={<Cart />} />
-                            <Route path="/checkout" element={<Checkout />} />
-                            <Route path="/account" element={<Account />} />
-                            <Route path="/account/orders" element={<Orders />} />
-                            <Route path="/admin" element={<AdminDashboard />} />
+                            {/* Routes privées (protégées) */}
+                            <Route element={<ProtectedRoute />}>
+                                <Route path="/cart" element={<Cart />} />
+                                <Route path="/checkout" element={<Checkout />} />
+                                <Route path="/account" element={<Account />} />
+                                <Route path="/account/orders" element={<Orders />} />
+                                <Route path="/admin" element={<AdminDashboard />} />
+                            </Route>
                         </Routes>
                     </div>
                     <Footer />
