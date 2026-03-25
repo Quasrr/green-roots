@@ -1,34 +1,26 @@
-import { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { useState, useActionState } from 'react';
+import { Link, useNavigate, Navigate } from 'react-router-dom';
+import { useAuth } from '../hooks/useAuth';
 import '../components/styles/Register.css';
 
 function Register() {
-    const [firstname, setFirstname] = useState('');
-    const [lastname, setLastname] = useState('');
-    const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [confirmPassword, setConfirmPassword] = useState('');
     const [hasAcceptedPolicies, setHasAcceptedPolicies] = useState(false);
-    const [error, setError] = useState('');
-    const [isLoading, setIsLoading] = useState(false);
-
+    const { isLoggedIn } = useAuth();
     const navigate = useNavigate();
+    const [error, action, isPending] = useActionState(registerAction, '');
 
-    async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
-        e.preventDefault();
-        setError('');
+    async function registerAction(_prev: string, formData: FormData) {
+        const firstname = formData.get('firstname') as string;
+        const lastname = formData.get('lastname') as string;
+        const email = formData.get('email') as string;
+        const password = formData.get('password') as string;
+        const confirmPassword = formData.get('confirmPassword') as string;
 
-        if (password !== confirmPassword) {
-            setError('Les mots de passe ne correspondent pas.');
-            return;
-        }
+        if (password !== confirmPassword) return 'Les mots de passe ne correspondent pas.';
+        if (!hasAcceptedPolicies) return 'Vous devez accepter les conditions et la politique de confidentialité pour créer un compte.';
 
-        if (!hasAcceptedPolicies) {
-            setError('Vous devez accepter les conditions et la politique de confidentialité pour créer un compte.');
-            return;
-        }
-
-        setIsLoading(true);
         try {
             const res = await fetch(`${import.meta.env.VITE_API_URL}/api/auth/register`, {
                 method: 'POST',
@@ -46,12 +38,13 @@ function Register() {
             }
 
             navigate('/login');
+            return '';
         } catch (err) {
-            setError(err instanceof Error ? err.message : 'Une erreur est survenue');
-        } finally {
-            setIsLoading(false);
+            return err instanceof Error ? err.message : 'Une erreur est survenue';
         }
     }
+
+    if (isLoggedIn) return <Navigate to="/" replace />;
 
     return (
         <main className="register_wrapper">
@@ -59,42 +52,40 @@ function Register() {
                 <h1>Créer un compte</h1>
                 <p className="register_description">Rejoignez GreenRoots et contribuez à la reforestation.</p>
 
-                <form className="register_form" onSubmit={handleSubmit}>
+                <form className="register_form" action={action}>
                     <div className="register_form_row">
                         <div className="register_field">
                             <label className="register_label">Prénom</label>
                             <input
+                                name="firstname"
                                 type="text"
                                 className="register_input"
                                 placeholder="Votre prénom"
-                                value={firstname}
-                                onChange={e => setFirstname(e.target.value)}
                             />
                         </div>
                         <div className="register_field">
                             <label className="register_label">Nom</label>
                             <input
+                                name="lastname"
                                 type="text"
                                 className="register_input"
                                 placeholder="Votre nom"
-                                value={lastname}
-                                onChange={e => setLastname(e.target.value)}
                             />
                         </div>
                     </div>
                     <div className="register_field">
                         <label className="register_label">Email</label>
                         <input
+                            name="email"
                             type="email"
                             className="register_input"
                             placeholder="votre@email.fr"
-                            value={email}
-                            onChange={e => setEmail(e.target.value)}
                         />
                     </div>
                     <div className="register_field">
                         <label className="register_label">Mot de passe</label>
                         <input
+                            name="password"
                             type="password"
                             className="register_input"
                             placeholder="••••••••"
@@ -105,6 +96,7 @@ function Register() {
                     <div className="register_field">
                         <label className="register_label">Confirmer le mot de passe</label>
                         <input
+                            name="confirmPassword"
                             type="password"
                             className={`register_input ${confirmPassword && password !== confirmPassword ? 'register_input_error' : ''}`}
                             placeholder="••••••••"
@@ -121,7 +113,7 @@ function Register() {
                             type="checkbox"
                             className="register_checkbox"
                             checked={hasAcceptedPolicies}
-                            onChange={(e) => setHasAcceptedPolicies(e.target.checked)}
+                            onChange={e => setHasAcceptedPolicies(e.target.checked)}
                         />
                         <span className="register_consent_text">
                             J'accepte les <Link to="/cgv">CGV</Link>, la{' '}
@@ -132,8 +124,8 @@ function Register() {
 
                     {error && <p className="register_error_global">{error}</p>}
 
-                    <button type="submit" className="register_btn" disabled={isLoading}>
-                        {isLoading ? 'Inscription...' : 'Créer mon compte'}
+                    <button type="submit" className="register_btn" disabled={isPending}>
+                        {isPending ? 'Inscription...' : 'Créer mon compte'}
                     </button>
                 </form>
 

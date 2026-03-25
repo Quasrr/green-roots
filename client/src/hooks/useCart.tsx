@@ -10,6 +10,7 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
 
     const totalItems = items.reduce((sum, item) => sum + item.quantity, 0);
 
+    // Charge le panier depuis Redis - fallback sur tableau vide si la réponse est invalide
     async function loadCart() {
         try {
             const res = await fetch(`${import.meta.env.VITE_API_URL}/api/cart`, {
@@ -34,7 +35,8 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
 
         loadCart();
     }, [isLoading, isLoggedIn]);
-
+    
+    // Fonction PUT créée pour être appelé à chaque modif du panier (ajout, suppression, modif et clear)
     async function sendToBack(id: number, quantity: number) {
         try {
             await fetch(`${import.meta.env.VITE_API_URL}/api/cart`, {
@@ -61,7 +63,8 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
         });
         sendToBack(tree.id, 1); // quantity = 1 = incrément
     };
-
+    
+    // sendToBack en dehors du setItems exprès pour éviter le double appel en React StrictMode qui exécute les callbacks deux fois en développement. (créant une incrémentation au refresh sinon)
     function removeFromCart(treeId: number) {
         setItems(prev => prev.filter(i => i.id !== treeId));
         sendToBack(treeId, 0); // quantity = 0 = suppression
