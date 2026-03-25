@@ -153,9 +153,8 @@ describe("PATCH /api/users/:id", () => {
 });
 
 describe("DELETE /api/users/:id", () => {
-    it("deletes an existing user", async () => {
-        await createUser({ email: "viewer@greenroots.fr" });
-        const user = await createUser({ email: "target@greenroots.fr" });
+    it("deletes the connected user", async () => {
+        const user = await createUser({ email: "viewer@greenroots.fr" });
         const { session } = await loginAndGetSession("viewer@greenroots.fr", "GreenRoots123");
 
         const response = await session.csrfFetch(`${baseUrl}/api/users/${user.id}`, {
@@ -171,11 +170,28 @@ describe("DELETE /api/users/:id", () => {
         assert.equal(deletedUser, null);
     });
 
-    it("returns 404 when the user does not exist", async () => {
+    it("returns 403 when a user tries to delete another account", async () => {
         await createUser({ email: "viewer@greenroots.fr" });
+        const user = await createUser({ email: "target@greenroots.fr" });
         const { session } = await loginAndGetSession("viewer@greenroots.fr", "GreenRoots123");
 
-        const response = await session.csrfFetch(`${baseUrl}/api/users/999`, {
+        const response = await session.csrfFetch(`${baseUrl}/api/users/${user.id}`, {
+            method: "DELETE",
+        });
+
+        assert.equal(response.status, 403);
+        assert.match(await response.text(), /Forbidden/);
+    });
+
+    it("returns 404 when the user does not exist", async () => {
+        const user = await createUser({ email: "viewer@greenroots.fr" });
+        const { session } = await loginAndGetSession("viewer@greenroots.fr", "GreenRoots123");
+
+        await prisma.user.delete({
+            where: { id: user.id },
+        });
+
+        const response = await session.csrfFetch(`${baseUrl}/api/users/${user.id}`, {
             method: "DELETE",
         });
 

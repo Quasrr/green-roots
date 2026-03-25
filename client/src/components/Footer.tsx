@@ -1,7 +1,7 @@
 import { Link } from 'react-router-dom';
 import '../components/styles/Footer.css';
 
-function Footer() {
+export default function Footer() {
     return (
         <footer>
             <div className="footer_copyright_out">
@@ -12,7 +12,7 @@ function Footer() {
                             <p className="name_enterprise_footer">GreenRoots</p>
                         </div>
                     </Link>
-                    <p className="description_footer">Redonnez vie à votre jardin avec nos arbres d'exception, sélectionnés avec soin auprès des meilleures pépinières mondiales</p>
+                    <p className="description_footer">Participez à la reforestation en soutenant des plantations d'arbres porteuses d'un impact concret pour la planète.</p>
                 </div>
                 <nav className='nav_footer'>
                     <p className="nav_categorie">Information</p>
@@ -27,7 +27,7 @@ function Footer() {
                 </nav>
                 <nav className='nav_footer'>
                     <p className="nav_categorie">Entreprise</p>
-                    <Link to="/about">A propos</Link>
+                    <Link to="/about">À propos</Link>
                     <Link to="/contact">Contact</Link>
                 </nav>
             </div>
@@ -39,7 +39,5 @@ function Footer() {
                 </div>
             </div>
         </footer>
-    )
+    );
 }
-
-export default Footer

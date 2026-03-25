@@ -5,9 +5,9 @@ import { useAuth } from '../hooks/useAuth';
 import '../components/styles/Cart.css';
 import { useEffect } from 'react';
 
-function Cart() {
+export default function Cart() {
     const { isLoggedIn, isLoading } = useAuth();
-    const { items, removeFromCart, updateQuantity, setItems } = useCart();
+    const { items, removeFromCart, updateQuantity } = useCart();
     const navigate = useNavigate();
 
     const subtotal = items.reduce((sum, item) => sum + item.price * item.quantity, 0);
@@ -15,29 +15,9 @@ function Cart() {
     // Vérification de connexion pour être sur la page panier, sinon redirection
     useEffect(() => {
         if (isLoading) return;
-        if (!isLoggedIn) {
-            navigate('/');
-        }
+        if (!isLoggedIn) navigate('/');
+
     }, [isLoggedIn, isLoading, navigate]);
-
-    useEffect(() => {
-        if (isLoading || !isLoggedIn) return;
-
-        async function loadCart() {
-            try {
-                const res = await fetch(`${import.meta.env.VITE_API_URL}/api/cart`, {
-                    credentials: 'include',
-                });
-                if (res.ok) {
-                    const data = await res.json();
-                    setItems(Array.isArray(data.items) ? data.items : []);
-                }
-            } catch (error) {
-                console.error(error);
-            }
-        }
-        loadCart();
-    }, [isLoggedIn, isLoading, setItems]);
 
     if (items.length === 0) {
         return (
@@ -49,7 +29,7 @@ function Cart() {
                 </div>
             </main>
         );
-    }
+    };
 
     return (
         <main className="cart_wrapper">
@@ -115,5 +95,3 @@ function Cart() {
         </main>
     );
 }
-
-export default Cart;

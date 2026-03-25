@@ -175,6 +175,13 @@
     margin: 0;
 }
 
+.profile_actions {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 1rem;
+}
+
 .profile_btn {
     background-color: var(--bg-color-secondary);
     color: white;
@@ -194,6 +201,111 @@
 }
 
 .profile_btn:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+.profile_delete_btn {
+    background-color: transparent;
+    color: #c0392b;
+    border: 1px solid #e5b7b2;
+    border-radius: 0.5rem;
+    padding: 0.6rem 1.4rem;
+    font-size: 0.9rem;
+    font-weight: 600;
+    font-family: var(--font-primary);
+    cursor: pointer;
+    transition: background 0.15s, color 0.15s, border-color 0.15s;
+    align-self: flex-end;
+}
+
+.profile_delete_btn:hover {
+    background-color: #fff1ef;
+    border-color: #c0392b;
+}
+
+.profile_delete_btn:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+.profile_modal_overlay {
+    position: fixed;
+    inset: 0;
+    background-color: rgba(13, 13, 12, 0.45);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 1rem;
+    z-index: 1000;
+}
+
+.profile_modal {
+    width: 100%;
+    max-width: 460px;
+    background-color: white;
+    border-radius: 1rem;
+    padding: 1.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    box-shadow: 0 20px 45px rgba(0, 0, 0, 0.18);
+}
+
+.profile_modal_title {
+    margin: 0;
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: var(--bg-color-tercary);
+}
+
+.profile_modal_text {
+    margin: 0;
+    font-size: 0.95rem;
+    line-height: 1.6;
+    color: var(--text-color);
+}
+
+.profile_modal_actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 0.75rem;
+}
+
+.profile_modal_cancel,
+.profile_modal_confirm {
+    border-radius: 0.5rem;
+    padding: 0.65rem 1rem;
+    font-size: 0.9rem;
+    font-weight: 600;
+    font-family: var(--font-primary);
+    cursor: pointer;
+    transition: background 0.15s, color 0.15s, border-color 0.15s;
+}
+
+.profile_modal_cancel {
+    background-color: white;
+    color: var(--bg-color-tercary);
+    border: 1px solid #d8dfdb;
+}
+
+.profile_modal_cancel:hover {
+    background-color: #f5f7f6;
+}
+
+.profile_modal_confirm {
+    background-color: #c0392b;
+    color: white;
+    border: 1px solid #c0392b;
+}
+
+.profile_modal_confirm:hover {
+    background-color: #a93226;
+    border-color: #a93226;
+}
+
+.profile_modal_cancel:disabled,
+.profile_modal_confirm:disabled {
     opacity: 0.6;
     cursor: not-allowed;
 }
@@ -230,5 +342,18 @@
     .profile_btn {
         align-self: stretch;
         text-align: center;
+    }
+
+    .profile_delete_btn {
+        align-self: stretch;
+        text-align: center;
+    }
+
+    .profile_actions {
+        flex-direction: column-reverse;
+    }
+
+    .profile_modal_actions {
+        flex-direction: column;
     }
 }

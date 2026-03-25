@@ -1,6 +1,6 @@
 import type { Request, Response } from "express";
 import { prisma } from '../models/index.ts';
-import { NotFoundError } from "../utils/Error.ts";
+import { ForbiddenError, NotFoundError } from "../utils/Error.ts";
 import z from 'zod';
 import ErrorHandler from "../ErrorHandler.ts";
 
@@ -79,15 +79,39 @@ class UserController {
     async delete(req: Request, res: Response) {
         try {
             const { id } = req.params;
+            const userId = Number(id);
+
+            if (Number(req.user?.id) !== userId) {
+                throw new ForbiddenError('Forbidden');
+            }
 
             const user = await prisma.user.findUnique({
-                where: { id: Number(id) }
+                where: { id: userId }
             });
 
             if (!user) throw new NotFoundError('User not found');
 
-            await prisma.user.delete({
-                where: { id: Number(id) }
+            await prisma.$transaction(async (tx) => {
+                await tx.refreshToken.deleteMany({
+                    where: { userId }
+                });
+
+                await tx.order.deleteMany({
+                    where: { userId }
+                });
+
+                await tx.user.delete({
+                    where: { id: userId }
+                });
+            });
+
+            res.clearCookie("access_token", { path: "/api" });
+            res.clearCookie("refresh_token", {
+                httpOnly: true,
+                secure: process.env.NODE_ENV === "production",
+                sameSite: "lax",
+                maxAge: 1000 * 60 * 60 * 24 * 7,
+                path: "/api/auth/refresh"
             });
 
             res.status(204).send();
