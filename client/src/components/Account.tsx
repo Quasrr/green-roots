@@ -13,6 +13,8 @@ export default function Account() {
     const [success, setSuccess] = useState('');
     const [error, setError] = useState('');
     const [isLoading, setIsLoading] = useState(false);
+    const [isDeleting, setIsDeleting] = useState(false);
+    const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
 
     async function handleSubmit(e: React.FormEvent) {
         e.preventDefault();
@@ -54,6 +56,38 @@ export default function Account() {
             setIsLoading(false);
         };
     };
+
+    async function handleDeleteAccount() {
+        if (!user) {
+            return;
+        }
+
+        setError('');
+        setSuccess('');
+        setIsDeleting(true);
+
+        try {
+            const res = await fetch(`${import.meta.env.VITE_API_URL}/api/users/${user.id}`, {
+                method: 'DELETE',
+                headers: {
+                    'x-csrf-token': localStorage.getItem('csrfToken') || ''
+                },
+                credentials: 'include',
+            });
+
+            if (!res.ok) {
+                const data = await res.json();
+                throw new Error(data.message || 'Erreur lors de la suppression du compte');
+            }
+
+            setIsDeleteModalOpen(false);
+            localStorage.removeItem('csrfToken');
+            window.location.assign('/');
+        } catch (err) {
+            setError(err instanceof Error ? err.message : 'Une erreur est survenue');
+            setIsDeleting(false);
+        }
+    }
 
     return (
         <main className="profile_wrapper">
@@ -140,11 +174,57 @@ export default function Account() {
                     {error && <p className="profile_error">{error}</p>}
                     {success && <p className="profile_success">{success}</p>}
 
-                    <button type="submit" className="profile_btn" disabled={isLoading}>
-                        {isLoading ? 'Enregistrement...' : 'Enregistrer les modifications'}
-                    </button>
+                    <div className="profile_actions">
+                        <button
+                            type="button"
+                            className="profile_delete_btn"
+                            onClick={() => setIsDeleteModalOpen(true)}
+                            disabled={isLoading || isDeleting}
+                        >
+                            {isDeleting ? 'Suppression...' : 'Supprimer mon compte'}
+                        </button>
+
+                        <button type="submit" className="profile_btn" disabled={isLoading || isDeleting}>
+                            {isLoading ? 'Enregistrement...' : 'Enregistrer les modifications'}
+                        </button>
+                    </div>
                 </form>
             </div>
+
+            {isDeleteModalOpen && (
+                <div className="profile_modal_overlay" onClick={() => !isDeleting && setIsDeleteModalOpen(false)}>
+                    <div
+                        className="profile_modal"
+                        onClick={(e) => e.stopPropagation()}
+                        role="dialog"
+                        aria-modal="true"
+                        aria-labelledby="delete-account-title"
+                    >
+                        <h2 id="delete-account-title" className="profile_modal_title">Supprimer mon compte</h2>
+                        <p className="profile_modal_text">
+                            Cette action est définitive. Votre compte et les données associées seront supprimés.
+                        </p>
+                        <div className="profile_modal_actions">
+                            <button
+                                type="button"
+                                className="profile_modal_cancel"
+                                onClick={() => setIsDeleteModalOpen(false)}
+                                disabled={isDeleting}
+                            >
+                                Annuler
+                            </button>
+                            <button
+                                type="button"
+                                className="profile_modal_confirm"
+                                onClick={handleDeleteAccount}
+                                disabled={isDeleting}
+                            >
+                                {isDeleting ? 'Suppression...' : 'Supprimer définitivement'}
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
         </main>
     );
 };

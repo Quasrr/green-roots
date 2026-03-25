@@ -1,7 +1,7 @@
 import { Link } from 'react-router-dom';
 import '../components/styles/Footer.css';
 
-function Footer() {
+export default function Footer() {
     return (
         <footer>
             <div className="footer_copyright_out">
@@ -41,5 +41,3 @@ function Footer() {
         </footer>
     );
 }
-
-export default Footer;
