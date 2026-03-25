@@ -97,4 +97,4 @@ export type Order = {
     lines: Array<OrderLine>;
 };
 
-export type Tab = 'users' | 'orders';
+export type Tab = 'users' | 'orders' | 'trees';
