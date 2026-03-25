@@ -78,11 +78,11 @@ function Product() {
                 <div className="measure_tree">
                     <div className="measure_tree_value">
                         <p className="information_tree">HAUTEUR ADULTE</p>
-                        <p className="information_tree_value">{tree.height}</p>
+                        <p className="information_tree_value">{tree.height}m</p>
                     </div>
                     <div className="measure_tree_value">
                         <p className="information_tree">CROISSANCE</p>
-                        <p className="information_tree_value">{tree.growth}</p>
+                        <p className="information_tree_value">{{ slow: 'Lente', medium: 'Moyenne', fast: 'Rapide' }[tree.growth]}</p>
                     </div>
                     <div className="measure_tree_value">
                         <p className="information_tree">EXPOSITION</p>
