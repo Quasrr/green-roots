@@ -1,13 +1,11 @@
 import { useState, useActionState } from 'react';
-import { Link, useNavigate, Navigate } from 'react-router-dom';
-import { useAuth } from '../hooks/useAuth';
+import { Link, useNavigate } from 'react-router-dom';
 import '../components/styles/Register.css';
 
 function Register() {
     const [password, setPassword] = useState('');
     const [confirmPassword, setConfirmPassword] = useState('');
     const [hasAcceptedPolicies, setHasAcceptedPolicies] = useState(false);
-    const { isLoggedIn } = useAuth();
     const navigate = useNavigate();
     const [error, action, isPending] = useActionState(registerAction, '');
 
@@ -42,8 +40,6 @@ function Register() {
             return err instanceof Error ? err.message : 'Une erreur est survenue';
         }
     }
-
-    if (isLoggedIn) return <Navigate to="/" replace />;
 
     return (
         <main className="register_wrapper">

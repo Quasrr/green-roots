@@ -1,10 +1,10 @@
 import { useActionState } from 'react';
-import { Link, useNavigate, Navigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../hooks/useAuth';
 import '../components/styles/Login.css';
 
 function Login() {
-    const { login, isLoggedIn } = useAuth();
+    const { login } = useAuth();
     const navigate = useNavigate();
 
     async function loginAction(_prev: string, formData: FormData) {
@@ -21,8 +21,6 @@ function Login() {
     }
 
     const [error, action, isPending] = useActionState(loginAction, '');
-
-    if (isLoggedIn) return <Navigate to="/" replace />;
 
     return (
         <main className="login_wrapper">
