@@ -7,25 +7,26 @@ import { Leaf, Bird, MountainSnow, ShoppingCart } from 'lucide-react';
 
 function LandingPage() {
     const [trees, setTrees] = useState<Tree[]>([]); //State des arbres
-    const { setItems, loadCart } = useCart();
-
+    const { loadCart } = useCart();
 
     // Charger le panier depuis Redis au montage de la landing page
     useEffect(() => {
-        loadCart()
-    }, [setItems, loadCart]);
+        loadCart();
+    }, []);
 
     useEffect(() => {
         async function fetchTrees() {
             try {
-                const res = await fetch(`${import.meta.env.VITE_API_URL}/api/trees`) // Fetch sur la route des arbres de notre api
-                const data = await res.json()
+                const res = await fetch(`${import.meta.env.VITE_API_URL}/api/trees`); // Fetch sur la route des arbres de notre api
+                const data = await res.json();
+
                 setTrees(data) // Maj du state avec les arbres récupérer
             } catch (error) {
-                console.error(error)
-            }
-        }
-        fetchTrees()
+                console.error(error);
+            };
+        };
+
+        fetchTrees();
     }, []);
 
     return (
