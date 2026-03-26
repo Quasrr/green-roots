@@ -98,7 +98,7 @@ function Catalog() {
 
                         <p className="categories">PRIX (0€ - 300€)</p>
                         <div className="slider_wrapper">
-                            <input type="range" min={0} max={300} value={maxPrice} onChange={e => { setMaxPrice(Number(e.target.value)); setCurrentPage(1); }} /> {/* Convertir la value de l'input string en number pour la comparaison sur matchPrice + reset page */}
+                            <input type="range" min={0} max={300} value={maxPrice} onChange={e => { setMaxPrice(Number(e.target.value)); setCurrentPage(1); }} aria-label={`Prix maximum : ${maxPrice}€`} /> {/* Convertir la value de l'input string en number pour la comparaison sur matchPrice + reset page */}
                             <div className="slider_labels">
                                 <span>0€</span>
                                 <span>{maxPrice}€</span>
@@ -140,9 +140,18 @@ function Catalog() {
                                                 </span>
                                                 <div
                                                     className={`icon_wrapper_cart ${tree.quantity <= 0 ? 'disabled' : ''}`}
+                                                    role="button"
+                                                    aria-label={`Ajouter ${tree.name} au panier`}
+                                                    tabIndex={tree.quantity > 0 ? 0 : -1}
                                                     onClick={(event) => {
                                                         event.preventDefault();
                                                         if (tree.quantity > 0) addToCart(tree);
+                                                    }}
+                                                    onKeyDown={(event) => {
+                                                        if ((event.key === 'Enter' || event.key === ' ') && tree.quantity > 0) {
+                                                            event.preventDefault();
+                                                            addToCart(tree);
+                                                        }
                                                     }}>
                                                     <ShoppingCart size={18} color="#F6F8F7" className="logo_cart" />
                                                 </div>
@@ -157,7 +166,7 @@ function Catalog() {
                         {/* boutons de pagination, affichés uniquement si plus d'une page */}
                         {totalPages > 1 && (
                             <div className="pagination">
-                                <button onClick={() => setCurrentPage(p => p - 1)} disabled={currentPage === 1}>←</button>
+                                <button onClick={() => setCurrentPage(p => p - 1)} disabled={currentPage === 1} aria-label="Page précédente">←</button>
                                 {Array.from({ length: totalPages }, (_, i) => i + 1).map(page => (
                                     <button
                                         key={page}
@@ -166,7 +175,7 @@ function Catalog() {
                                         {page}
                                     </button>
                                 ))}
-                                <button onClick={() => setCurrentPage(p => p + 1)} disabled={currentPage === totalPages}>→</button>
+                                <button onClick={() => setCurrentPage(p => p + 1)} disabled={currentPage === totalPages} aria-label="Page suivante">→</button>
                             </div>
                         )}
                     </main>

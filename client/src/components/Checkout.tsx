@@ -189,7 +189,7 @@ export default function Checkout() {
                 <div className="checkout_right">
                     <h2 className="checkout_form_title">Informations de paiement</h2>
 
-                    <form className="checkout_form" action={submitOrder}>
+                    <form className="checkout_form" action={submitOrder} aria-label="Formulaire de paiement">
                         <div className="checkout_field">
                             <label className="checkout_label" htmlFor="email">
                                 Email de facturation
