@@ -73,9 +73,9 @@ export default function App() {
     return (
         <AuthProvider>
             <CartProvider>
-                <Toaster position="top-right" offset={{ top: 80 }}/>
                 <div className="app_layout">
                     <Header />
+                    <Toaster position="top-right" offset={{ top: 80 }} />
                     <div className="app_content">
                         <Routes>
                             {/* Routes publics */}
