@@ -3,6 +3,8 @@ import { useParams } from "react-router-dom";
 import type { Tree } from "../types";
 import { Leaf, Wind, MapPin } from 'lucide-react';
 import { useCart } from "../hooks/useCart";
+import { useAuth } from '../hooks/useAuth';
+import { toast } from 'sonner';
 import '../components/styles/Product.css';
 
 function Product() {
@@ -12,6 +14,7 @@ function Product() {
     const [isLoading, setIsLoading] = useState<boolean>(false); // Loader de chargement
     const [error, setError] = useState(false);
     const { addToCart } = useCart();
+    const { isLoggedIn } = useAuth();
 
     useEffect(() => {
         async function fetchTreeById() {
@@ -47,7 +50,13 @@ function Product() {
                     </div>
                     <button
                         className="btn_add_to_cart"
-                        onClick={() => addToCart(tree)}
+                        onClick={() => {
+                            if (!isLoggedIn) {
+                                toast.error('Veuillez vous identifier pour accéder au panier');
+                                return;
+                            }
+                            addToCart(tree);
+                        }}
                         disabled={tree.quantity <= 0}
                     >
                         Ajouter au panier

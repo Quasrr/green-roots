@@ -75,7 +75,7 @@ export default function App() {
             <CartProvider>
                 <div className="app_layout">
                     <Header />
-                    <Toaster position="top-right" offset={{ top: 80 }} />
+                    <Toaster position="top-right" offset={{ top: 80 }} toastOptions={{ style: { zIndex: 9999 } }}/>
                     <div className="app_content">
                         <Routes>
                             {/* Routes publics */}
