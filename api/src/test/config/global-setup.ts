@@ -51,6 +51,7 @@ before(async () => {
 beforeEach(async (t) => {
     (t as TestContext).mock.method(console, "info", () => {});
 
+    await redis.flushDb();
     await truncateTables();
 
     await prisma.role.createMany({
