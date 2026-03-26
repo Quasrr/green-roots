@@ -22,28 +22,28 @@ function Contact() {
                     </div>
                 </div>
 
-                <form className="contact_form">
+                <form className="contact_form" aria-label="Formulaire de contact">
                     <div className="contact_form_row">
                         <div className="contact_field">
-                            <label className="contact_label">Nom</label>
-                            <input type="text" className="contact_input" placeholder="Votre nom" />
+                            <label className="contact_label" htmlFor="contact-lastname">Nom</label>
+                            <input id="contact-lastname" type="text" className="contact_input" placeholder="Votre nom" autoComplete="family-name" />
                         </div>
                         <div className="contact_field">
-                            <label className="contact_label">Prénom</label>
-                            <input type="text" className="contact_input" placeholder="Votre prénom" />
+                            <label className="contact_label" htmlFor="contact-firstname">Prénom</label>
+                            <input id="contact-firstname" type="text" className="contact_input" placeholder="Votre prénom" autoComplete="given-name" />
                         </div>
                     </div>
                     <div className="contact_field">
-                        <label className="contact_label">Email</label>
-                        <input type="email" className="contact_input" placeholder="votre@email.fr" />
+                        <label className="contact_label" htmlFor="contact-email">Email</label>
+                        <input id="contact-email" type="email" className="contact_input" placeholder="votre@email.fr" autoComplete="email" />
                     </div>
                     <div className="contact_field">
-                        <label className="contact_label">Sujet</label>
-                        <input type="text" className="contact_input" placeholder="Sujet de votre message" />
+                        <label className="contact_label" htmlFor="contact-subject">Sujet</label>
+                        <input id="contact-subject" type="text" className="contact_input" placeholder="Sujet de votre message" />
                     </div>
                     <div className="contact_field">
-                        <label className="contact_label">Message</label>
-                        <textarea className="contact_textarea" placeholder="Votre message..." rows={6} />
+                        <label className="contact_label" htmlFor="contact-message">Message</label>
+                        <textarea id="contact-message" className="contact_textarea" placeholder="Votre message..." rows={6} />
                     </div>
                     <button type="submit" className="contact_btn">Envoyer le message</button>
                 </form>

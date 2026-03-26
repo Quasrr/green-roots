@@ -31,23 +31,27 @@ function Login() {
                 <h1>Connexion</h1>
                 <p className="login_description">Accédez à votre espace personnel GreenRoots.</p>
 
-                <form className="login_form" action={action}>
+                <form className="login_form" action={action} aria-label="Formulaire de connexion">
                     <div className="login_field">
-                        <label className="login_label">Email</label>
+                        <label className="login_label" htmlFor="login-email">Email</label>
                         <input
+                            id="login-email"
                             name="email"
                             type="email"
                             className="login_input"
                             placeholder="votre@email.fr"
+                            autoComplete="email"
                         />
                     </div>
                     <div className="login_field">
-                        <label className="login_label">Mot de passe</label>
+                        <label className="login_label" htmlFor="login-password">Mot de passe</label>
                         <input
+                            id="login-password"
                             name="password"
                             type="password"
                             className="login_input"
                             placeholder="********"
+                            autoComplete="current-password"
                         />
                     </div>
                     <button type="submit" className="login_btn" disabled={isPending}>

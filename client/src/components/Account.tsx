@@ -109,37 +109,43 @@ export default function Account() {
                 </aside>
 
                 {/* Formulaire de modification */}
-                <form className="profile_form" onSubmit={handleSubmit}>
+                <form className="profile_form" onSubmit={handleSubmit} aria-label="Modifier mes informations personnelles">
                     <h4>Informations personnelles</h4>
 
                     <div className="profile_form_row">
                         <div className="profile_field">
-                            <label className="profile_label">Prénom</label>
+                            <label className="profile_label" htmlFor="profile-firstname">Prénom</label>
                             <input
+                                id="profile-firstname"
                                 type="text"
                                 className="profile_input"
                                 value={firstname}
                                 onChange={e => setFirstname(e.target.value)}
+                                autoComplete="given-name"
                             />
                         </div>
                         <div className="profile_field">
-                            <label className="profile_label">Nom</label>
+                            <label className="profile_label" htmlFor="profile-lastname">Nom</label>
                             <input
+                                id="profile-lastname"
                                 type="text"
                                 className="profile_input"
                                 value={lastname}
                                 onChange={e => setLastname(e.target.value)}
+                                autoComplete="family-name"
                             />
                         </div>
                     </div>
 
                     <div className="profile_field">
-                        <label className="profile_label">Email</label>
+                        <label className="profile_label" htmlFor="profile-email">Email</label>
                         <input
+                            id="profile-email"
                             type="email"
                             className="profile_input"
                             value={email}
                             onChange={e => setEmail(e.target.value)}
+                            autoComplete="email"
                         />
                     </div>
 
@@ -147,24 +153,28 @@ export default function Account() {
                     <p className="profile_hint">Laissez vide si vous ne souhaitez pas le modifier.</p>
 
                     <div className="profile_field">
-                        <label className="profile_label">Nouveau mot de passe</label>
+                        <label className="profile_label" htmlFor="profile-password">Nouveau mot de passe</label>
                         <input
+                            id="profile-password"
                             type="password"
                             className="profile_input"
                             placeholder="••••••••"
                             value={password}
                             onChange={e => setPassword(e.target.value)}
+                            autoComplete="new-password"
                         />
                     </div>
 
                     <div className="profile_field">
-                        <label className="profile_label">Confirmer le mot de passe</label>
+                        <label className="profile_label" htmlFor="profile-confirmPassword">Confirmer le mot de passe</label>
                         <input
+                            id="profile-confirmPassword"
                             type="password"
                             className={`profile_input ${confirmPassword && password !== confirmPassword ? 'profile_input_error' : ''}`}
                             placeholder="••••••••"
                             value={confirmPassword}
                             onChange={e => setConfirmPassword(e.target.value)}
+                            autoComplete="new-password"
                         />
                         {confirmPassword && password !== confirmPassword && (
                             <p className="profile_error_inline">Les mots de passe ne correspondent pas.</p>
