@@ -1,5 +1,6 @@
 import { useState, useActionState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+import { toast } from 'sonner';
 import '../components/styles/Register.css';
 
 function Register() {
@@ -7,7 +8,7 @@ function Register() {
     const [confirmPassword, setConfirmPassword] = useState('');
     const [hasAcceptedPolicies, setHasAcceptedPolicies] = useState(false);
     const navigate = useNavigate();
-    const [error, action, isPending] = useActionState(registerAction, '');
+    const [, action, isPending] = useActionState(registerAction, '');
 
     async function registerAction(_prev: string, formData: FormData) {
         const firstname = formData.get('firstname') as string;
@@ -32,13 +33,17 @@ function Register() {
 
             if (!res.ok) {
                 const data = await res.json();
-                throw new Error(data.message || 'Erreur lors de l\'inscription');
+                toast.error(data.message || 'Erreur lors de l\'inscription');
+                return'';
             }
 
+            toast.success("Compte créé avec succès");
             navigate('/login');
             return '';
+
         } catch (err) {
-            return err instanceof Error ? err.message : 'Une erreur est survenue';
+            toast.error (err instanceof Error ? err.message : 'Une erreur est survenue') // toast.error retourne un id de toast(number)
+            return '';
         }
     }
 
@@ -84,7 +89,7 @@ function Register() {
                             name="password"
                             type="password"
                             className="register_input"
-                            placeholder="••••••••"
+                            placeholder="********"
                             value={password}
                             onChange={e => setPassword(e.target.value)}
                         />
@@ -117,8 +122,6 @@ function Register() {
                             <Link to="/cookies">politique de cookies</Link>.
                         </span>
                     </label>
-
-                    {error && <p className="register_error_global">{error}</p>}
 
                     <button type="submit" className="register_btn" disabled={isPending}>
                         {isPending ? 'Inscription...' : 'Créer mon compte'}
