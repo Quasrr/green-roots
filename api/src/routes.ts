@@ -6,17 +6,18 @@ import TreesController from "./controllers/TreesController.ts";
 import OrdersController from "./controllers/OrdersController.ts";
 import adminMiddleware from "./Middlewares/adminMiddleware.ts";
 import CartController from "./controllers/CartController.ts";
+import { loginLimiter } from "./Middlewares/rateLimitMiddleware.ts";
 
 const router = Router();
 
 // routes d'authentification
-router.post('/api/auth/register', AuthController.register);
-router.post('/api/auth/login', AuthController.login);
+router.post('/api/auth/register', loginLimiter, AuthController.register);
+router.post('/api/auth/login', loginLimiter, AuthController.login);
 router.post('/api/auth/logout', authMiddleware, AuthController.logout);
 router.get('/api/auth/me', authMiddleware, AuthController.me);
 // Renouvellement de l'access token via le refresh token 
 // (pas de authMiddleware car l'access token est expiré à ce moment-là)
-router.post('/api/auth/refresh', AuthController.refreshAccessToken);
+router.post('/api/auth/refresh', loginLimiter, AuthController.refreshAccessToken);
 
 // routes utilisateur
 router.get('/api/users', authMiddleware, adminMiddleware, UserController.getAll);

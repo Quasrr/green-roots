@@ -5,9 +5,14 @@ import router from './src/routes.ts';
 import { doubleCsrf } from 'csrf-csrf';
 import cors from 'cors';
 import helmet from 'helmet';
+import { apiLimiter } from './src/Middlewares/rateLimitMiddleware.ts';
 
 const app = express();
 const PORT = Number(process.env.PORT) || 3000;
+
+// Obligatoire car en prod on est derrière un reverse proxy, express ne verrait que l'ip de celui ci sans cette option
+// Ajoute les en-têtes X-Forwared-* pour reconstituer la vraie ip client
+app.set('trust proxy', 1);
 
 app.use(express.json());
 app.use(helmet());
@@ -31,6 +36,8 @@ const { generateToken, doubleCsrfProtection } = doubleCsrf({
         secure: process.env.NODE_ENV === 'production',
     }
 });
+
+app.use('/api', apiLimiter);
 
 // CSRF getter
 app.get('/api/csrf', (req: Request, res: Response) => {
