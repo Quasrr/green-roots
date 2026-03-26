@@ -23,7 +23,7 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
                 setItems(Array.isArray(data.items) ? data.items : []);
             }
         } catch {
-            toast.error('Impossible de charger le panier');
+            toast.error('Impossible de mettre à jour le panier');
         };
     };
 
@@ -53,7 +53,7 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
         const data = await response.json();
 
         if (!response.ok) {
-            toast.error('Mise à jour du panier échouée');
+            throw new Error('Impossible de mettre à jour le panier');
         };
 
         return Array.isArray(data.items) ? data.items : [];
@@ -65,7 +65,7 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
 
             setItems(serverItems);
         } catch {
-            toast.error('Mise à jour du panier échouée');
+            toast.error('Impossible de mettre à jour le panier');
 
             await loadCart();
         };
@@ -78,7 +78,7 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
             };
 
         } catch {
-            toast.error('Mise à jour du panier échouée');
+            toast.error('Impossible de mettre à jour le panier');
 
             await loadCart();
         };
