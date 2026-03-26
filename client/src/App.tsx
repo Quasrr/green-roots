@@ -26,7 +26,7 @@ import ProtectedRoute from './components/ProtectedRoute.tsx';
 
 // Sélecteurs des éléments à animer au scroll
 const REVEAL_SELECTORS = [
-    'section',
+    'main section',
     '.article_tree',
     '.article_reasons_choose',
     '.about_value_card',
@@ -75,7 +75,6 @@ export default function App() {
             <CartProvider>
                 <div className="app_layout">
                     <Header />
-                    <Toaster position="top-right" offset={{ top: 80 }} toastOptions={{ style: { zIndex: 9999 } }}/>
                     <div className="app_content">
                         <Routes>
                             {/* Routes publics */}
@@ -102,6 +101,7 @@ export default function App() {
                     </div>
                     <Footer />
                 </div>
+                <Toaster position="top-right" offset={{ top: 80 }} toastOptions={{ style: { zIndex: 9999 } }} />
             </CartProvider>
         </AuthProvider>
     );
