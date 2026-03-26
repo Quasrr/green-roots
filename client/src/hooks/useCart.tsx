@@ -1,6 +1,7 @@
 import { createContext, useContext, useEffect, useState } from 'react';
 import type { CartContextType, RedisCartItem, Tree } from '../types';
 import { useAuth } from './useAuth';
+import { toast } from 'sonner';
 
 const CartContext = createContext<CartContextType | null>(null);
 
@@ -21,8 +22,8 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
                 const data = await res.json();
                 setItems(Array.isArray(data.items) ? data.items : []);
             }
-        } catch (error) {
-            console.error(error);
+        } catch {
+            toast.error('Impossible de charger le panier');
         };
     };
 
@@ -52,7 +53,7 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
         const data = await response.json();
 
         if (!response.ok) {
-            throw new Error('Cart update failed');
+            toast.error('Mise à jour du panier échouée');
         };
 
         return Array.isArray(data.items) ? data.items : [];
@@ -63,8 +64,8 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
             const serverItems = await sendToBack(id, quantity);
 
             setItems(serverItems);
-        } catch (error) {
-            console.error(error);
+        } catch {
+            toast.error('Mise à jour du panier échouée');
 
             await loadCart();
         };
@@ -76,8 +77,8 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
                 await sendToBack(item.id, 0);
             };
 
-        } catch (error) {
-            console.error(error);
+        } catch {
+            toast.error('Mise à jour du panier échouée');
 
             await loadCart();
         };
