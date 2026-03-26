@@ -186,6 +186,61 @@ describe("PUT /api/cart", () => {
         assert.match(await response.text(), /Tree out of stock/);
     });
 
+    it("returns 400 when the requested quantity exceeds available stock", async () => {
+        await createUser();
+        const { session } = await loginAndGetSession(testUser.email, testUser.password);
+        const tree = await createTree(2);
+
+        const response = await session.csrfFetch(`${baseUrl}/api/cart`, {
+            method: "PUT",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+                item: {
+                    id: tree.id,
+                    quantity: 3,
+                },
+            }),
+        });
+
+        assert.equal(response.status, 400);
+        assert.match(await response.text(), /Insufficient stock/);
+    });
+
+    it("returns 400 when incrementing the cart would exceed available stock", async () => {
+        await createUser();
+        const { session } = await loginAndGetSession(testUser.email, testUser.password);
+        const tree = await createTree(3);
+
+        await session.csrfFetch(`${baseUrl}/api/cart`, {
+            method: "PUT",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+                item: {
+                    id: tree.id,
+                    quantity: 2,
+                },
+            }),
+        });
+
+        const response = await session.csrfFetch(`${baseUrl}/api/cart`, {
+            method: "PUT",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+                item: {
+                    id: tree.id,
+                    quantity: 2,
+                },
+            }),
+        });
+
+        assert.equal(response.status, 400);
+        assert.match(await response.text(), /Insufficient stock/);
+
+        const cartResponse = await session.fetch(`${baseUrl}/api/cart`);
+        assert.equal(cartResponse.status, 200);
+        assert.equal((await cartResponse.json()).items[0].quantity, 2);
+    });
+
     it("returns 401 when no auth cookie is provided", async () => {
         const session = await createTestSession();
         const response = await session.csrfFetch(`${baseUrl}/api/cart`, {
