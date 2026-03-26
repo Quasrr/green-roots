@@ -1,5 +1,6 @@
 import { useActionState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+import { toast } from 'sonner';
 import { useAuth } from '../hooks/useAuth';
 import '../components/styles/Login.css';
 
@@ -13,14 +14,16 @@ function Login() {
 
         try {
             await login(email, password);
+            toast.success("Vous êtes connecté");
             navigate('/');
             return '';
         } catch (err) {
-            return err instanceof Error ? err.message : 'Une erreur est survenue';
+            toast.error(err instanceof Error ? err.message : 'Une erreur est survenue') // toast.error retourne un id de toast(number)
+            return ''; // Return obligatoire car useActionState attend que la fct return quelque chose, comme on ignore l'état avec ',' TS exige quand meme le return
         }
     }
 
-    const [error, action, isPending] = useActionState(loginAction, '');
+    const [, action, isPending] = useActionState(loginAction, '');
 
     return (
         <main className="login_wrapper">
@@ -28,28 +31,29 @@ function Login() {
                 <h1>Connexion</h1>
                 <p className="login_description">Accédez à votre espace personnel GreenRoots.</p>
 
-                <form className="login_form" action={action}>
+                <form className="login_form" action={action} aria-label="Formulaire de connexion">
                     <div className="login_field">
-                        <label className="login_label">Email</label>
+                        <label className="login_label" htmlFor="login-email">Email</label>
                         <input
+                            id="login-email"
                             name="email"
                             type="email"
                             className="login_input"
                             placeholder="votre@email.fr"
+                            autoComplete="email"
                         />
                     </div>
                     <div className="login_field">
-                        <label className="login_label">Mot de passe</label>
+                        <label className="login_label" htmlFor="login-password">Mot de passe</label>
                         <input
+                            id="login-password"
                             name="password"
                             type="password"
                             className="login_input"
-                            placeholder="••••••••"
+                            placeholder="********"
+                            autoComplete="current-password"
                         />
                     </div>
-
-                    {error && <p className="login_error">{error}</p>}
-
                     <button type="submit" className="login_btn" disabled={isPending}>
                         {isPending ? 'Connexion...' : 'Se connecter'}
                     </button>

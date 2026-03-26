@@ -1,5 +1,6 @@
 import { useState, useActionState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+import { toast } from 'sonner';
 import '../components/styles/Register.css';
 
 function Register() {
@@ -7,7 +8,7 @@ function Register() {
     const [confirmPassword, setConfirmPassword] = useState('');
     const [hasAcceptedPolicies, setHasAcceptedPolicies] = useState(false);
     const navigate = useNavigate();
-    const [error, action, isPending] = useActionState(registerAction, '');
+    const [, action, isPending] = useActionState(registerAction, '');
 
     async function registerAction(_prev: string, formData: FormData) {
         const firstname = formData.get('firstname') as string;
@@ -32,13 +33,17 @@ function Register() {
 
             if (!res.ok) {
                 const data = await res.json();
-                throw new Error(data.message || 'Erreur lors de l\'inscription');
+                toast.error(data.message || 'Erreur lors de l\'inscription');
+                return'';
             }
 
+            toast.success("Compte créé avec succès");
             navigate('/login');
             return '';
+
         } catch (err) {
-            return err instanceof Error ? err.message : 'Une erreur est survenue';
+            toast.error (err instanceof Error ? err.message : 'Une erreur est survenue') // toast.error retourne un id de toast(number)
+            return '';
         }
     }
 
@@ -48,56 +53,66 @@ function Register() {
                 <h1>Créer un compte</h1>
                 <p className="register_description">Rejoignez GreenRoots et contribuez à la reforestation.</p>
 
-                <form className="register_form" action={action}>
+                <form className="register_form" action={action} aria-label="Formulaire d'inscription">
                     <div className="register_form_row">
                         <div className="register_field">
-                            <label className="register_label">Prénom</label>
+                            <label className="register_label" htmlFor="register-firstname">Prénom</label>
                             <input
+                                id="register-firstname"
                                 name="firstname"
                                 type="text"
                                 className="register_input"
                                 placeholder="Votre prénom"
+                                autoComplete="given-name"
                             />
                         </div>
                         <div className="register_field">
-                            <label className="register_label">Nom</label>
+                            <label className="register_label" htmlFor="register-lastname">Nom</label>
                             <input
+                                id="register-lastname"
                                 name="lastname"
                                 type="text"
                                 className="register_input"
                                 placeholder="Votre nom"
+                                autoComplete="family-name"
                             />
                         </div>
                     </div>
                     <div className="register_field">
-                        <label className="register_label">Email</label>
+                        <label className="register_label" htmlFor="register-email">Email</label>
                         <input
+                            id="register-email"
                             name="email"
                             type="email"
                             className="register_input"
                             placeholder="votre@email.fr"
+                            autoComplete="email"
                         />
                     </div>
                     <div className="register_field">
-                        <label className="register_label">Mot de passe</label>
+                        <label className="register_label" htmlFor="register-password">Mot de passe</label>
                         <input
+                            id="register-password"
                             name="password"
                             type="password"
                             className="register_input"
-                            placeholder="••••••••"
+                            placeholder="********"
                             value={password}
                             onChange={e => setPassword(e.target.value)}
+                            autoComplete="new-password"
                         />
                     </div>
                     <div className="register_field">
-                        <label className="register_label">Confirmer le mot de passe</label>
+                        <label className="register_label" htmlFor="register-confirmPassword">Confirmer le mot de passe</label>
                         <input
+                            id="register-confirmPassword"
                             name="confirmPassword"
                             type="password"
                             className={`register_input ${confirmPassword && password !== confirmPassword ? 'register_input_error' : ''}`}
                             placeholder="••••••••"
                             value={confirmPassword}
                             onChange={e => setConfirmPassword(e.target.value)}
+                            autoComplete="new-password"
                         />
                         {confirmPassword && password !== confirmPassword && (
                             <p className="register_error">Les mots de passe ne correspondent pas.</p>
@@ -117,8 +132,6 @@ function Register() {
                             <Link to="/cookies">politique de cookies</Link>.
                         </span>
                     </label>
-
-                    {error && <p className="register_error_global">{error}</p>}
 
                     <button type="submit" className="register_btn" disabled={isPending}>
                         {isPending ? 'Inscription...' : 'Créer mon compte'}
