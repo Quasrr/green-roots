@@ -1,5 +1,6 @@
 import { useEffect } from 'react';
 import { Routes, Route, useLocation } from 'react-router-dom';
+import { Toaster } from 'sonner';
 import Header from './components/Header.tsx';
 import LandingPage from './components/LandingPage.tsx';
 import Footer from './components/Footer.tsx';
@@ -72,6 +73,7 @@ export default function App() {
     return (
         <AuthProvider>
             <CartProvider>
+                <Toaster position="top-right" />
                 <div className="app_layout">
                     <Header />
                     <div className="app_content">
