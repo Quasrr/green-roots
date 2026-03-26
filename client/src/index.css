@@ -1,6 +1,6 @@
 /* =====================================================
-   VARIABLES GLOBALES — définies ici une seule fois
-   Tous les autres fichiers CSS les utilisent directement
+  VARIABLES GLOBALES — définies ici une seule fois
+  Tous les autres fichiers CSS les utilisent directement
    ===================================================== */
 :root {
   --bg-color-primary: #F6F8F7;
@@ -18,7 +18,7 @@
 }
 
 /* =====================================================
-   RESET DE BASE
+  RESET DE BASE
    ===================================================== */
 *, *::before, *::after {
   margin: 0;
@@ -37,11 +37,11 @@ body {
 }
 
 /* =====================================================
-   ANIMATIONS AU SCROLL
-   Principe : on ajoute la classe .reveal aux éléments
-   que l'on veut animer. Quand ils entrent dans le
-   viewport, on ajoute .visible via IntersectionObserver
-   dans App.tsx
+  ANIMATIONS AU SCROLL
+  Principe : on ajoute la classe .reveal aux éléments
+  que l'on veut animer. Quand ils entrent dans le
+  viewport, on ajoute .visible via IntersectionObserver
+  dans App.tsx
    ===================================================== */
 .reveal {
   opacity: 0;
@@ -52,4 +52,8 @@ body {
 .reveal.visible {
   opacity: 1;
   transform: translateY(0);
+}
+
+.app_layout > section {
+  position: fixed !important;
 }

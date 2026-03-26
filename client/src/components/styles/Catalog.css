@@ -323,7 +323,7 @@
 }
 
 /* ===================================================
-   RESPONSIVE — TABLETTE (≤ 1024px)
+  RESPONSIVE — TABLETTE (≤ 1024px)
    =================================================== */
 @media (max-width: 1024px) {
   .catalog_layout {
@@ -336,7 +336,7 @@
 }
 
 /* ===================================================
-   RESPONSIVE — MOBILE (≤ 768px)
+  RESPONSIVE — MOBILE (≤ 768px)
    =================================================== */
 @media (max-width: 768px) {
   /* Layout en colonne : filtres au-dessus, catalogue en dessous */
