@@ -1,6 +1,7 @@
 import { useActionState, useEffect } from 'react';
 import { useFormStatus } from 'react-dom';
 import { Link, useNavigate } from 'react-router-dom';
+import { toast } from 'sonner';
 import { useCart } from '../hooks/useCart';
 import { useAuth } from '../hooks/useAuth';
 import './styles/Checkout.css';
@@ -83,13 +84,6 @@ export default function Checkout() {
             };
         }
 
-        if (items.length === 0) {
-            return {
-                error: 'Votre panier est vide.',
-                success: false,
-            };
-        }
-
         await wait(2500);
 
         const response = await fetch(`${import.meta.env.VITE_API_URL}/api/orders`, {
@@ -108,9 +102,10 @@ export default function Checkout() {
         });
 
         if (!response.ok) {
+            toast.error(genericCheckoutError)
             return {
-                error: genericCheckoutError,
-                success: false,
+                error:'',
+                success: false
             };
         }
 
