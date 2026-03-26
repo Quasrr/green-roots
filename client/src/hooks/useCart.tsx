@@ -10,20 +10,21 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
 
     const totalItems = items.reduce((sum, item) => sum + item.quantity, 0);
 
-    // Charge le panier depuis Redis - fallback sur tableau vide si la réponse est invalide
+    // Charge le panier depuis Redis
     async function loadCart() {
         try {
             const res = await fetch(`${import.meta.env.VITE_API_URL}/api/cart`, {
                 credentials: 'include',
             });
+
             if (res.ok) {
                 const data = await res.json();
                 setItems(Array.isArray(data.items) ? data.items : []);
             }
         } catch (error) {
             console.error(error);
-        }
-    }
+        };
+    };
 
     useEffect(() => {
         if (isLoading) return;
@@ -35,39 +36,84 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
 
         loadCart();
     }, [isLoading, isLoggedIn]);
-    
-    // Fonction PUT créée pour être appelé à chaque modif du panier (ajout, suppression, modif et clear)
+
+    // Synchronise une modification de panier et re-aligne l'état local sur la réponse serveur
     async function sendToBack(id: number, quantity: number) {
+        const response = await fetch(`${import.meta.env.VITE_API_URL}/api/cart`, {
+            method: 'PUT',
+            credentials: 'include',
+            headers: {
+                'Content-Type': 'application/json',
+                'x-csrf-token': localStorage.getItem('csrfToken') || ''
+            },
+            body: JSON.stringify({ item: { id, quantity } }),
+        });
+
+        const data = await response.json();
+
+        if (!response.ok) {
+            throw new Error('Cart update failed');
+        };
+
+        return Array.isArray(data.items) ? data.items : [];
+    };
+
+    async function syncCartChange(id: number, quantity: number) {
         try {
-            await fetch(`${import.meta.env.VITE_API_URL}/api/cart`, {
-                method: 'PUT',
-                credentials: 'include',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'x-csrf-token': localStorage.getItem('csrfToken') || ''
-                },
-                body: JSON.stringify({ item: { id, quantity } }),
-            });
+            const serverItems = await sendToBack(id, quantity);
+
+            setItems(serverItems);
         } catch (error) {
             console.error(error);
+
+            await loadCart();
+        };
+    };
+
+    async function syncCartClear(items: RedisCartItem[]) {
+        try {
+            for (const item of items) {
+                await sendToBack(item.id, 0);
+            };
+
+        } catch (error) {
+            console.error(error);
+
+            await loadCart();
         };
     };
 
     function addToCart(tree: Tree) {
-        setItems(prev => {
-            const existing = prev.find(i => i.id === tree.id);
+        setItems((prev) => {
+            const existing = prev.find((item) => item.id === tree.id);
+
             if (existing) {
-                return prev.map(i => i.id === tree.id ? { ...i, quantity: i.quantity + 1 } : i);
-            }
-            return [...prev, { id: tree.id, title: tree.name, image: tree.image, price: tree.price, inStock: tree.quantity > 0, quantity: 1, label: tree.label }];
+                return prev.map((item) =>
+                    item.id === tree.id ? { ...item, quantity: item.quantity + 1 } : item
+                );
+            };
+
+            return [
+                ...prev,
+                {
+                    id: tree.id,
+                    title: tree.name,
+                    image: tree.image,
+                    price: tree.price,
+                    inStock: tree.quantity > 0,
+                    quantity: 1,
+                    label: tree.label
+                }
+            ];
         });
-        sendToBack(tree.id, 1); // quantity = 1 = incrément
+
+        syncCartChange(tree.id, 1); // quantity = 1 = incrément
     };
-    
-    // sendToBack en dehors du setItems exprès pour éviter le double appel en React StrictMode qui exécute les callbacks deux fois en développement. (créant une incrémentation au refresh sinon)
+
     function removeFromCart(treeId: number) {
-        setItems(prev => prev.filter(i => i.id !== treeId));
-        sendToBack(treeId, 0); // quantity = 0 = suppression
+        setItems((prev) => prev.filter((item) => item.id !== treeId));
+
+        syncCartChange(treeId, 0); // quantity = 0 = suppression
     };
 
     function updateQuantity(treeId: number, quantity: number) {
@@ -76,28 +122,29 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
             return;
         };
 
-        const existing = items.find(i => i.id === treeId);
+        const existing = items.find((item) => item.id === treeId);
         if (!existing) return;
 
         const delta = quantity - existing.quantity; // différence entre nouvelle et ancienne quantité
-        sendToBack(treeId, delta);
+        syncCartChange(treeId, delta);
 
-        setItems(prev => {
-            return prev.map(i => i.id === treeId ? { ...i, quantity } : i);
+        setItems((prev) => {
+            return prev.map((item) => (item.id === treeId ? { ...item, quantity } : item));
         });
     };
 
     function clearCart() {
-        items.forEach(item => sendToBack(item.id, 0));
         setItems([]);
+
+        syncCartClear(items);
     };
 
     return (
-        <CartContext.Provider value={{ items, totalItems, addToCart, removeFromCart, updateQuantity, clearCart, setItems, loadCart}}>
+        <CartContext.Provider value={{ items, totalItems, addToCart, removeFromCart, updateQuantity, clearCart, setItems, loadCart }}>
             {children}
         </CartContext.Provider>
-    )
-};
+    );
+}
 
 export function useCart() {
     const ctx = useContext(CartContext);
