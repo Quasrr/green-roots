@@ -83,6 +83,7 @@ class OrdersController {
                 const createdOrder = await tx.order.create({
                     data: {
                         userId,
+                        status: 'paid',
                         total,
                         lines: {
                             create: lines.map(line => ({
