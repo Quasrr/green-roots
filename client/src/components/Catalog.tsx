@@ -3,7 +3,8 @@ import { Link } from "react-router-dom";
 import type { Category, Tree } from "../types";
 import { ShoppingCart } from 'lucide-react';
 import { useCart } from '../hooks/useCart';
-
+import { useAuth } from '../hooks/useAuth';
+import { toast } from 'sonner';
 import '../components/styles/Catalog.css'
 
 function Catalog() {
@@ -17,6 +18,7 @@ function Catalog() {
     const [error, setError] = useState<boolean>(false); // State d'erreur dans le ternaire
     const [currentPage, setCurrentPage] = useState<number>(1); // AJOUT PAGINATION - page courante
     const itemsPerPage = 9; // AJOUT PAGINATION - 9 arbres par page (grille 3x3)
+    const { isLoggedIn } = useAuth();
 
     useEffect(() => {
         async function fetchTrees() {
@@ -121,43 +123,51 @@ function Catalog() {
                             {paginatedTrees.map(tree => ( // paginatedTrees à la place de filteredTrees
                                 <Link to={`/catalog/${tree.id}`} key={tree.id} className="catalog_card_link">
                                     <article className="article_tree">
-                                    <div className="article_tree_img_wrapper">
-                                        <img src={`/${tree.image}`} alt={tree.name} />
-                                        <div className="category_badges">
-                                            {tree.categories.map(category => (
-                                                <span key={category.id} className="category_badge">{category.name}</span>
-                                            ))}
+                                        <div className="article_tree_img_wrapper">
+                                            <img src={`/${tree.image}`} alt={tree.name} />
+                                            <div className="category_badges">
+                                                {tree.categories.map(category => (
+                                                    <span key={category.id} className="category_badge">{category.name}</span>
+                                                ))}
+                                            </div>
                                         </div>
-                                    </div>
-                                    <div className="article_tree_info">
-                                        <h2>{tree.name}</h2>
-                                        <p className="label_tree">{tree.label}</p>
-                                        <div className="price_cart_row">
-                                            <p className="price_tree">{tree.price}€</p>
-                                            <div className="cart_stock_wrapper">
-                                                <span className={`stock_badge ${tree.quantity > 0 ? 'in_stock' : 'out_stock'}`}>
-                                                    {tree.quantity > 0 ? 'EN STOCK' : 'RUPTURE'}
-                                                </span>
-                                                <div
-                                                    className={`icon_wrapper_cart ${tree.quantity <= 0 ? 'disabled' : ''}`}
-                                                    role="button"
-                                                    aria-label={`Ajouter ${tree.name} au panier`}
-                                                    tabIndex={tree.quantity > 0 ? 0 : -1}
-                                                    onClick={(event) => {
-                                                        event.preventDefault();
-                                                        if (tree.quantity > 0) addToCart(tree);
-                                                    }}
-                                                    onKeyDown={(event) => {
-                                                        if ((event.key === 'Enter' || event.key === ' ') && tree.quantity > 0) {
+                                        <div className="article_tree_info">
+                                            <h2>{tree.name}</h2>
+                                            <p className="label_tree">{tree.label}</p>
+                                            <div className="price_cart_row">
+                                                <p className="price_tree">{tree.price}€</p>
+                                                <div className="cart_stock_wrapper">
+                                                    <span className={`stock_badge ${tree.quantity > 0 ? 'in_stock' : 'out_stock'}`}>
+                                                        {tree.quantity > 0 ? 'EN STOCK' : 'RUPTURE'}
+                                                    </span>
+                                                    <div
+                                                        className={`icon_wrapper_cart ${tree.quantity <= 0 ? 'disabled' : ''}`}
+                                                        role="button"
+                                                        aria-label={`Ajouter ${tree.name} au panier`}
+                                                        tabIndex={tree.quantity > 0 ? 0 : -1}
+                                                        onClick={(event) => {
                                                             event.preventDefault();
-                                                            addToCart(tree);
-                                                        }
-                                                    }}>
-                                                    <ShoppingCart size={18} color="#F6F8F7" className="logo_cart" />
+                                                            if (!isLoggedIn) {
+                                                                toast.error('Veuillez vous identifier pour accéder au panier');
+                                                                return;
+                                                            }
+                                                            if (tree.quantity > 0) addToCart(tree);
+                                                        }}
+                                                        onKeyDown={(event) => {
+                                                            if ((event.key === 'Enter' || event.key === ' ') && tree.quantity > 0) {
+                                                                event.preventDefault();
+                                                                if (!isLoggedIn) {
+                                                                    toast.error('Veuillez vous identifier pour accéder au panier');
+                                                                    return;
+                                                                }
+                                                                addToCart(tree);
+                                                            }
+                                                        }}>
+                                                        <ShoppingCart size={18} color="#F6F8F7" className="logo_cart" />
+                                                    </div>
                                                 </div>
                                             </div>
                                         </div>
-                                    </div>
                                     </article>
                                 </Link>
                             ))}
