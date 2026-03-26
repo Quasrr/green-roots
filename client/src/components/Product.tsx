@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import type { Tree } from "../types";
-import { Leaf, Wind, MapPin } from 'lucide-react';
+import { Leaf, Wind, MapPin, TriangleAlert } from 'lucide-react';
 import { useCart } from "../hooks/useCart";
 import { useAuth } from '../hooks/useAuth';
 import { toast } from 'sonner';
@@ -44,8 +44,12 @@ function Product() {
                 <div className="add_cart_right">
                     <div className="price_stock_row">
                         <p className="price_tree">{tree.price}€</p>
-                        <span className={`stock_badge ${tree.quantity > 0 ? 'in_stock' : 'out_stock'}`}>
-                            {tree.quantity > 0 ? 'EN STOCK' : 'RUPTURE'}
+                        <span className={`stock_badge ${tree.quantity <= 0 ? 'out_stock' : tree.quantity <= 10 ? 'low_stock' : 'in_stock'}`}>
+                            {tree.quantity <= 0 && 'RUPTURE'}
+                            {tree.quantity > 0 && tree.quantity <= 10 && (
+                                <><TriangleAlert size={14} /> Plus que {tree.quantity} en stock</>
+                            )}
+                            {tree.quantity > 10 && 'EN STOCK'}
                         </span>
                     </div>
                     <button

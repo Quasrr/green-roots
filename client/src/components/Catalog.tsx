@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import type { Category, Tree } from "../types";
-import { ShoppingCart } from 'lucide-react';
+import { ShoppingCart, TriangleAlert } from 'lucide-react';
 import { useCart } from '../hooks/useCart';
 import { useAuth } from '../hooks/useAuth';
 import { toast } from 'sonner';
@@ -137,8 +137,12 @@ function Catalog() {
                                             <div className="price_cart_row">
                                                 <p className="price_tree">{tree.price}€</p>
                                                 <div className="cart_stock_wrapper">
-                                                    <span className={`stock_badge ${tree.quantity > 0 ? 'in_stock' : 'out_stock'}`}>
-                                                        {tree.quantity > 0 ? 'EN STOCK' : 'RUPTURE'}
+                                                    <span className={`stock_badge ${tree.quantity <= 0 ? 'out_stock' : tree.quantity <= 10 ? 'low_stock' : 'in_stock'}`}>
+                                                        {tree.quantity <= 0 && 'RUPTURE'}
+                                                        {tree.quantity > 0 && tree.quantity <= 10 && (
+                                                            <><TriangleAlert size={14} /> Plus que {tree.quantity} en stock</>
+                                                        )}
+                                                        {tree.quantity > 10 && 'EN STOCK'}
                                                     </span>
                                                     <div
                                                         className={`icon_wrapper_cart ${tree.quantity <= 0 ? 'disabled' : ''}`}

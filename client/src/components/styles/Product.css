@@ -98,6 +98,14 @@
   opacity: 0.7;
 }
 
+.stock_badge.low_stock {
+  background-color: #fef3c7;
+  color: #b45309;
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+}
+
 /* === Impact === */
 
 .impact {
