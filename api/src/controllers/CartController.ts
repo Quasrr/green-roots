@@ -113,6 +113,13 @@ class CartController {
             if (!tree) throw new NotFoundError("Tree not found");
             if (tree.quantity <= 0) throw new BadRequestError("Tree out of stock");
 
+            const currentQuantity = itemIndex >= 0 ? currentCart[itemIndex].quantity : 0;
+            const nextQuantity = currentQuantity + quantity;
+
+            if (nextQuantity > tree.quantity) {
+                throw new BadRequestError(`Insufficient stock for the tree "${tree.name}" (available: ${tree.quantity})`);
+            }
+
             // Données persistées dans le panier Redis
             const dbItem = {
                 id: tree.id,
@@ -126,12 +133,12 @@ class CartController {
             if (itemIndex >= 0) {
                 currentCart[itemIndex] = {
                     ...dbItem,
-                    quantity: currentCart[itemIndex].quantity + quantity,
+                    quantity: nextQuantity,
                 };
             } else {
                 currentCart.push({
                     ...dbItem,
-                    quantity,
+                    quantity: nextQuantity,
                 });
             };
 
