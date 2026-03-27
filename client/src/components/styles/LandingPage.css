@@ -2,6 +2,10 @@ section {
   margin-bottom: 5rem;
 }
 
+section:last-child {
+  margin-bottom: 0;
+}
+
 /* === Section Banniere === */
 
 h1 {
