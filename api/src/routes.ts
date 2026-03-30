@@ -39,6 +39,7 @@ router.delete('/api/trees/:id', authMiddleware, adminMiddleware, TreesController
 // routes Commandes
 router.get('/api/orders', authMiddleware, adminMiddleware, OrdersController.getOrders);
 router.post('/api/orders', authMiddleware, OrdersController.createOrder);
+router.post('/api/orders/:id/pay', authMiddleware, OrdersController.payOrder);
 router.get('/api/orders/me', authMiddleware, OrdersController.getMyOrders);
 router.get('/api/orders/me/:id', authMiddleware, OrdersController.getOrderById);
 

@@ -1,18 +1,18 @@
 import type { Request, Response } from "express";
-import { prisma } from '../models/index.ts';
+import { OrderStatus, prisma } from '../models/index.ts';
 import ErrorHandler from "../ErrorHandler.ts";
 import z from 'zod';
-import { BadRequestError, NotFoundError } from "../utils/Error.ts";
+import { BadRequestError, ConflictError, ForbiddenError, NotFoundError } from "../utils/Error.ts";
 
 const schemas = z.array(
     z.object({
-        treeId: z.number().int().positive(),
-        quantity: z.number().int().positive(),
+        treeId: z.coerce.number().int().positive(),
+        quantity: z.coerce.number().int().positive(),
     })
 ).min(1);
 
 class OrdersController {
-    async getOrders(req: Request, res: Response) {
+    async getOrders(_req: Request, res: Response) {
         try {
             const orders = await prisma.order.findMany({
                 orderBy: {
@@ -49,44 +49,40 @@ class OrdersController {
 
     async createOrder(req: Request, res: Response) {
         try {
-            const lines = schemas.parse(req.body);
-            const userId = Number(req.user?.id);
+            const orderLines = schemas.parse(req.body);
+            const userId = Number(req.user.id);
 
-            //Aller chercher les arbres
+            // Aller chercher les arbres dans la base de donnée
             const trees = await prisma.tree.findMany({
-                where: { id: { in: lines.map(l => l.treeId) } },
+                where: { id: { in: orderLines.map(line => line.treeId) } },
                 select: { id: true, price: true, quantity: true }
             });
 
-            //Calculer le total de la commande
+            // Calculer le total de la commande
             let total = 0;
 
-            for (const line of lines) {
-                let found = false;
+            for (const line of orderLines) {
 
-                for (const tree of trees) {
-                    if (tree.id === line.treeId) {
-                        if (tree.quantity < line.quantity) {
-                            throw new BadRequestError(`Stock insuffisant pour l'arbre ${line.treeId} (disponible: ${tree.quantity})`);
-                        };
+                const findTree = trees.find(tree => tree.id === line.treeId);
 
-                        total += tree.price.toNumber() * line.quantity;
-                        found = true;
-                    };
+                if (!findTree) throw new NotFoundError(`Tree ${line.treeId} not found`);
+
+                if (findTree.quantity < line.quantity) {
+                    throw new BadRequestError(`Stock insuffisant pour l'arbre ${line.treeId} (disponible: ${findTree.quantity})`);
                 };
 
-                if (!found) throw new NotFoundError(`Tree ${line.treeId} not found`);
+                total += findTree.price.toNumber() * line.quantity;
             };
 
-            //Créer la commande + ses lignes
+            // Créer la commande + ses lignes
             const order = await prisma.$transaction(async (tx) => {
                 const createdOrder = await tx.order.create({
                     data: {
                         userId,
-                        status: 'paid',
+                        status: 'waiting',
                         total,
                         lines: {
-                            create: lines.map(line => ({
+                            create: orderLines.map(line => ({
                                 treeId: line.treeId,
                                 quantity: line.quantity
                             }))
@@ -97,16 +93,6 @@ class OrdersController {
                     }
                 });
 
-                // Décrémenter le stock de chaque arbre commandé
-                await Promise.all(
-                    lines.map(line =>
-                        tx.tree.update({
-                            where: { id: line.treeId },
-                            data: { quantity: { decrement: line.quantity } }
-                        })
-                    )
-                );
-
                 return createdOrder;
             });
 
@@ -115,12 +101,74 @@ class OrdersController {
         } catch (error) {
             ErrorHandler.sendError(res, error);
         };
+    };
 
+    async payOrder(req: Request, res: Response) {
+        try {
+            const orderId = z.coerce.number().int().positive().parse(req.params.id);
+
+            const order = await prisma.order.findUnique({
+                where: { id: orderId },
+                include: {
+                    lines: true
+                }
+            });
+
+            if (!order) throw new NotFoundError(`Order not found`);
+            if (order.userId !== Number(req.user.id)) throw new ForbiddenError('Forbidden');
+
+            if (order.status !== OrderStatus.waiting) throw new ConflictError('The order has already processed');
+
+            const payingOrder = await prisma.$transaction(async (tx) => {
+                const trees = await tx.tree.findMany({
+                    where: { id: { in: order.lines.map(line => line.treeId) } },
+                    select: { id: true, quantity: true }
+                });
+
+                for (const line of order.lines) {
+                    const tree = trees.find(t => t.id === line.treeId);
+
+                    if (!tree) throw new NotFoundError(`Tree ${line.treeId} not found`);
+
+                    if (tree.quantity < line.quantity) {
+                        const updatedOrder = await prisma.order.update({
+                            where: { id: orderId },
+                            data: { status: OrderStatus.canceled }
+                        });
+
+                        throw new BadRequestError(`Stock insuffisant pour l'arbre ${line.treeId}`)
+                    };
+                };
+
+                await Promise.all(
+                    order.lines.map(line =>
+                        tx.tree.update({
+                            where: { id: line.treeId },
+                            data: {
+                                quantity: { decrement: line.quantity }
+                            }
+                        })
+                    )
+                );
+
+                const updatedOrder = await tx.order.update({
+                    where: { id: orderId },
+                    data: { status: OrderStatus.paid }
+                });
+
+                return updatedOrder;
+            });
+
+            res.sendStatus(200);
+        } catch (error) {
+            ErrorHandler.sendError(res, error);
+        };
     };
 
     async getMyOrders(req: Request, res: Response) {
         try {
-            const userId = Number(req.user?.id);
+            const userId = Number(req.user.id);
+
             const orders = await prisma.order.findMany({
                 where: { userId },
                 orderBy: {
@@ -149,7 +197,7 @@ class OrdersController {
 
     async getOrderById(req: Request, res: Response) {
         try {
-            const userId = Number(req.user?.id);
+            const userId = Number(req.user.id);
             const orderId = Number(req.params.id);
 
             if (!Number.isInteger(orderId) || orderId <= 0) {
@@ -185,7 +233,7 @@ class OrdersController {
                 where: { id: userId },
                 select: { roleId: true }
             });
-            
+
             const isAdmin = currentUser?.roleId === 1;
 
             if (!order || (!isAdmin && order.userId !== userId)) throw new NotFoundError('Order not found');
