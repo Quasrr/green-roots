@@ -1,4 +1,4 @@
-import { useActionState, useEffect } from 'react';
+import { useActionState, useEffect, useState } from 'react';
 import { useFormStatus } from 'react-dom';
 import { Link, useNavigate } from 'react-router-dom';
 import { toast } from 'sonner';
@@ -52,7 +52,7 @@ function CheckoutFeedbackOverlay({ isSuccess }: { isSuccess: boolean }) {
             {isSuccess && !pending && (
                 <div className="checkout_success_box">
                     <div className="checkout_success_icon">✓</div>
-                    <p className="checkout_success_title">Paiement accepte !</p>
+                    <p className="checkout_success_title">Commande effectuée !</p>
                     <p className="checkout_success_sub">Merci pour votre commande.</p>
                 </div>
             )}
@@ -68,6 +68,7 @@ export default function Checkout() {
     const subtotal = items.reduce((sum, item) => sum + item.price * item.quantity, 0);
     const totalItems = items.reduce((sum, item) => sum + item.quantity, 0);
 
+    const [orderId, setOrderId] = useState(0);
     const [actionState, submitOrder] = useActionState(async (_previousState: CheckoutActionState, formData: FormData) => {
         const email = String(formData.get('email') || '').trim();
         const address = String(formData.get('address') || '').trim();
@@ -83,8 +84,6 @@ export default function Checkout() {
                 success: false,
             };
         }
-
-        await wait(2500);
 
         const response = await fetch(`${import.meta.env.VITE_API_URL}/api/orders`, {
             method: 'POST',
@@ -108,6 +107,11 @@ export default function Checkout() {
                 success: false
             };
         }
+        
+        const data = await response.json();
+        setOrderId(data.id);
+
+        await wait(2500);
 
         return {
             error: '',
@@ -133,6 +137,15 @@ export default function Checkout() {
 
         return () => {
             window.clearTimeout(timeoutId);
+
+            fetch(`${import.meta.env.VITE_API_URL}/api/orders/${orderId}/pay`, {
+                method: 'POST',
+                credentials: 'include',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'x-csrf-token': localStorage.getItem('csrfToken') || '',
+                },
+            });
         };
     }, [actionState.success, clearCart, navigate]);
 
