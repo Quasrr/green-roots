@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../hooks/useAuth';
 import { Users, ShoppingBag, TreePine, ChevronDown, ChevronUp, Pencil, Trash2, X, Plus } from 'lucide-react';
-import type { AdminUser, Order, Tree, Tab } from '../types';
+import type { AdminUser, Order, Tree, Tab, Category } from '../types';
 import '../components/styles/AdminDashboard.css';
 
 // valeurs par défaut pour le formulaire de création
@@ -20,6 +20,7 @@ const emptyForm = {
     growth: 'medium' as 'slow' | 'medium' | 'fast',
     exposition: '',
     rusticity: '',
+    categories: [] as number[],
 };
 
 function AdminDashboard() {
@@ -46,6 +47,15 @@ function AdminDashboard() {
     const [selectedTree, setSelectedTree] = useState<Tree | null>(null);
     // treeForm : les valeurs du formulaire (partagé entre create et edit)
     const [treeForm, setTreeForm] = useState(emptyForm);
+
+    // On extrait les catégories uniques depuis les arbres déjà chargés
+    const categoryMap = new Map<number, Category>();
+    for (const tree of trees) {
+        for (const cat of tree.categories) {
+            categoryMap.set(cat.id, cat);
+        }
+    }
+    const allCategories = Array.from(categoryMap.values()).sort((a, b) => a.name.localeCompare(b.name));
 
     // Rediriger si pas admin
     useEffect(() => {
@@ -125,6 +135,7 @@ function AdminDashboard() {
             growth: tree.growth as 'slow' | 'medium' | 'fast',
             exposition: tree.exposition,
             rusticity: tree.rusticity,
+            categories: tree.categories.map(c => c.id),
         });
         setIsModalOpen(true);
     }
@@ -146,7 +157,18 @@ function AdminDashboard() {
         }));
     }
 
-    // créer un arbre (POST /api/trees) 
+    // Checkbox pour les catégories 
+    function handleCategoryToggle(categoryId: number) {
+        setTreeForm(prev => ({
+            ...prev,
+            // Si la catégorie est déjà sélectionnée, on la retire ; sinon, on l'ajoute
+            categories: prev.categories.includes(categoryId)
+                ? prev.categories.filter(id => id !== categoryId)
+                : [...prev.categories, categoryId],
+        }));
+    }
+
+    // créer un arbre (POST /api/trees)
     async function handleCreate() {
         try {
             const res = await fetch(`${import.meta.env.VITE_API_URL}/api/trees`, {
@@ -595,6 +617,23 @@ function AdminDashboard() {
                                         placeholder="Ex: -15°C"
                                     />
                                 </label>
+                            </div>
+
+                            {/* Catégories (checkboxes) */}
+                            <div className="admin_form_label">
+                                Catégories
+                                <div className="admin_form_categories">
+                                    {allCategories.map(cat => (
+                                        <label key={cat.id} className="admin_category_checkbox">
+                                            <input
+                                                type="checkbox"
+                                                checked={treeForm.categories.includes(cat.id)}
+                                                onChange={() => handleCategoryToggle(cat.id)}
+                                            />
+                                            {cat.name}
+                                        </label>
+                                    ))}
+                                </div>
                             </div>
 
                             <label className="admin_form_label">

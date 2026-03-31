@@ -47,7 +47,7 @@ function Product() {
                         <span className={`stock_badge ${tree.quantity <= 0 ? 'out_stock' : tree.quantity <= 10 ? 'low_stock' : 'in_stock'}`}>
                             {tree.quantity <= 0 && 'RUPTURE'}
                             {tree.quantity > 0 && tree.quantity <= 10 && (
-                                <><TriangleAlert size={14} /> Plus que {tree.quantity} en stock</>
+                                <><TriangleAlert size={14} /> PLUS QUE {tree.quantity} EN STOCK</>
                             )}
                             {tree.quantity > 10 && 'EN STOCK'}
                         </span>

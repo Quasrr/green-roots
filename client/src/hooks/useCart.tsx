@@ -53,7 +53,7 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
         const data = await response.json();
 
         if (!response.ok) {
-            throw new Error('Cart update failed');
+            throw new Error('Impossible de mettre à jour le panier');
         };
 
         return Array.isArray(data.items) ? data.items : [];
