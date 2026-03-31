@@ -419,6 +419,27 @@
     flex: 1;
 }
 
+.admin_form_categories {
+    display: flex;
+    gap: 1rem;
+    flex-wrap: wrap;
+    margin-top: 0.3rem;
+}
+
+.admin_category_checkbox {
+    display: flex;
+    align-items: center;
+    gap: 0.35rem;
+    font-size: 0.85rem;
+    font-weight: 400;
+    cursor: pointer;
+}
+
+.admin_category_checkbox input[type="checkbox"] {
+    accent-color: var(--bg-color-secondary);
+    cursor: pointer;
+}
+
 .admin_modal_footer {
     display: flex;
     justify-content: flex-end;
