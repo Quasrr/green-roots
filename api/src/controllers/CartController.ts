@@ -28,14 +28,15 @@ function getCartKey(email: string) {
 
 // Lire le panier existant et fallback sur tableau vide si la clé n'existe pas
 async function readCart(email: string): Promise<Array<CartItem>> {
-    const rawCart = await redis.get(getCartKey(email));
+    const rawCart = await redis.get(getCartKey(email)); // Récupération dans la base redis avec la méthode get
 
     if (!rawCart) return [];
 
     try {
         const parsed = JSON.parse(rawCart);
 
-        if (!Array.isArray(parsed)) return [];
+        if (!Array.isArray(parsed)) return []; // Array.isArray() méthode static qui vérifie si la donnée est bien un tableau.
+                                               // Ici c'est une sécurité au cas où la donnée est corrompu, on s'assure de retourner un tableau
 
         return parsed as Array<CartItem>;
     } catch {
@@ -75,7 +76,8 @@ class CartController {
             // quantity = 0 => suppression directe de l'item
             if (quantity === 0) {
                 if (itemIndex >= 0) currentCart.splice(itemIndex, 1);
-                await redis.set(getCartKey(email), JSON.stringify(currentCart));
+                await redis.set(getCartKey(email), JSON.stringify(currentCart)); // Sauvegarde dans la base redis avec la méthode set
+
                 return res.send({ items: currentCart });
             };
 
@@ -130,13 +132,13 @@ class CartController {
                 label: tree.label
             };
 
-            if (itemIndex >= 0) {
+            if (itemIndex >= 0) { // Mettre à jour la quantité de l'item dans le panier
                 currentCart[itemIndex] = {
                     ...dbItem,
                     quantity: nextQuantity,
                 };
             } else {
-                currentCart.push({
+                currentCart.push({ // Ajouter l'item au panier s'il n'existe pas déjà
                     ...dbItem,
                     quantity: nextQuantity,
                 });

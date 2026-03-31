@@ -41,6 +41,10 @@ class UserController {
 
             if (!id || isNaN(id)) throw new NotFoundError('User not found');
 
+            if (Number(req.user.id) !== id) {
+                throw new ForbiddenError('Forbidden');
+            };
+
             const user = await prisma.user.findUnique({
                 where: { id },
                 select: userSelect

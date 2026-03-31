@@ -9,12 +9,10 @@ const authMiddleware = async (req: Request, res: Response, next: NextFunction) =
         const token = req.cookies.access_token;
         if (!token) {
             throw new UnauthorizedError('Unauthorized');
+        };
 
-        }
         //Vérifier et décoder le token JWT
         const decodedToken = jwt.verify(token, process.env.JWT_SECRET as string) as { email: string, id: string };
-
-
 
         // Attacher les informations de l'utilisateur à la requête
         req.user = { email: decodedToken.email, id: decodedToken.id };
@@ -23,8 +21,7 @@ const authMiddleware = async (req: Request, res: Response, next: NextFunction) =
 
     } catch (error) {
         ErrorHandler.sendError(res, error);
-
-    }
+    };
 };
 
 export default authMiddleware;
