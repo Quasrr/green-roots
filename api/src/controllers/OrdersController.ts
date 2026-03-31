@@ -239,6 +239,43 @@ class OrdersController {
             ErrorHandler.sendError(res, error);
         };
     };
+
+    async cancelOrder(req: Request, res: Response) {
+        try {
+            const orderId = z.coerce.number().int().positive().parse(req.params.id);
+            const userId = Number(req.user.id);
+
+            await prisma.$transaction(async (tx) => {
+                const order = await tx.order.findUnique({
+                    where: { id: orderId },
+                    include: { lines: true }
+                });
+
+                if (!order) throw new NotFoundError('Order not found');
+                if (order.userId !== userId) throw new ForbiddenError('Forbidden');
+                if (order.status === OrderStatus.canceled) throw new ConflictError('Order is already canceled');
+
+                // Si la commande est payée, on restitue le stock
+                if (order.status === OrderStatus.paid) {
+                    for (const line of order.lines) {
+                        await tx.tree.update({
+                            where: { id: line.treeId },
+                            data: { quantity: { increment: line.quantity } }
+                        });
+                    }
+                }
+
+                await tx.order.update({
+                    where: { id: orderId },
+                    data: { status: OrderStatus.canceled }
+                });
+            });
+
+            res.sendStatus(200);
+        } catch (error) {
+            ErrorHandler.sendError(res, error);
+        }
+    }
 };
 
 export default new OrdersController();
