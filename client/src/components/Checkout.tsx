@@ -8,6 +8,7 @@ import './styles/Checkout.css';
 
 type CheckoutActionState = {
     error: string;
+    orderId: number | null;
     success: boolean;
 };
 
@@ -15,6 +16,7 @@ const genericCheckoutError = "Le paiement n'a pas pu être finalisé. Veuillez r
 
 const initialActionState: CheckoutActionState = {
     error: '',
+    orderId: null,
     success: false,
 };
 
@@ -46,13 +48,13 @@ function CheckoutFeedbackOverlay({ isSuccess }: { isSuccess: boolean }) {
             {pending && (
                 <div className="checkout_loader_box">
                     <div className="checkout_spinner" />
-                    <p className="checkout_loader_text">Traitement du paiement...</p>
+                    <p className="checkout_loader_text">Traitement de la commande...</p>
                 </div>
             )}
             {isSuccess && !pending && (
                 <div className="checkout_success_box">
                     <div className="checkout_success_icon">✓</div>
-                    <p className="checkout_success_title">Paiement accepte !</p>
+                    <p className="checkout_success_title">Commande effectuée !</p>
                     <p className="checkout_success_sub">Merci pour votre commande.</p>
                 </div>
             )}
@@ -80,11 +82,10 @@ export default function Checkout() {
         if (!email || !address || !zipCode || !city || !cardNumber || !expiration || !cvv) {
             return {
                 error: 'Le formulaire de paiement est incomplet.',
+                orderId: null,
                 success: false,
             };
         }
-
-        await wait(2500);
 
         const response = await fetch(`${import.meta.env.VITE_API_URL}/api/orders`, {
             method: 'POST',
@@ -105,12 +106,18 @@ export default function Checkout() {
             toast.error(genericCheckoutError)
             return {
                 error:'',
+                orderId: null,
                 success: false
             };
         }
+        
+        const data = await response.json();
+
+        await wait(2500);
 
         return {
             error: '',
+            orderId: data.id,
             success: true,
         };
     }, initialActionState);
@@ -122,11 +129,12 @@ export default function Checkout() {
     }, [isLoggedIn, navigate]);
 
     useEffect(() => {
-        if (!actionState.success) {
+        if (!actionState.success || !actionState.orderId) {
             return;
         }
 
         const timeoutId = window.setTimeout(() => {
+            window.sessionStorage.setItem('pendingPaymentOrderId', String(actionState.orderId));
             clearCart();
             navigate('/account/orders');
         }, 2000);
@@ -134,7 +142,7 @@ export default function Checkout() {
         return () => {
             window.clearTimeout(timeoutId);
         };
-    }, [actionState.success, clearCart, navigate]);
+    }, [actionState.orderId, actionState.success, clearCart, navigate]);
 
     if (items.length === 0) {
         return (

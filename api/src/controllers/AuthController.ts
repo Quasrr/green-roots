@@ -11,10 +11,10 @@ function getJwtSecret() {
     const secret = process.env.JWT_SECRET;
     if (!secret) {
         throw new UnauthorizedError('JWT secret is not configured');
-    }
+    };
 
     return secret;
-}
+};
 
 class AuthController {
     async register(req: Request, res: Response) {
@@ -45,7 +45,7 @@ class AuthController {
             const existingUser = await prisma.user.findUnique({ where: { email } });
             if (existingUser) {
                 throw new ConflictError('Email already in use');
-            }
+            };
 
             //hasher le mot de passe avant de le stocker en base de données
             const hashedPassword = await argon2.hash(password);
@@ -74,8 +74,8 @@ class AuthController {
 
         } catch (error) {
             ErrorHandler.sendError(res, error);
-        }
-    }
+        };
+    };
 
     async login(req: Request, res: Response) {
         // schéma pour valider les données entrantes dans notre controller
@@ -105,12 +105,6 @@ class AuthController {
                 { expiresIn: "1h" }
             );
 
-            // Avant de créer un nouveau refresh token, on supprime les anciens refresh
-            // Afin d'avoir un token / utilisateur
-            await prisma.refreshToken.deleteMany({
-                where: { userId: user.id }
-            });
-
             const refreshToken = jwt.sign(
                 { email, id: user.id },
                 jwtSecret,
@@ -125,7 +119,6 @@ class AuthController {
                     expiresAt: new Date(Date.now() + 1000 * 60 * 60 * 24 * 7) // 7j
                 }
             });
-
 
             res.cookie("access_token", token, {
                 httpOnly: true,
@@ -181,7 +174,7 @@ class AuthController {
 
         } catch (error) {
             return ErrorHandler.sendError(res, error);
-        }
+        };
     };
 
     async logout(req: Request, res: Response) {
@@ -201,12 +194,13 @@ class AuthController {
         // On supprime également le refreshToken dans la DB (celui qui avait été confié au client et qu'il nous renvoie sur la route logout via cookie) pour forcer le relogin
         // Suppression via l'userId récupéré depuis le token (authMiddleware)
         if (refreshToken) {
-            await prisma.refreshToken.deleteMany({
-                where: { userId: Number(req.user.id) }
+            await prisma.refreshToken.delete({
+                where: { token: req.cookies.refresh_token }
             });
-        }
+        };
+
         res.sendStatus(204);
-    }
+    };
 
     async me(req: Request, res: Response): Promise<void> {
         // Récupérer les informations de l'utilisateur à partir de la requête (grâce au middleware d'authentification)
@@ -221,8 +215,7 @@ class AuthController {
 
         // Renvoyer les informations de l'utilisateur au client
         res.json({ id: user.id, email: user.email, firstname: user.firstname, lastname: user.lastname, role: user.roleId });
-    }
-
+    };
 };
 
 export default new AuthController();

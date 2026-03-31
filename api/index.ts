@@ -16,7 +16,7 @@ app.set('trust proxy', 1);
 
 app.use(express.json());
 app.use(helmet());
-app.use(cookieParser());
+app.use(cookieParser()); // Lib qui parse le cookie, permet l'accès à req.cookies
 
 // CORS Policy
 app.use(cors({
@@ -32,6 +32,7 @@ const { generateToken, doubleCsrfProtection } = doubleCsrf({
     getSecret: () => process.env.JWT_SECRET as string,
     cookieName: 'csrfToken',
     cookieOptions: {
+        httpOnly: true, // true = qui ne peut pas être lu par le JS
         sameSite: 'lax',
         secure: process.env.NODE_ENV === 'production',
     }

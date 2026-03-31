@@ -4,14 +4,12 @@ import { ForbiddenError, NotFoundError } from "../utils/Error.ts";
 import z from 'zod';
 import ErrorHandler from "../ErrorHandler.ts";
 
-const shemas = {
-    update: z.object({
-        email: z.string().email().optional(),
-        firstname: z.string().min(2).optional(),
-        lastname: z.string().min(2).optional(),
-        address: z.string().min(5).optional(),
-    })
-};
+const userSchema = z.object({
+    email: z.string().email().optional(),
+    firstname: z.string().min(2).optional(),
+    lastname: z.string().min(2).optional(),
+    address: z.string().min(5).optional(),
+});
 
 const userSelect = {
     id: true,
@@ -25,11 +23,12 @@ const userSelect = {
 };
 
 class UserController {
-    async getAll(req: Request, res: Response) {
+    async getAll(_req: Request, res: Response) {
         try {
             const users = await prisma.user.findMany({
                 select: userSelect
             });
+
             res.json(users);
         } catch (error) {
             ErrorHandler.sendError(res, error);
@@ -38,10 +37,16 @@ class UserController {
 
     async getById(req: Request, res: Response) {
         try {
-            const { id } = req.params;
+            const id = Number(req.params.id);
+
+            if (!id || isNaN(id)) throw new NotFoundError('User not found');
+
+            if (Number(req.user.id) !== id) {
+                throw new ForbiddenError('Forbidden');
+            };
 
             const user = await prisma.user.findUnique({
-                where: { id: Number(id) },
+                where: { id },
                 select: userSelect
             });
 
@@ -55,17 +60,23 @@ class UserController {
 
     async update(req: Request, res: Response) {
         try {
-            const { id } = req.params;
-            const data = shemas.update.parse(req.body);
+            const id = Number(req.params.id);
+            const data = userSchema.parse(req.body);
+
+            if (!id || isNaN(id)) throw new NotFoundError('User not found');
+
+            if (Number(req.user.id) !== id) {
+                throw new ForbiddenError('Forbidden');
+            };
 
             const exists = await prisma.user.findUnique({
-                where: { id: Number(id) }
+                where: { id }
             });
 
             if (!exists) throw new NotFoundError('User not found');
 
             const user = await prisma.user.update({
-                where: { id: Number(id) },
+                where: { id },
                 data: data,
                 select: userSelect
             });
@@ -81,9 +92,9 @@ class UserController {
             const { id } = req.params;
             const userId = Number(id);
 
-            if (Number(req.user?.id) !== userId) {
+            if (Number(req.user.id) !== userId) {
                 throw new ForbiddenError('Forbidden');
-            }
+            };
 
             const user = await prisma.user.findUnique({
                 where: { id: userId }

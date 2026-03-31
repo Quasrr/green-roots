@@ -18,6 +18,7 @@ h1 {
   position: relative;
   height: 50dvh;
   margin-top: 0.75rem;
+  margin-bottom: 5rem;
 }
 
 .banniere {
@@ -79,6 +80,7 @@ h1 {
 .trees_popular {
   margin-right: 18rem;
   margin-left: 18rem;
+  margin-bottom: 5rem;
 }
 
 h4 {
@@ -127,6 +129,7 @@ h3 {
   display: flex;
   gap: 2rem;
   margin-top: 2rem;
+  margin-bottom: 5rem;
 }
 
 .article_reasons_choose {
@@ -268,6 +271,7 @@ h3 {
    RESPONSIVE — TABLETTE (≤ 1200px)
    =================================================== */
 @media (max-width: 1200px) {
+
   .why_choose,
   .trees_popular {
     margin-right: 4rem;

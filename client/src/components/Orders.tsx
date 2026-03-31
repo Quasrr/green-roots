@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { ArrowLeft, LoaderCircle, PackageSearch, Receipt, Sprout } from 'lucide-react';
 import { useAuth } from '../hooks/useAuth.tsx';
@@ -39,6 +39,7 @@ export default function Orders() {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState('');
     const [refreshIndex, setRefreshIndex] = useState(0);
+    const paymentRequestStarted = useRef(false);
 
     useEffect(() => {
         // Un utilisateur non connecté est redirigé sur la page d'accueil
@@ -86,6 +87,41 @@ export default function Orders() {
             isCancelled = true;
         };
     }, [isLoggedIn, navigate, refreshIndex]);
+
+    useEffect(() => {
+        if (isLoading || !isLoggedIn) {
+            return;
+        }
+
+        const pendingPaymentOrderId = window.sessionStorage.getItem('pendingPaymentOrderId');
+
+        if (!pendingPaymentOrderId || paymentRequestStarted.current) {
+            return;
+        }
+
+        paymentRequestStarted.current = true;
+
+        const timeoutId = window.setTimeout(async () => {
+            try {
+                await fetch(`${import.meta.env.VITE_API_URL}/api/orders/${pendingPaymentOrderId}/pay`, {
+                    method: 'POST',
+                    credentials: 'include',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'x-csrf-token': localStorage.getItem('csrfToken') || '',
+                    },
+                });
+            } finally {
+                window.sessionStorage.removeItem('pendingPaymentOrderId');
+                setRefreshIndex((current) => current + 1);
+            }
+        }, 1500);
+
+        return () => {
+            window.clearTimeout(timeoutId);
+            paymentRequestStarted.current = false;
+        };
+    }, [isLoading, isLoggedIn]);
 
     // Initiales de l'user (firstname lastname)
     const initials = `${user?.firstname?.charAt(0)}${user?.lastname?.charAt(0)}`.toUpperCase();

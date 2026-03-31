@@ -21,8 +21,6 @@ const treeSchema = z.object({
     categories: z.array(z.coerce.number().int().positive()).default([]),
 });
 
-const updateTreeSchema = treeSchema.partial();
-
 class TreesController {
     async getAll(_req: Request, res: Response) {
         try {
@@ -46,12 +44,14 @@ class TreesController {
             res.send(normalizedTrees);
         } catch (error) {
             ErrorHandler.sendError(res, error);
-        }
-    }
+        };
+    };
 
     async getById(req: Request, res: Response) {
         try {
             const id = Number(req.params.id);
+
+            if (id <= 0) throw new NotFoundError("Tree not found");
 
             const tree = await prisma.tree.findUnique({
                 where: { id },
@@ -72,8 +72,8 @@ class TreesController {
             });
         } catch (error) {
             ErrorHandler.sendError(res, error);
-        }
-    }
+        };
+    };
 
     async create(req: Request, res: Response) {
         try {
@@ -81,7 +81,7 @@ class TreesController {
 
             const existingTree = await prisma.tree.findFirst({
                 where: {
-                    OR: [
+                    OR: [ // Soit l'un soit l'autre
                         { name: data.name },
                         { image: data.image },
                     ],
@@ -108,7 +108,7 @@ class TreesController {
                     categories: {
                         create: data.categories.map((categoryId) => ({
                             category: {
-                                connect: { id: categoryId },
+                                connect: { id: categoryId }, // connect permet, grâce au schéma Prisma, d'ajouter automatiquement la valeur dans la  table de liaison
                             },
                         })),
                     },
@@ -134,7 +134,7 @@ class TreesController {
     async update(req: Request, res: Response) {
         try {
             const id = Number(req.params.id);
-            const data = updateTreeSchema.parse(req.body);
+            const data = treeSchema.parse(req.body);
 
             const { categories, ...treeData } = data;
 
@@ -142,7 +142,7 @@ class TreesController {
                 ...treeData,
             };
 
-            if (categories !== undefined) {
+            if (categories.length > 0) {
                 updateData.categories = {
                     deleteMany: {},
                     create: categories.map((categoryId) => ({
