@@ -39,6 +39,7 @@ export default function Orders() {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState('');
     const [refreshIndex, setRefreshIndex] = useState(0);
+    const [cancelingId, setCancelingId] = useState<number | null>(null);
     const paymentRequestStarted = useRef(false);
 
     useEffect(() => {
@@ -131,6 +132,36 @@ export default function Orders() {
     const totalTrees = orders.reduce((sum, order) => sum + order.lines.reduce((lineSum, line) => lineSum + line.quantity, 0), 0);
     // Total d'euros dépensés
     const totalSpent = orders.reduce((sum, order) => sum + Number(order.total), 0);
+
+    async function handleCancelOrder(orderId: number) {
+        // Petite confirmation avant d'annuler
+        const confirmed = window.confirm('Confirmer l\'annulation de cette commande ?');
+        if (!confirmed) return;
+
+        setCancelingId(orderId);
+
+        try {
+            const response = await fetch(`${import.meta.env.VITE_API_URL}/api/orders/${orderId}/cancel`, {
+                method: 'PATCH',
+                credentials: 'include',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'x-csrf-token': localStorage.getItem('csrfToken') || '',
+                },
+            });
+
+            if (!response.ok) {
+                throw new Error('CANCEL_ORDER_FAILED');
+            }
+
+            // Rafraîchit la liste après annulation
+            setRefreshIndex((current) => current + 1);
+        } catch (err) {
+            setError('Impossible d\'annuler cette commande pour le moment');
+        } finally {
+            setCancelingId(null);
+        }
+    }
 
     return (
         <main className="orders_wrapper">
@@ -239,7 +270,7 @@ export default function Orders() {
                             {orders.map((order, index) => {
                                 const itemCount = order.lines.reduce((sum, line) => sum + line.quantity, 0);
                                 const orderNumber = totalOrders - index;
-                                
+
                                 return (
                                     <article key={order.id} className="orders_card">
                                         <div className="orders_card_header">
@@ -293,6 +324,18 @@ export default function Orders() {
                                                 );
                                             })}
                                         </div>
+                                        {(order.status === 'waiting' || order.status === 'paid') && (
+                                            <div className="orders_card_actions">
+                                                <button
+                                                    type="button"
+                                                    className="orders_cancel_button"
+                                                    onClick={() => handleCancelOrder(order.id)}
+                                                    disabled={cancelingId === order.id}
+                                                >
+                                                    {cancelingId === order.id ? 'Annulation...' : 'Annuler la commande'}
+                                                </button>
+                                            </div>
+                                        )}
                                     </article>
                                 );
                             })}
