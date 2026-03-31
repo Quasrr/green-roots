@@ -1,3 +1,4 @@
+import { Link } from 'react-router-dom';
 import '../components/styles/Cgv.css';
 
 function CGV() {
@@ -7,52 +8,99 @@ function CGV() {
             <p className="last_update">Dernière mise à jour : mars 2026</p>
 
             <section>
-                <h2>1. Objet</h2>
-                <p>Les présentes conditions générales de vente régissent les ventes d'arbres effectuées sur la plateforme GreenRoots. Toute commande implique l'acceptation pleine et entière des présentes CGV.</p>
+                <h2>1. Champ d'application</h2>
+                <p>
+                    Les présentes conditions générales de vente régissent les commandes passées sur GreenRoots.
+                    Toute commande implique l'acceptation des présentes CGV.
+                </p>
             </section>
 
             <section>
-                <h2>2. Produits</h2>
-                <p>GreenRoots commercialise des arbres à planter dans le cadre d'une démarche de reforestation. Les caractéristiques de chaque arbre (espèce, impact écologique, prix) sont détaillées sur la fiche produit correspondante.</p>
+                <h2>2. Identité du vendeur</h2>
+                <p>
+                    GreenRoots est présenté, à la date de mise à jour de cette page, comme un projet pédagogique.
+                    Les informations relatives à l'éditeur du site et aux moyens de contact sont disponibles dans les{' '}
+                    <Link to="/legals">mentions légales</Link> et sur la page <Link to="/contact">contact</Link>.
+                </p>
             </section>
 
             <section>
-                <h2>3. Prix</h2>
-                <p>Les prix sont indiqués en euros toutes taxes comprises. GreenRoots se réserve le droit de modifier ses prix à tout moment. Les commandes sont facturées sur la base des tarifs en vigueur au moment de la validation.</p>
+                <h2>3. Produits et services</h2>
+                <p>
+                    GreenRoots propose des commandes d'arbres dans le cadre d'une démarche de reforestation.
+                    Les caractéristiques essentielles de chaque offre, notamment la nature de l'arbre et son prix,
+                    sont indiquées sur la fiche correspondante.
+                </p>
             </section>
 
             <section>
-                <h2>4. Commande</h2>
-                <p>Pour passer une commande, l'utilisateur doit :</p>
-                <ul>
-                    <li>Disposer d'un compte GreenRoots</li>
-                    <li>Sélectionner un ou plusieurs arbres depuis le catalogue</li>
-                    <li>Valider son panier et procéder au paiement</li>
-                </ul>
-                <p>La commande est confirmée après validation du paiement. Un récapitulatif est accessible depuis l'historique des commandes.</p>
+                <h2>4. Prix</h2>
+                <p>
+                    Les prix affichés sur le site sont indiqués en euros toutes taxes comprises. Sauf indication
+                    contraire, le prix applicable est celui affiché au moment de la validation de la commande.
+                </p>
             </section>
 
             <section>
-                <h2>5. Paiement</h2>
-                <p>Le paiement est sécurisé et traité via Stripe. GreenRoots ne stocke aucune donnée bancaire. Les moyens de paiement acceptés sont les cartes bancaires Visa et Mastercard.</p>
+                <h2>5. Commande</h2>
+                <p>Pour passer commande, l'utilisateur doit disposer d'un compte, sélectionner une ou plusieurs offres et valider son panier.</p>
+                <p>
+                    La commande n'est considérée comme enregistrée qu'après validation du processus de commande sur
+                    le site. Un récapitulatif reste accessible depuis l'espace personnel de l'utilisateur.
+                </p>
             </section>
 
             <section>
-                <h2>6. Rétractation</h2>
-                <p>Conformément à l'article L221-28 du Code de la consommation, le droit de rétractation ne s'applique pas aux biens dont la nature ne permet pas le retour. La plantation d'un arbre étant un acte irréversible, les commandes validées ne peuvent faire l'objet d'un remboursement.</p>
+                <h2>6. Paiement</h2>
+                <p>
+                    Le paiement intervient au moment de la validation de la commande, selon les modalités proposées
+                    sur le site au moment de l'achat. Les CGV ne décrivent pas ici un prestataire de paiement
+                    particulier lorsque celui-ci n'est pas effectivement intégré ou identifié sur le site.
+                </p>
             </section>
 
             <section>
-                <h2>7. Responsabilité</h2>
-                <p>GreenRoots s'engage à planter les arbres commandés dans les zones de reforestation définies. GreenRoots ne saurait être tenu responsable de facteurs environnementaux indépendants de sa volonté (sécheresse, incendie, etc.).</p>
+                <h2>7. Exécution de la commande</h2>
+                <p>
+                    Les modalités d'exécution de la commande et, le cas échéant, les informations relatives à la
+                    plantation ou au suivi du projet sont celles présentées sur le site au moment de la commande.
+                    En l'absence d'indication plus précise, GreenRoots exécute la commande dans un délai raisonnable
+                    après sa validation.
+                </p>
             </section>
 
             <section>
-                <h2>8. Litiges</h2>
-                <p>En cas de litige, une solution amiable sera recherchée en priorité. À défaut, les tribunaux français seront seuls compétents.</p>
+                <h2>8. Droit de rétractation</h2>
+                <p>
+                    Sauf exception légale applicable, le consommateur bénéficie en principe d'un délai de rétractation
+                    de 14 jours pour les contrats conclus à distance. Si la prestation commence avant l'expiration de
+                    ce délai à la demande expresse du client, les conditions de maintien, de limitation ou de perte du
+                    droit de rétractation sont celles prévues par le Code de la consommation.
+                </p>
+                <p>
+                    En conséquence, GreenRoots ne peut pas écarter de manière générale le droit de rétractation sans
+                    que les conditions légales correspondantes soient réunies au moment de la commande.
+                </p>
+            </section>
+
+            <section>
+                <h2>9. Réclamations et litiges</h2>
+                <p>
+                    Pour toute réclamation, l'utilisateur est invité à contacter GreenRoots via la page{' '}
+                    <Link to="/contact">contact</Link>.
+                </p>
+                <p>
+                    En cas d'échec d'une réclamation préalable, le consommateur peut recourir gratuitement à un
+                    médiateur de la consommation dans les conditions prévues par les articles L612-1 et suivants du
+                    Code de la consommation.
+                </p>
+                <p>
+                    Dans le cadre de cette version fictive du projet, le médiateur indiqué à titre d'exemple est :
+                    Médiation Consommation France, 10 rue des Tilleuls, 33000 Bordeaux, www.mediation-consommation-france.fr.
+                </p>
             </section>
         </main>
-    )
+    );
 }
 
-export default CGV
+export default CGV;
