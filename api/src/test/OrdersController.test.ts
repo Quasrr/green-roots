@@ -1,7 +1,7 @@
 import * as assert from "node:assert/strict";
 import { describe, it } from "node:test";
 import argon2 from "argon2";
-import { Growth, prisma } from "../models/index.ts";
+import { Growth, OrderStatus, prisma } from "../models/index.ts";
 import { baseUrl, createTestSession, loginAndGetSession } from "./helpers/http.ts";
 
 async function createUser({
@@ -96,19 +96,24 @@ describe("POST /api/orders", () => {
         assert.equal(order.lines[0].quantity, 2);
     });
 
-    it("decrements tree stock after order creation", async () => {
+    it("keeps tree stock unchanged after order creation while the order is waiting", async () => {
         await createUser({ email: "user@greenroots.fr", roleId: 2 });
         const tree = await createTree(10);
         const { session } = await loginAndGetSession("user@greenroots.fr", "GreenRoots123");
 
-        await session.csrfFetch(`${baseUrl}/api/orders`, {
+        const response = await session.csrfFetch(`${baseUrl}/api/orders`, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify([{ treeId: tree.id, quantity: 3 }]),
         });
 
+        assert.equal(response.status, 201);
+
+        const order = await response.json();
+        assert.equal(order.status, OrderStatus.waiting);
+
         const updatedTree = await prisma.tree.findUnique({ where: { id: tree.id } });
-        assert.equal(updatedTree?.quantity, 7);
+        assert.equal(updatedTree?.quantity, 10);
     });
 
     it("returns 401 when unauthenticated", async () => {
@@ -164,6 +169,69 @@ describe("POST /api/orders", () => {
 
         assert.equal(response.status, 400);
         assert.match(await response.text(), /Stock insuffisant/);
+    });
+});
+
+describe("POST /api/orders/:id/pay", () => {
+    it("marks one concurrent order as canceled when only one payment can consume the remaining stock", async () => {
+        await createUser({ email: "first-user@greenroots.fr", roleId: 2 });
+        await createUser({ email: "second-user@greenroots.fr", roleId: 2 });
+        const tree = await createTree(9);
+
+        const { session: firstSession } = await loginAndGetSession("first-user@greenroots.fr", "GreenRoots123");
+        const { session: secondSession } = await loginAndGetSession("second-user@greenroots.fr", "GreenRoots123");
+
+        const firstOrderResponse = await firstSession.csrfFetch(`${baseUrl}/api/orders`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify([{ treeId: tree.id, quantity: 9 }]),
+        });
+        const secondOrderResponse = await secondSession.csrfFetch(`${baseUrl}/api/orders`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify([{ treeId: tree.id, quantity: 9 }]),
+        });
+
+        assert.equal(firstOrderResponse.status, 201);
+        assert.equal(secondOrderResponse.status, 201);
+
+        const firstOrder = await firstOrderResponse.json();
+        const secondOrder = await secondOrderResponse.json();
+
+        const [firstPaymentResponse, secondPaymentResponse] = await Promise.all([
+            firstSession.csrfFetch(`${baseUrl}/api/orders/${firstOrder.id}/pay`, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+            }),
+            secondSession.csrfFetch(`${baseUrl}/api/orders/${secondOrder.id}/pay`, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+            }),
+        ]);
+
+        const paymentStatuses = [firstPaymentResponse.status, secondPaymentResponse.status].sort();
+        assert.deepEqual(paymentStatuses, [200, 400]);
+
+        const refreshedOrders = await prisma.order.findMany({
+            orderBy: { id: "asc" },
+            select: { id: true, status: true },
+        });
+
+        assert.equal(
+            refreshedOrders.filter(order => order.status === OrderStatus.paid).length,
+            1
+        );
+        assert.equal(
+            refreshedOrders.filter(order => order.status === OrderStatus.canceled).length,
+            1
+        );
+
+        const updatedTree = await prisma.tree.findUnique({
+            where: { id: tree.id },
+            select: { quantity: true },
+        });
+
+        assert.equal(updatedTree?.quantity, 0);
     });
 });
 
