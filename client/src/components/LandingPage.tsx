@@ -74,7 +74,7 @@ function LandingPage() {
                     <Link to="/catalog" className='link_catalog'>Voir tout le catalogue</Link>
                 </div>
                 <div className="section_article_trees">
-                    {trees.slice(0, 4).map(tree => (
+                    {trees.filter(tree => tree.quantity > 0).slice(0, 4).map(tree => (
                         <Link to={`/catalog/${tree.id}`} key={tree.id} className="article_reasons_choose">
                             <article key={tree.id} className="article_reasons_choose">
                                 <img src={`/${tree.image}`} alt={tree.name} className="chene" />
