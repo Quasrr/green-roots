@@ -19,7 +19,12 @@ export default function Legals() {
 
             <section>
                 <h2>2. Hébergement</h2>
-                <p>L'hébergement du site est à définir. Les informations seront mises à jour lors de la mise en production.</p>
+                <p>Le site est hébergé par :</p>
+                <ul>
+                    <li><strong>Société :</strong> OVH SAS</li>
+                    <li><strong>Adresse :</strong> 2 rue Kellermann, 59100 Roubaix, France</li>
+                    <li><strong>Site web :</strong> <a href="https://www.ovhcloud.com" target="_blank" rel="noreferrer">www.ovhcloud.com</a></li>
+                </ul>
             </section>
 
             <section>
