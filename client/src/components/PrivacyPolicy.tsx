@@ -52,7 +52,7 @@ export default function PrivacyPolicy() {
 
             <section>
                 <h2>6. Sécurité</h2>
-                <p>Vos mots de passe sont hashés avec argon2. <br /> Aucune donnée sensible n'est stockée en clair. <br /> Les échanges sont sécurisés via HTTPS.</p>
+                <p>Vos mots de passe sont hashés. <br /> Aucune donnée sensible n'est stockée en clair. <br /> Les échanges sont sécurisés via HTTPS.</p>
             </section>
 
             <section>
