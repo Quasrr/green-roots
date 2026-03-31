@@ -1,12 +1,16 @@
+/* ===================================================
+   BASE — MOBILE-FIRST (default = small screens)
+   =================================================== */
+
 .contact_wrapper {
     max-width: 900px;
-    margin: 3rem auto;
-    padding: 0 2rem 4rem;
+    margin: 1.5rem auto;
+    padding: 0 1rem 3rem;
     font-family: var(--font-primary);
 }
 
 .contact_wrapper h1 {
-    font-size: 2.2rem;
+    font-size: 1.7rem;
     font-weight: bold;
     color: var(--bg-color-tercary);
     margin-bottom: 0.5rem;
@@ -15,15 +19,16 @@
 .contact_description {
     color: var(--text-color);
     font-size: 1rem;
-    margin-bottom: 3rem;
+    margin-bottom: 1.5rem;
 }
 
 /* === Layout === */
 
 .contact_layout {
     display: flex;
-    gap: 3rem;
-    align-items: flex-start;
+    flex-direction: column;
+    gap: 2rem;
+    align-items: stretch;
 }
 
 /* === Infos === */
@@ -32,7 +37,8 @@
     display: flex;
     flex-direction: column;
     gap: 2rem;
-    min-width: 200px;
+    min-width: unset;
+    width: 100%;
 }
 
 .contact_info_item {
@@ -63,10 +69,12 @@
     flex-direction: column;
     gap: 1.25rem;
     flex: 1;
+    width: 100%;
 }
 
 .contact_form_row {
     display: flex;
+    flex-direction: column;
     gap: 1rem;
 }
 
@@ -122,7 +130,8 @@
     font-family: var(--font-primary);
     cursor: pointer;
     transition: background 0.15s;
-    align-self: flex-end;
+    align-self: stretch;
+    text-align: center;
 }
 
 .contact_btn:hover {
@@ -130,52 +139,46 @@
 }
 
 /* ===================================================
-   RESPONSIVE — MOBILE (≤ 768px)
+   RESPONSIVE — DESKTOP (>= 769px)
    =================================================== */
-@media (max-width: 768px) {
-  .contact_wrapper {
-    margin: 1.5rem auto;
-    padding: 0 1rem 3rem;
-  }
+@media (min-width: 769px) {
+    .contact_wrapper {
+        margin: 3rem auto;
+        padding: 0 2rem 4rem;
+    }
 
-  .contact_wrapper h1 {
-    font-size: 1.7rem;
-  }
+    .contact_wrapper h1 {
+        font-size: 2.2rem;
+    }
 
-  .contact_description {
-    margin-bottom: 1.5rem;
-  }
+    .contact_description {
+        margin-bottom: 3rem;
+    }
 
-  /* Infos + formulaire en colonne */
-  .contact_layout {
-    flex-direction: column;
-    gap: 2rem;
-    align-items: stretch;
-  }
+    /* Infos + formulaire côte à côte */
+    .contact_layout {
+        flex-direction: row;
+        gap: 3rem;
+        align-items: flex-start;
+    }
 
-  .contact_info {
-    min-width: unset;
-    width: 100%;
-  }
+    .contact_info {
+        min-width: 200px;
+        width: auto;
+    }
 
-  .contact_form {
-    width: 100%;
-  }
+    .contact_form {
+        width: auto;
+    }
 
-  /* Les 2 champs côte à côte deviennent 1 colonne */
-  .contact_form_row {
-    flex-direction: column;
-  }
+    /* Les 2 champs côte à côte */
+    .contact_form_row {
+        flex-direction: row;
+    }
 
-  /* Inputs et textarea pleine largeur */
-  .contact_input,
-  .contact_textarea {
-    width: 100%;
-  }
-
-  /* Bouton centré sur mobile */
-  .contact_btn {
-    align-self: stretch;
-    text-align: center;
-  }
+    /* Bouton aligné à droite sur desktop */
+    .contact_btn {
+        align-self: flex-end;
+        text-align: left;
+    }
 }

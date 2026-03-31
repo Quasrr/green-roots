@@ -1,12 +1,16 @@
+/* ===================================================
+   BASE STYLES (Mobile-first: ≤ 768px)
+   =================================================== */
+
 .cart_wrapper {
     max-width: 1000px;
-    margin: 3rem auto;
-    padding: 0 2rem 4rem;
+    margin: 1.5rem auto;
+    padding: 0 1rem 3rem;
     font-family: var(--font-primary);
 }
 
 .cart_wrapper h1 {
-    font-size: 2rem;
+    font-size: 1.6rem;
     font-weight: bold;
     color: var(--bg-color-tercary);
     margin-bottom: 0.25rem;
@@ -47,6 +51,7 @@
 
 .cart_layout {
     display: flex;
+    flex-direction: column;
     gap: 2.5rem;
     align-items: flex-start;
 }
@@ -67,6 +72,7 @@
     background-color: white;
     border-radius: 0.75rem;
     padding: 1rem;
+    flex-wrap: wrap;
 }
 
 .cart_item_img {
@@ -102,7 +108,7 @@
     margin: 0;
 }
 
-/* === Contrôles quantité === */
+/* === Controles quantite === */
 
 .cart_item_controls {
     display: flex;
@@ -142,7 +148,7 @@
     font-size: 0.95rem;
     margin: 0;
     min-width: 60px;
-    text-align: right;
+    text-align: left;
 }
 
 .cart_remove_btn {
@@ -161,15 +167,14 @@
     background-color: #fde8e8;
 }
 
-/* === Résumé commande === */
+/* === Resume commande === */
 
 .cart_summary {
     background-color: white;
     border-radius: 1rem;
     padding: 1.5rem;
-    min-width: 240px;
-    position: sticky;
-    top: 1rem;
+    width: 100%;
+    position: static;
     display: flex;
     flex-direction: column;
     gap: 0.75rem;
@@ -226,33 +231,34 @@
 }
 
 /* ===================================================
-   RESPONSIVE — MOBILE (≤ 768px)
+   RESPONSIVE — DESKTOP (>= 769px)
    =================================================== */
-@media (max-width: 768px) {
+@media (min-width: 769px) {
     .cart_wrapper {
-        margin: 1.5rem auto;
-        padding: 0 1rem 3rem;
+        margin: 3rem auto;
+        padding: 0 2rem 4rem;
     }
 
     .cart_wrapper h1 {
-        font-size: 1.6rem;
+        font-size: 2rem;
     }
 
     .cart_layout {
-        flex-direction: column;
-    }
-
-    .cart_summary {
-        position: static;
-        min-width: unset;
-        width: 100%;
+        flex-direction: row;
     }
 
     .cart_item {
-        flex-wrap: wrap;
+        flex-wrap: nowrap;
     }
 
     .cart_item_subtotal {
-        text-align: left;
+        text-align: right;
+    }
+
+    .cart_summary {
+        min-width: 240px;
+        width: auto;
+        position: sticky;
+        top: 1rem;
     }
 }

@@ -1,12 +1,16 @@
+/* ===================================================
+   BASE — MOBILE-FIRST (default = small screens)
+   =================================================== */
+
 .profile_wrapper {
     max-width: 900px;
-    margin: 3rem auto;
-    padding: 0 2rem 4rem;
+    margin: 1.5rem auto;
+    padding: 0 1rem 3rem;
     font-family: var(--font-primary);
 }
 
 .profile_wrapper h1 {
-    font-size: 2rem;
+    font-size: 1.6rem;
     font-weight: bold;
     color: var(--bg-color-tercary);
     margin-bottom: 0.25rem;
@@ -22,11 +26,12 @@
 
 .profile_layout {
     display: flex;
+    flex-direction: column;
     gap: 2.5rem;
-    align-items: flex-start;
+    align-items: stretch;
 }
 
-/* === Carte résumé (gauche) === */
+/* === Carte résumé === */
 
 .profile_card_summary {
     background-color: white;
@@ -36,10 +41,9 @@
     flex-direction: column;
     align-items: center;
     gap: 0.5rem;
-    min-width: 200px;
+    min-width: unset;
     text-align: center;
-    position: sticky;
-    top: 1rem;
+    position: static;
 }
 
 .profile_avatar {
@@ -80,7 +84,7 @@
     margin-top: 0.25rem;
 }
 
-/* === Formulaire (droite) === */
+/* === Formulaire === */
 
 .profile_form {
     flex: 1;
@@ -111,6 +115,7 @@
 
 .profile_form_row {
     display: flex;
+    flex-direction: column;
     gap: 1rem;
 }
 
@@ -177,7 +182,7 @@
 
 .profile_actions {
     display: flex;
-    justify-content: space-between;
+    flex-direction: column-reverse;
     align-items: center;
     gap: 1rem;
 }
@@ -193,7 +198,8 @@
     font-family: var(--font-primary);
     cursor: pointer;
     transition: background 0.15s;
-    align-self: flex-end;
+    align-self: stretch;
+    text-align: center;
 }
 
 .profile_btn:hover {
@@ -216,7 +222,8 @@
     font-family: var(--font-primary);
     cursor: pointer;
     transition: background 0.15s, color 0.15s, border-color 0.15s;
-    align-self: flex-end;
+    align-self: stretch;
+    text-align: center;
 }
 
 .profile_delete_btn:hover {
@@ -268,7 +275,7 @@
 
 .profile_modal_actions {
     display: flex;
-    justify-content: flex-end;
+    flex-direction: column;
     gap: 0.75rem;
 }
 
@@ -311,49 +318,48 @@
 }
 
 /* ===================================================
-   RESPONSIVE — MOBILE (≤ 768px)
+   RESPONSIVE — DESKTOP (>= 769px)
    =================================================== */
-@media (max-width: 768px) {
+@media (min-width: 769px) {
     .profile_wrapper {
-        margin: 1.5rem auto;
-        padding: 0 1rem 3rem;
+        margin: 3rem auto;
+        padding: 0 2rem 4rem;
     }
 
     .profile_wrapper h1 {
-        font-size: 1.6rem;
+        font-size: 2rem;
     }
 
-    /* Carte résumé + formulaire en colonne */
     .profile_layout {
-        flex-direction: column;
-        align-items: stretch;
+        flex-direction: row;
+        align-items: flex-start;
     }
 
     .profile_card_summary {
-        position: static;
-        min-width: unset;
+        min-width: 200px;
+        position: sticky;
+        top: 1rem;
     }
 
-    /* Champs prénom/nom en colonne */
     .profile_form_row {
-        flex-direction: column;
+        flex-direction: row;
     }
 
     .profile_btn {
-        align-self: stretch;
-        text-align: center;
+        align-self: flex-end;
     }
 
     .profile_delete_btn {
-        align-self: stretch;
-        text-align: center;
+        align-self: flex-end;
     }
 
     .profile_actions {
-        flex-direction: column-reverse;
+        flex-direction: row;
+        justify-content: space-between;
     }
 
     .profile_modal_actions {
-        flex-direction: column;
+        flex-direction: row;
+        justify-content: flex-end;
     }
 }

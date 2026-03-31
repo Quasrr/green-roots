@@ -1,7 +1,11 @@
+/* ===========================
+   Orders — Mobile-First Styles
+   =========================== */
+
 .orders_wrapper {
     max-width: 1100px;
-    margin: 3rem auto;
-    padding: 0 2rem 4rem;
+    margin: 1.5rem auto;
+    padding: 0 1rem 3rem;
     font-family: var(--font-primary);
 }
 
@@ -10,7 +14,7 @@
 }
 
 .orders_intro h1 {
-    font-size: 2rem;
+    font-size: 1.65rem;
     color: var(--bg-color-tercary);
     margin-bottom: 0.45rem;
 }
@@ -24,12 +28,13 @@
 
 .orders_layout {
     display: flex;
+    flex-direction: column;
     gap: 2rem;
     align-items: flex-start;
 }
 
 .orders_summary_card {
-    width: 260px;
+    width: 100%;
     background: linear-gradient(180deg, #ffffff 0%, #f7fbf8 100%);
     border: 1px solid rgba(26, 66, 49, 0.08);
     border-radius: 1rem;
@@ -37,8 +42,7 @@
     display: flex;
     flex-direction: column;
     gap: 1rem;
-    position: sticky;
-    top: 1rem;
+    position: static;
     box-shadow: var(--shadow-card);
 }
 
@@ -114,7 +118,7 @@
 
 .orders_stats_grid {
     display: grid;
-    grid-template-columns: repeat(3, minmax(0, 1fr));
+    grid-template-columns: 1fr;
     gap: 1rem;
 }
 
@@ -175,9 +179,9 @@
 
 .orders_card_header {
     display: flex;
-    justify-content: space-between;
+    flex-direction: column;
+    align-items: stretch;
     gap: 1rem;
-    align-items: flex-start;
 }
 
 .orders_card_eyebrow {
@@ -201,6 +205,7 @@
     font-size: 0.78rem;
     font-weight: 700;
     white-space: nowrap;
+    align-self: flex-start;
 }
 
 .orders_status_badge_waiting {
@@ -220,7 +225,7 @@
 
 .orders_card_resume {
     display: grid;
-    grid-template-columns: repeat(3, minmax(0, 1fr));
+    grid-template-columns: 1fr;
     gap: 1rem;
     padding: 1rem 1.1rem;
     background-color: var(--bg-color-primary);
@@ -248,8 +253,8 @@
 
 .orders_line {
     display: grid;
-    grid-template-columns: auto 1fr auto auto;
-    gap: 1rem;
+    grid-template-columns: 1fr;
+    gap: 0.6rem;
     align-items: center;
     padding: 0.95rem 0;
     border-bottom: 1px solid var(--border-color);
@@ -266,7 +271,7 @@
     border-radius: 0.85rem;
     background-color: var(--bg-color-primary);
     color: var(--bg-color-secondary);
-    display: flex;
+    display: none;
     align-items: center;
     justify-content: center;
 }
@@ -328,7 +333,9 @@
 
 .orders_state_actions {
     display: flex;
+    flex-direction: column;
     gap: 0.85rem;
+    width: 100%;
     flex-wrap: wrap;
     justify-content: center;
 }
@@ -342,6 +349,8 @@
     font-size: 0.92rem;
     font-weight: 600;
     text-decoration: none;
+    width: 100%;
+    text-align: center;
     transition: background-color var(--transition-fast), color var(--transition-fast), border-color var(--transition-fast);
 }
 
@@ -374,62 +383,72 @@
     }
 }
 
-@media (max-width: 900px) {
-    .orders_layout {
-        flex-direction: column;
-    }
+/* ===========================
+   Tablet — min-width: 769px
+   =========================== */
 
-    .orders_summary_card {
-        width: 100%;
-        position: static;
-    }
-
-    .orders_stats_grid {
-        grid-template-columns: 1fr;
-    }
-}
-
-@media (max-width: 768px) {
+@media (min-width: 769px) {
     .orders_wrapper {
-        margin: 1.5rem auto;
-        padding: 0 1rem 3rem;
+        margin: 3rem auto;
+        padding: 0 2rem 4rem;
     }
 
     .orders_intro h1 {
-        font-size: 1.65rem;
-    }
-
-    .orders_card_resume,
-    .orders_line {
-        grid-template-columns: 1fr;
+        font-size: 2rem;
     }
 
     .orders_card_header {
-        flex-direction: column;
-        align-items: stretch;
+        flex-direction: row;
+        justify-content: space-between;
+        align-items: flex-start;
     }
 
     .orders_status_badge {
-        align-self: flex-start;
+        align-self: auto;
+    }
+
+    .orders_card_resume {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
     }
 
     .orders_line {
-        gap: 0.6rem;
+        grid-template-columns: auto 1fr auto auto;
+        gap: 1rem;
     }
 
     .orders_line_icon {
-        display: none;
+        display: flex;
     }
 
     .orders_state_actions {
-        flex-direction: column;
-        width: 100%;
+        flex-direction: row;
+        width: auto;
     }
 
     .orders_primary_action,
     .orders_secondary_action,
     .orders_primary_action_button {
-        width: 100%;
-        text-align: center;
+        width: auto;
+        text-align: left;
+    }
+}
+
+/* ===========================
+   Desktop — min-width: 901px
+   =========================== */
+
+@media (min-width: 901px) {
+    .orders_layout {
+        flex-direction: row;
+    }
+
+    .orders_summary_card {
+        width: 260px;
+        position: sticky;
+        top: 1rem;
+    }
+
+    .orders_stats_grid {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
     }
 }

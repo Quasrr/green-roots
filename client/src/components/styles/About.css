@@ -1,11 +1,15 @@
+/* ===================================================
+   BASE STYLES — MOBILE-FIRST (small screens)
+   =================================================== */
+
 .about_wrapper {
     max-width: 900px;
-    margin: 3rem auto;
-    padding: 0 2rem 4rem;
+    margin: 1.5rem auto;
+    padding: 0 1rem 3rem;
     font-family: var(--font-primary);
     display: flex;
     flex-direction: column;
-    gap: 4rem;
+    gap: 2.5rem;
 }
 
 /* === Hero === */
@@ -17,17 +21,17 @@
 }
 
 .about_wrapper h1 {
-    font-size: 2.5rem;
+    font-size: 1.8rem;
     font-weight: bold;
     color: var(--bg-color-tercary);
     margin: 0;
 }
 
 .about_hero_description {
-    font-size: 1.1rem;
+    font-size: 1rem;
     color: var(--text-color);
     line-height: 1.7;
-    max-width: 650px;
+    max-width: 100%;
     margin: 0;
 }
 
@@ -45,6 +49,7 @@
 
 .about_values_list {
     display: flex;
+    flex-direction: column;
     gap: 1rem;
     flex-wrap: wrap;
 }
@@ -57,7 +62,6 @@
     flex-direction: column;
     gap: 0.75rem;
     flex: 1;
-    min-width: 180px;
 }
 
 .about_icon_wrapper {
@@ -84,7 +88,7 @@
     margin: 0;
 }
 
-/* === Équipe === */
+/* === Equipe === */
 
 .about_team_description {
     color: var(--text-color);
@@ -95,6 +99,7 @@
 
 .about_team_list {
     display: flex;
+    flex-direction: column;
     gap: 1.5rem;
 }
 
@@ -147,35 +152,33 @@
 }
 
 /* ===================================================
-   RESPONSIVE — MOBILE (≤ 768px)
+   RESPONSIVE — DESKTOP (>= 769px)
    =================================================== */
-@media (max-width: 768px) {
-  .about_wrapper {
-    margin: 1.5rem auto;
-    padding: 0 1rem 3rem;
-    gap: 2.5rem;
-  }
+@media (min-width: 769px) {
+    .about_wrapper {
+        margin: 3rem auto;
+        padding: 0 2rem 4rem;
+        gap: 4rem;
+    }
 
-  .about_wrapper h1 {
-    font-size: 1.8rem;
-  }
+    .about_wrapper h1 {
+        font-size: 2.5rem;
+    }
 
-  .about_hero_description {
-    font-size: 1rem;
-    max-width: 100%;
-  }
+    .about_hero_description {
+        font-size: 1.1rem;
+        max-width: 650px;
+    }
 
-  /* Cards valeurs : 1 colonne sur mobile */
-  .about_values_list {
-    flex-direction: column;
-  }
+    .about_values_list {
+        flex-direction: row;
+    }
 
-  .about_value_card {
-    min-width: unset;
-  }
+    .about_value_card {
+        min-width: 180px;
+    }
 
-  /* Cards équipe : 1 colonne sur mobile */
-  .about_team_list {
-    flex-direction: column;
-  }
+    .about_team_list {
+        flex-direction: row;
+    }
 }
