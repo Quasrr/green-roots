@@ -1,7 +1,7 @@
 .main_product {
   max-width: 900px;
   margin: 0 auto;
-  padding: 2rem 3rem;
+  padding: 1rem;
   font-family: var(--font-primary);
 }
 
@@ -10,13 +10,13 @@
   margin: 0;
 }
 
-/* === Bannière === */
+/* === Banniere === */
 
 .product_banner {
   width: 100%;
-  height: 340px;
+  height: 220px;
   object-fit: cover;
-  border-radius: 1rem;
+  border-radius: 0.75rem;
   display: block;
   margin-bottom: 1.5rem;
 }
@@ -25,13 +25,14 @@
 
 .add_cart_tree {
   display: flex;
-  justify-content: space-between;
+  flex-direction: column;
+  gap: 1rem;
   align-items: flex-start;
   margin-bottom: 2rem;
 }
 
 .add_cart_tree h2 {
-  font-size: 1.5rem;
+  font-size: 1.25rem;
   font-weight: bold;
   color: var(--bg-color-tercary);
   margin-bottom: 0.75rem;
@@ -40,7 +41,7 @@
 .add_cart_right {
   display: flex;
   flex-direction: column;
-  align-items: flex-end;
+  align-items: flex-start;
   gap: 0.75rem;
 }
 
@@ -109,7 +110,8 @@
 /* === Impact === */
 
 .impact {
-  display: flex;
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
   gap: 1rem;
   margin-bottom: 2rem;
 }
@@ -181,7 +183,8 @@
 /* === Mesures === */
 
 .measure_tree {
-  display: flex;
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
   gap: 1rem;
   margin-bottom: 2rem;
 }
@@ -262,41 +265,40 @@
 }
 
 /* ===================================================
-  RESPONSIVE — MOBILE (≤ 768px)
+   RESPONSIVE — DESKTOP (>= 769px)
    =================================================== */
-@media (max-width: 768px) {
+@media (min-width: 769px) {
   .main_product {
-    padding: 1rem;
+    padding: 2rem 3rem;
   }
 
   .product_banner {
-    height: 220px;
-    border-radius: 0.75rem;
+    height: 340px;
+    border-radius: 1rem;
   }
 
-  /* Nom + prix s'empilent verticalement */
   .add_cart_tree {
-    flex-direction: column;
-    gap: 1rem;
-  }
-
-  .add_cart_right {
+    flex-direction: row;
+    gap: 0;
+    justify-content: space-between;
     align-items: flex-start;
   }
 
   .add_cart_tree h2 {
-    font-size: 1.25rem;
+    font-size: 1.5rem;
   }
 
-  /* Cards d'impact en grille 2 colonnes */
+  .add_cart_right {
+    align-items: flex-end;
+  }
+
+  /* Impact en ligne (flex) au lieu de grille 2 colonnes */
   .impact {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
+    display: flex;
   }
 
-  /* Mesures en grille 2 colonnes */
+  /* Mesures en ligne (flex) au lieu de grille 2 colonnes */
   .measure_tree {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
+    display: flex;
   }
 }
