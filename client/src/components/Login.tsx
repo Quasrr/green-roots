@@ -14,11 +14,11 @@ function Login() {
 
         try {
             await login(email, password);
-            toast.success("Vous êtes connecté");
+            toast.success("Vous êtes connecté", { id: 'login-success' });
             navigate('/');
             return '';
-        } catch (err) {
-            toast.error(err instanceof Error ? err.message : 'Une erreur est survenue') // toast.error retourne un id de toast(number)
+        } catch {
+            toast.error('Une erreur est survenue', { id: 'login-error' }) // toast.error retourne un id de toast(number)
             return ''; // Return obligatoire car useActionState attend que la fct return quelque chose, comme on ignore l'état avec ',' TS exige quand meme le return
         }
     }

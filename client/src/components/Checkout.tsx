@@ -12,8 +12,6 @@ type CheckoutActionState = {
     success: boolean;
 };
 
-const genericCheckoutError = "Le paiement n'a pas pu être finalisé. Veuillez réessayer.";
-
 const initialActionState: CheckoutActionState = {
     error: '',
     orderId: null,
@@ -103,7 +101,7 @@ export default function Checkout() {
         });
 
         if (!response.ok) {
-            toast.error(genericCheckoutError)
+            toast.error( "Le paiement n'a pas pu être finalisé. Veuillez réessayer.", { id: 'cart-update-error' })
             return {
                 error:'',
                 orderId: null,

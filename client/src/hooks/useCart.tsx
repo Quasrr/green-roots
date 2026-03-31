@@ -23,7 +23,7 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
                 setItems(Array.isArray(data.items) ? data.items : []);
             }
         } catch {
-            toast.error('Impossible de mettre à jour le panier');
+            toast.error('Impossible de charger le panier', { id: 'cart-load-error' });
         };
     };
 
@@ -65,7 +65,7 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
 
             setItems(serverItems);
         } catch {
-            toast.error('Impossible de mettre à jour le panier');
+            toast.error('Impossible de mettre à jour le panier', { id: 'cart-update-error' });
 
             await loadCart();
         };
@@ -77,8 +77,8 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
                 await sendToBack(item.id, 0);
             };
 
-        } catch {
-            toast.error('Impossible de mettre à jour le panier');
+        } catch  {
+            toast.error('Impossible de vider le panier', { id: 'cart-clear-error' });
 
             await loadCart();
         };
@@ -117,7 +117,7 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
         syncCartChange(treeId, 0); // quantity = 0 = suppression
     };
 
-    function updateQuantity(treeId: number, quantity: number) {
+    async function updateQuantity(treeId: number, quantity: number) {
         if (quantity <= 0) {
             removeFromCart(treeId);
             return;
@@ -127,7 +127,7 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
         if (!existing) return;
 
         const delta = quantity - existing.quantity; // différence entre nouvelle et ancienne quantité
-        syncCartChange(treeId, delta);
+        await syncCartChange(treeId, delta);
 
         setItems((prev) => {
             return prev.map((item) => (item.id === treeId ? { ...item, quantity } : item));
