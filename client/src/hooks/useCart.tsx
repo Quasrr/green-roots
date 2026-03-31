@@ -117,7 +117,7 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
         syncCartChange(treeId, 0); // quantity = 0 = suppression
     };
 
-    async function updateQuantity(treeId: number, quantity: number) {
+    function updateQuantity(treeId: number, quantity: number) {
         if (quantity <= 0) {
             removeFromCart(treeId);
             return;
@@ -127,7 +127,7 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
         if (!existing) return;
 
         const delta = quantity - existing.quantity; // différence entre nouvelle et ancienne quantité
-        await syncCartChange(treeId, delta);
+        syncCartChange(treeId, delta);
 
         setItems((prev) => {
             return prev.map((item) => (item.id === treeId ? { ...item, quantity } : item));
