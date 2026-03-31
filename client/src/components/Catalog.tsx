@@ -152,7 +152,7 @@ function Catalog() {
                                                         onClick={(event) => {
                                                             event.preventDefault();
                                                             if (!isLoggedIn) {
-                                                                toast.error('Veuillez vous identifier pour accéder au panier');
+                                                                toast.error('Veuillez vous identifier pour accéder au panier', { id: 'auth-required' });
                                                                 return;
                                                             }
                                                             if (tree.quantity > 0) addToCart(tree);
@@ -161,7 +161,7 @@ function Catalog() {
                                                             if ((event.key === 'Enter' || event.key === ' ') && tree.quantity > 0) {
                                                                 event.preventDefault();
                                                                 if (!isLoggedIn) {
-                                                                    toast.error('Veuillez vous identifier pour accéder au panier');
+                                                                    toast.error('Veuillez vous identifier pour accéder au panier', { id: 'auth-required' });
                                                                     return;
                                                                 }
                                                                 addToCart(tree);

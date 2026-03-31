@@ -33,16 +33,16 @@ function Register() {
 
             if (!res.ok) {
                 const data = await res.json();
-                toast.error(data.message || 'Erreur lors de l\'inscription');
+                toast.error(data.message || 'Erreur lors de l\'inscription', { id: 'register-error' });
                 return'';
             }
 
-            toast.success("Compte créé avec succès");
+            toast.success("Compte créé avec succès", { id: 'register-success' });
             navigate('/login');
             return '';
 
         } catch (err) {
-            toast.error (err instanceof Error ? err.message : 'Une erreur est survenue') // toast.error retourne un id de toast(number)
+            toast.error (err instanceof Error ? err.message : 'Une erreur est survenue', { id: 'register-error' }) // toast.error retourne un id de toast(number)
             return '';
         }
     }

@@ -56,7 +56,7 @@ function Product() {
                         className="btn_add_to_cart"
                         onClick={() => {
                             if (!isLoggedIn) {
-                                toast.error('Veuillez vous identifier pour accéder au panier');
+                                toast.error('Veuillez vous identifier pour accéder au panier', { id: 'auth-required' });
                                 return;
                             }
                             addToCart(tree);
