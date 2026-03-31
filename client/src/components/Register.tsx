@@ -32,8 +32,7 @@ function Register() {
             });
 
             if (!res.ok) {
-                const data = await res.json();
-                toast.error(data.message || 'Erreur lors de l\'inscription', { id: 'register-error' });
+                toast.error('Erreur lors de l\'inscription', { id: 'register-error' });
                 return'';
             }
 
@@ -41,8 +40,8 @@ function Register() {
             navigate('/login');
             return '';
 
-        } catch (err) {
-            toast.error (err instanceof Error ? err.message : 'Une erreur est survenue', { id: 'register-error' }) // toast.error retourne un id de toast(number)
+        } catch {
+            toast.error('Une erreur est survenue', { id: 'register-error' }) // toast.error retourne un id de toast(number)
             return '';
         }
     }
