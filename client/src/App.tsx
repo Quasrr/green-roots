@@ -99,9 +99,9 @@ export default function App() {
                             </Route>
                         </Routes>
                     </div>
+                    <Toaster position="top-left" offset={{ top: 80 }} toastOptions={{ style: { zIndex: 9999 } }} className="toaster"/>
                     <Footer />
                 </div>
-                <Toaster position="top-right" offset={{ top: 80 }} toastOptions={{ style: { zIndex: 9999 } }} />
             </CartProvider>
         </AuthProvider>
     );
