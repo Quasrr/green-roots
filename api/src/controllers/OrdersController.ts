@@ -1,6 +1,7 @@
 import type { Request, Response } from "express";
 import { OrderStatus, prisma } from '../models/index.ts';
 import ErrorHandler from "../ErrorHandler.ts";
+import redis from "../models/redis.ts";
 import z from 'zod';
 import { BadRequestError, ConflictError, ForbiddenError, NotFoundError } from "../utils/Error.ts";
 
@@ -96,6 +97,8 @@ class OrdersController {
                 return createdOrder;
             });
 
+            await redis.del(`orders:user:${userId}`);
+
             res.status(201).send(order);
 
         } catch (error) {
@@ -144,6 +147,8 @@ class OrdersController {
                 });
             });
 
+            await redis.del(`orders:user:${userId}`);
+
             res.sendStatus(200);
         } catch (error) {
             if (error instanceof BadRequestError && orderId > 0) {
@@ -157,6 +162,8 @@ class OrdersController {
                 });
             };
 
+            await redis.del(`orders:user:${userId}`); // Invalider aussi le cache en cas d'erreur
+
             ErrorHandler.sendError(res, error);
         };
     };
@@ -164,6 +171,12 @@ class OrdersController {
     async getMyOrders(req: Request, res: Response) {
         try {
             const userId = Number(req.user.id);
+            const cacheKey = `orders:user:${userId}`;
+
+            const cached = await redis.get(cacheKey);
+            if (cached) {
+                return res.send(JSON.parse(cached));
+            }
 
             const orders = await prisma.order.findMany({
                 where: { userId },
@@ -184,6 +197,8 @@ class OrdersController {
                     }
                 }
             });
+
+            await redis.set(cacheKey, JSON.stringify(orders), { EX: 3600 });
 
             res.send(orders);
         } catch (error) {
@@ -270,6 +285,8 @@ class OrdersController {
                     data: { status: OrderStatus.canceled }
                 });
             });
+
+            await redis.del(`orders:user:${userId}`);
 
             res.sendStatus(200);
         } catch (error) {
