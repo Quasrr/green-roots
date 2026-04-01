@@ -135,7 +135,7 @@ class AuthController {
                 httpOnly: true,
                 secure: process.env.NODE_ENV === "production",
                 sameSite: "lax",
-                path: "/api/auth/refresh",
+                path: "/api/auth/",
                 maxAge: 1000 * 60 * 60 * 24 * 7 // 7j
             });
 
@@ -191,7 +191,7 @@ class AuthController {
             secure: process.env.NODE_ENV === "production",
             sameSite: "lax",
             maxAge: 1000 * 60 * 60 * 24 * 7, // 7j
-            path: "/api/auth/refresh"
+            path: "/api/auth/"
         });
 
         // On supprime également le refreshToken dans la DB (celui qui avait été confié au client et qu'il nous renvoie sur la route logout via cookie) pour forcer le relogin
@@ -208,16 +208,16 @@ class AuthController {
     async me(req: Request, res: Response): Promise<void> {
         // Récupérer les informations de l'utilisateur à partir de la requête (grâce au middleware d'authentification)
         const userInfo = req.user;
+
         // Si l'utilisateur n'est pas trouvé, renvoyer une erreur
-        if (!userInfo) {
-            throw new NotFoundError('User not found');
-        }
+        if (!userInfo) throw new NotFoundError('User not found');
+
         //On utilise l'email du token pour aller chercher toutes les infos en BDD
         const user = await prisma.user.findUnique({ where: { email: userInfo.email } });
         if (!user) throw new NotFoundError('User not found');
 
         // Renvoyer les informations de l'utilisateur au client
-        res.json({ id: user.id, email: user.email, firstname: user.firstname, lastname: user.lastname, role: user.roleId });
+        res.send({ id: user.id, email: user.email, firstname: user.firstname, lastname: user.lastname, role: user.roleId });
     };
 
     async forgotPassword(req: Request, res: Response) {

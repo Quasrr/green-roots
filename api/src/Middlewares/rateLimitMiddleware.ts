@@ -11,7 +11,7 @@ function createRedisStore(prefix: string) {
 
 export const apiLimiter = rateLimit({
     windowMs: 15 * 60 * 1000, // 15 mins
-    limit: 300, // 300 requetes par ip dans cette fenetre
+    limit: 300, // 300 requêtes par ip dans cette fenêtre
     standardHeaders: 'draft-8',
     legacyHeaders: false,
     store: createRedisStore('rl:api:'),
@@ -22,7 +22,7 @@ export const apiLimiter = rateLimit({
 
 export const loginLimiter = rateLimit({
     windowMs: 10 * 60 * 1000, // 10 mins
-    limit: 5, // 5 requetes par ip dans cette fenetre
+    limit: 10, // 10 requêtes par ip dans cette fenêtre
     standardHeaders: 'draft-8',
     legacyHeaders: false,
     store: createRedisStore('rl:auth:'),
