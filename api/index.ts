@@ -6,7 +6,7 @@ import { doubleCsrf } from 'csrf-csrf';
 import cors from 'cors';
 import helmet from 'helmet';
 import { apiLimiter } from './src/Middlewares/rateLimitMiddleware.ts';
-import { startCleanExpiredTokensJob } from './src/utils/cleanTokens.ts';
+import { startCleanExpiredTokensJob } from './src/jobs/cleanTokens.ts';
 
 const app = express();
 const PORT = Number(process.env.PORT) || 3000;
