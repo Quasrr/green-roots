@@ -22,26 +22,61 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         localStorage.setItem('csrfToken', data.csrfToken ?? '');
     };
 
+    async function fetchMe() {
+        return fetch(`${import.meta.env.VITE_API_URL}/api/auth/me`, {
+            credentials: 'include',
+        });
+    };
+
+    async function refreshSession() {
+        return fetch(`${import.meta.env.VITE_API_URL}/api/auth/refresh`, {
+            method: 'POST',
+            headers: {
+                'x-csrf-token': localStorage.getItem('csrfToken') || ''
+            },
+            credentials: 'include',
+        });
+    };
+
     async function checkAuth() {
         try {
             await getCsrfToken();
 
-            const res = await fetch(`${import.meta.env.VITE_API_URL}/api/auth/me`, {
-                credentials: 'include',
-            });
+            let res = await fetchMe();
 
             if (res.ok) {
                 const data = await res.json();
                 setUser(data);
-            } else {
+                return;
+            }
+
+            if (res.status !== 401) {
                 setUser(null);
+                return;
             };
+
+            const refresh = await refreshSession();
+
+            if (!refresh.ok) {
+                setUser(null);
+                return;
+            };
+
+            res = await fetchMe();
+
+            if (!res.ok) {
+                setUser(null);
+                return;
+            };
+
+            const data = await res.json();
+            setUser(data);
         } catch {
             setUser(null);
         } finally {
-            setIsLoading(false);
-        }
-    }
+           setIsLoading(false);
+        };
+    };
 
     async function login(email: string, password: string) {
         const res = await fetch(`${import.meta.env.VITE_API_URL}/api/auth/login`, {
