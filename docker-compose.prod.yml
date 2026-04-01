@@ -1,6 +1,7 @@
 services:
   greenroots-db:
     image: postgres:17
+    container_name: greenroots-db
     restart: unless-stopped
     networks:
       - greenroots-network
@@ -10,21 +11,19 @@ services:
       POSTGRES_USER: ${POSTGRES_USER}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
       POSTGRES_DB: ${POSTGRES_DB}
-    ports:
-      - ${POSTGRES_PORT}:5432
     healthcheck:
-      test: ['CMD-SHELL', 'pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}']
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"]
       interval: 5s
       timeout: 5s
       retries: 5
 
   greenroots-redis:
     image: redis:7-alpine
+    container_name: greenroots-redis
     restart: unless-stopped
     networks:
       - greenroots-network
-    ports:
-      - "6379:6379"
+    command: redis-server --appendonly yes
     healthcheck:
       test: ["CMD", "redis-cli", "ping"]
       interval: 5s
@@ -34,25 +33,23 @@ services:
   greenroots-api:
     build:
       context: ./api
-      dockerfile: Dockerfile
+      dockerfile: Dockerfile.prod
+    container_name: greenroots-api
     restart: unless-stopped
     environment:
-      PORT: ${API_LOCAL_PORT}
-      DATABASE_URL: postgres://${POSTGRES_USER}:${POSTGRES_PASSWORD}@greenroots-db:5432/${POSTGRES_DB}
+      PORT: ${API_PORT}
+      DATABASE_URL: postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@greenroots-db:5432/${POSTGRES_DB}
       REDIS_URL: redis://greenroots-redis:6379
-      NODE_ENV: development
+      NODE_ENV: production
       JWT_SECRET: ${API_JWT_SECRET}
       EMAILJS_SERVICE_ID: ${EMAILJS_SERVICE_ID}
       EMAILJS_TEMPLATE_ID: ${EMAILJS_TEMPLATE_ID}
       EMAILJS_PUBLIC_KEY: ${EMAILJS_PUBLIC_KEY}
       EMAILJS_PRIVATE_KEY: ${EMAILJS_PRIVATE_KEY}
       GMAIL_USER: ${GMAIL_USER}
-      FRONT_URL: ${FRONT_URL}
+      FRONT_URL: https://greenroots.duckdns.org
     ports:
-      - ${API_LOCAL_PORT}:${API_LOCAL_PORT}
-    volumes:
-      - ./api:/app
-      - /app/node_modules
+      - "3000:3000"
     networks:
       - greenroots-network
     depends_on:
@@ -60,22 +57,6 @@ services:
         condition: service_healthy
       greenroots-redis:
         condition: service_healthy
-    command: npm run docker:dev
-
-  greenroots-client:
-    build:
-      context: ./client
-      dockerfile: Dockerfile
-    restart: unless-stopped
-    environment:
-      VITE_API_URL: http://localhost:${API_LOCAL_PORT}
-    ports:
-      - ${CLIENT_LOCAL_PORT}:5173
-    volumes:
-      - ./client:/app
-      - /app/node_modules
-    networks:
-      - greenroots-network
 
 networks:
   greenroots-network:
