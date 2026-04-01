@@ -42,6 +42,8 @@ class OrdersController {
                 }
             });
 
+            // Pas de cache car dès qu'un user passe/paie/annule une commande il faudrait invalider ce cache global. Pas vraiment utile car presque invalidé à chaque action utilisateur.
+
             res.send(orders);
         } catch (error) {
             ErrorHandler.sendError(res, error);
