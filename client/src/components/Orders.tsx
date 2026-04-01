@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { ArrowLeft, LoaderCircle, PackageSearch, Receipt, Sprout } from 'lucide-react';
+import { ArrowLeft, LoaderCircle, PackageSearch, Receipt, Sprout, X } from 'lucide-react';
 import { useAuth } from '../hooks/useAuth.tsx';
 import type { Order, OrderStatus } from '../types.ts';
 import './styles/Orders.css';
@@ -40,6 +40,8 @@ export default function Orders() {
     const [error, setError] = useState('');
     const [refreshIndex, setRefreshIndex] = useState(0);
     const [cancelingId, setCancelingId] = useState<number | null>(null);
+    // ID de la commande pour laquelle on affiche la modale de confirmation
+    const [cancelModalOrderId, setCancelModalOrderId] = useState<number | null>(null);
     const paymentRequestStarted = useRef(false);
 
     useEffect(() => {
@@ -133,15 +135,25 @@ export default function Orders() {
     // Total d'euros dépensés
     const totalSpent = orders.reduce((sum, order) => sum + Number(order.total), 0);
 
-    async function handleCancelOrder(orderId: number) {
-        // Petite confirmation avant d'annuler
-        const confirmed = window.confirm('Confirmer l\'annulation de cette commande ?');
-        if (!confirmed) return;
+    // Ouvre la modale de confirmation d'annulation
+    function openCancelModal(orderId: number) {
+        setCancelModalOrderId(orderId);
+    }
 
-        setCancelingId(orderId);
+    // Ferme la modale sans annuler
+    function closeCancelModal() {
+        setCancelModalOrderId(null);
+    }
+
+    // Confirme l'annulation depuis la modale
+    async function confirmCancelOrder() {
+        if (!cancelModalOrderId) return;
+
+        setCancelingId(cancelModalOrderId);
+        closeCancelModal();
 
         try {
-            const response = await fetch(`${import.meta.env.VITE_API_URL}/api/orders/${orderId}/cancel`, {
+            const response = await fetch(`${import.meta.env.VITE_API_URL}/api/orders/${cancelModalOrderId}/cancel`, {
                 method: 'PATCH',
                 credentials: 'include',
                 headers: {
@@ -329,7 +341,7 @@ export default function Orders() {
                                                 <button
                                                     type="button"
                                                     className="orders_cancel_button"
-                                                    onClick={() => handleCancelOrder(order.id)}
+                                                    onClick={() => openCancelModal(order.id)}
                                                     disabled={cancelingId === order.id}
                                                 >
                                                     {cancelingId === order.id ? 'Annulation...' : 'Annuler la commande'}
@@ -343,6 +355,32 @@ export default function Orders() {
                     )}
                 </section>
             </div>
+
+            {/* Modale de confirmation d'annulation */}
+            {cancelModalOrderId !== null && (
+                <div className="orders_modal_overlay" onClick={closeCancelModal}>
+                    <div className="orders_modal" onClick={e => e.stopPropagation()}>
+                        <div className="orders_modal_header">
+                            <h2>Annuler la commande</h2>
+                            <button className="orders_modal_close" onClick={closeCancelModal}>
+                                <X size={20} />
+                            </button>
+                        </div>
+                        <div className="orders_modal_body">
+                            <p>Êtes-vous sûr de vouloir annuler cette commande ?</p>
+                            <p className="orders_modal_hint">Cette action est irréversible.</p>
+                        </div>
+                        <div className="orders_modal_footer">
+                            <button className="orders_modal_btn cancel" onClick={closeCancelModal}>
+                                Garder ma commande
+                            </button>
+                            <button className="orders_modal_btn confirm" onClick={confirmCancelOrder}>
+                                Confirmer l'annulation
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
         </main>
     );
 }
