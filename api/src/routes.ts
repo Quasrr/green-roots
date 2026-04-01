@@ -18,10 +18,11 @@ router.get('/api/auth/me', authMiddleware, AuthController.me);
 // Renouvellement de l'access token via le refresh token 
 // (pas de authMiddleware car l'access token est expiré à ce moment-là)
 router.post('/api/auth/refresh', loginLimiter, AuthController.refreshAccessToken);
+router.post('/api/auth/forgot-password', AuthController.forgotPassword);
+router.post('/api/auth/reset-password', AuthController.resetPassword);
 
 // routes utilisateur
 router.get('/api/users', authMiddleware, adminMiddleware, UserController.getAll);
-router.get('/api/users/:id', authMiddleware, UserController.getById);
 router.patch('/api/users/:id', authMiddleware, UserController.update);
 router.delete('/api/users/:id', authMiddleware, UserController.delete);
 

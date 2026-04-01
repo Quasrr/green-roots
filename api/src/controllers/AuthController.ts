@@ -4,8 +4,11 @@ import argon2 from 'argon2';
 import jwt from 'jsonwebtoken';
 import { RoleName } from '../../prisma/generated/enums.ts';
 import { prisma } from '../models/index.ts';
-import { ConflictError, NotFoundError, UnauthorizedError } from '../utils/Error.ts';
+import { BadRequestError, ConflictError, NotFoundError, UnauthorizedError } from '../utils/Error.ts';
 import ErrorHandler from '../ErrorHandler.ts';
+import { generateToken, hashToken } from "../utils/resetToken.ts";
+import { sendResetEmail } from "../services/email.ts";
+import redis from '../models/redis.ts';
 
 function getJwtSecret() {
     const secret = process.env.JWT_SECRET;
@@ -215,6 +218,73 @@ class AuthController {
 
         // Renvoyer les informations de l'utilisateur au client
         res.json({ id: user.id, email: user.email, firstname: user.firstname, lastname: user.lastname, role: user.roleId });
+    };
+
+    async forgotPassword(req: Request, res: Response) {
+        const { email } = req.body;
+
+        if (!email) throw new BadRequestError("Email requis");
+
+        // Envoyé quoi qu'il arrive
+        res.send({ message: "Si ce compte existe, un email a été envoyé" });
+
+        const user = await prisma.user.findUnique({ where: { email } });
+        if (!user) return;
+
+        // 1 demande par minute par email
+        const onCooldown = await redis.get(`reset-cooldown:${email}`);
+
+        if (onCooldown) return;
+
+        const rawToken = generateToken();
+        const hashedToken = hashToken(rawToken);
+
+        await redis.set(`reset:${hashedToken}`, email, { EX: 3600 });
+        await redis.set(`reset-cooldown:${email}`, "1", { EX: 60 });
+
+        const resetUrl = `${process.env.FRONT_URL}/reset-password?token=${rawToken}`;
+        await sendResetEmail(email, resetUrl);
+    };
+
+    async resetPassword(req: Request, res: Response) {
+        const schema = z.object({
+            token: z.string(),
+            newPassword: z
+                .string()
+                .min(8, "Invalid password format (min. 8 characters)")
+                .refine(
+                    (v) =>
+                        /[a-z]/.test(v) &&
+                        /[A-Z]/.test(v) &&
+                        /[0-9]/.test(v) &&
+                        /[^a-zA-Z0-9]/.test(v),
+                    "Invalid password format. Please include uppercase, lowercase, a number, and a special character (min. 6 characters)"
+                ),
+        });
+
+        const { token, newPassword } = schema.parse(req.body);
+
+        const hashedToken = hashToken(token);
+        const email = await redis.get(`reset:${hashedToken}`);
+
+        if (!email) throw new BadRequestError("Token invalide ou expiré");
+
+        const user = await prisma.user.findUnique({ where: { email } });
+
+        if (!user) throw new BadRequestError("Utilisateur introuvable");
+
+        // Nouveau mot de passe
+        const hashedPassword = await argon2.hash(newPassword);
+
+        await prisma.user.update({
+            where: { email },
+            data: { password: hashedPassword },
+        });
+
+        // Invalider le token en le supprimant de la base redis
+        await redis.del(`reset:${hashedToken}`);
+
+        res.send({ message: "Mot de passe mis à jour avec succès" });
     };
 };
 
