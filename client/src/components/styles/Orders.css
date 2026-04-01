@@ -377,6 +377,148 @@
     background-color: #edf5f0;
 }
 
+/* === Bouton annuler la commande === */
+
+.orders_card_actions {
+    display: flex;
+    justify-content: flex-end;
+    padding-top: 0.5rem;
+}
+
+.orders_cancel_button {
+    background-color: transparent;
+    color: #c0392b;
+    border: 1px solid #e5b7b2;
+    border-radius: 0.6rem;
+    padding: 0.55rem 1.1rem;
+    font-size: 0.85rem;
+    font-weight: 600;
+    font-family: var(--font-primary);
+    cursor: pointer;
+    transition: background-color 0.15s, border-color 0.15s;
+}
+
+.orders_cancel_button:hover {
+    background-color: #fff1ef;
+    border-color: #c0392b;
+}
+
+.orders_cancel_button:disabled {
+    opacity: 0.6;
+    cursor: wait;
+}
+
+/* === Modale de confirmation d'annulation === */
+
+.orders_modal_overlay {
+    position: fixed;
+    inset: 0;
+    background-color: rgba(13, 13, 12, 0.45);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 1rem;
+    z-index: 1000;
+}
+
+.orders_modal {
+    width: 100%;
+    max-width: 440px;
+    background-color: white;
+    border-radius: 1rem;
+    display: flex;
+    flex-direction: column;
+    box-shadow: 0 20px 45px rgba(0, 0, 0, 0.18);
+}
+
+.orders_modal_header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 1.25rem 1.5rem;
+    border-bottom: 1px solid #e0e8e4;
+}
+
+.orders_modal_header h2 {
+    font-size: 1.15rem;
+    font-weight: 700;
+    color: var(--bg-color-tercary);
+    margin: 0;
+}
+
+.orders_modal_close {
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: var(--text-color);
+    padding: 0.25rem;
+    border-radius: 0.3rem;
+    display: flex;
+    align-items: center;
+    transition: color 0.15s, background 0.15s;
+}
+
+.orders_modal_close:hover {
+    color: #c0392b;
+    background-color: #fde8e8;
+}
+
+.orders_modal_body {
+    padding: 1.25rem 1.5rem;
+}
+
+.orders_modal_body p {
+    margin: 0 0 0.5rem;
+    font-size: 0.95rem;
+    line-height: 1.6;
+    color: var(--bg-color-tercary);
+}
+
+.orders_modal_hint {
+    color: var(--text-color) !important;
+    font-size: 0.85rem !important;
+}
+
+.orders_modal_footer {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    padding: 1rem 1.5rem;
+    border-top: 1px solid #e0e8e4;
+}
+
+.orders_modal_btn {
+    border-radius: 0.5rem;
+    padding: 0.65rem 1rem;
+    font-size: 0.9rem;
+    font-weight: 600;
+    font-family: var(--font-primary);
+    cursor: pointer;
+    transition: background 0.15s, color 0.15s, border-color 0.15s;
+    text-align: center;
+}
+
+.orders_modal_btn.cancel {
+    background-color: white;
+    color: var(--bg-color-tercary);
+    border: 1px solid #d8dfdb;
+}
+
+.orders_modal_btn.cancel:hover {
+    background-color: #f5f7f6;
+}
+
+.orders_modal_btn.confirm {
+    background-color: #c0392b;
+    color: white;
+    border: 1px solid #c0392b;
+}
+
+.orders_modal_btn.confirm:hover {
+    background-color: #a93226;
+    border-color: #a93226;
+}
+
 @keyframes orders-spin {
     to {
         transform: rotate(360deg);
@@ -430,6 +572,11 @@
     .orders_primary_action_button {
         width: auto;
         text-align: left;
+    }
+
+    .orders_modal_footer {
+        flex-direction: row;
+        justify-content: flex-end;
     }
 }
 
