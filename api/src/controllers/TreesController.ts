@@ -3,6 +3,7 @@ import z from "zod";
 import { Prisma, prisma } from "../models/index.ts";
 import ErrorHandler from "../ErrorHandler.ts";
 import { ConflictError, NotFoundError } from "../utils/Error.ts";
+import redis from "../models/redis.ts";
 
 const treeSchema = z.object({
     name: z.string().min(1),
@@ -24,6 +25,14 @@ const treeSchema = z.object({
 class TreesController {
     async getAll(_req: Request, res: Response) {
         try {
+            // On vérifie d'abord le cache Redis
+            const cached = await redis.get('trees:all');
+
+            if (cached) {
+                // Cache trouvé → on renvoie directement sans toucher à la BDD
+                return res.send(JSON.parse(cached));
+            }
+
             const trees = await prisma.tree.findMany({
                 include: {
                     categories: {
@@ -41,6 +50,9 @@ class TreesController {
                 };
             });
 
+            // On stocke en cache pour 1h (3600 secondes)
+            await redis.set('trees:all', JSON.stringify(normalizedTrees), { EX: 3600 });
+
             res.send(normalizedTrees);
         } catch (error) {
             ErrorHandler.sendError(res, error);
@@ -52,6 +64,13 @@ class TreesController {
             const id = Number(req.params.id);
 
             if (id <= 0) throw new NotFoundError("Tree not found");
+
+            // Clé unique par arbre
+            const cached = await redis.get(`trees:${id}`);
+
+            if (cached) {
+                return res.send(JSON.parse(cached));
+            }
 
             const tree = await prisma.tree.findUnique({
                 where: { id },
@@ -66,10 +85,14 @@ class TreesController {
 
             if (!tree) throw new NotFoundError("Tree not found");
 
-            res.send({
+            const normalizedTree = {
                 ...tree,
                 categories: tree.categories.map((item) => item.category),
-            });
+            };
+
+            await redis.set(`trees:${id}`, JSON.stringify(normalizedTree), { EX: 3600 });
+
+            res.send(normalizedTree);
         } catch (error) {
             ErrorHandler.sendError(res, error);
         };
@@ -121,6 +144,9 @@ class TreesController {
                     },
                 },
             });
+
+            // Invalide le cache après modification
+            await redis.del('trees:all');
 
             res.status(201).send({
                 ...createdTree,
@@ -179,6 +205,9 @@ class TreesController {
                 },
             });
 
+            await redis.del('trees:all');
+            await redis.del(`trees:${id}`);
+
             res.send({
                 ...updatedTree,
                 categories: updatedTree.categories.map((item) => item.category),
@@ -195,6 +224,9 @@ class TreesController {
             await prisma.tree.delete({
                 where: { id },
             });
+
+            await redis.del('trees:all');
+            await redis.del(`trees:${id}`);
 
             res.sendStatus(204);
         } catch (error) {
