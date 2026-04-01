@@ -6,6 +6,7 @@ import { doubleCsrf } from 'csrf-csrf';
 import cors from 'cors';
 import helmet from 'helmet';
 import { apiLimiter } from './src/Middlewares/rateLimitMiddleware.ts';
+import { startCleanExpiredTokensJob } from './src/utils/cleanTokens.ts';
 
 const app = express();
 const PORT = Number(process.env.PORT) || 3000;
@@ -50,6 +51,8 @@ app.get('/api/csrf', (req: Request, res: Response) => {
 app.use(doubleCsrfProtection);
 
 app.use(router);
+
+startCleanExpiredTokensJob();
 
 app.listen(PORT, () => {
     console.log(`Server started on port ${PORT}`);
