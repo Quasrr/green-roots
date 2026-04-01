@@ -14,6 +14,8 @@ import Contact from './components/Contact.tsx';
 import About from './components/About.tsx';
 import Login from './components/Login.tsx';
 import Register from './components/Register.tsx';
+import ForgotPassword from './components/ForgotPassword.tsx';
+import ResetPassword from './components/ResetPassword.tsx';
 import Cart from './components/Cart.tsx';
 import Checkout from './components/Checkout.tsx';
 import AdminDashboard from './components/AdminDashboard.tsx';
@@ -34,6 +36,7 @@ const REVEAL_SELECTORS = [
     '.impact_tree',
     '.login_card',
     '.register_card',
+    '.password_reset_card',
     '.contact_layout',
 ].join(', ');
 
@@ -89,6 +92,8 @@ export default function App() {
                             <Route path="/about" element={<About />} />
                             <Route path="/login" element={<Login />} />
                             <Route path="/register" element={<Register />} />
+                            <Route path="/forgot-password" element={<ForgotPassword />} />
+                            <Route path="/reset-password" element={<ResetPassword />} />
                             {/* Routes privées (protégées) */}
                             <Route element={<ProtectedRoute />}>
                                 <Route path="/cart" element={<Cart />} />

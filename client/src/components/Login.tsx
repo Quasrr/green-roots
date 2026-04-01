@@ -54,6 +54,9 @@ function Login() {
                             autoComplete="current-password"
                         />
                     </div>
+                    <p className="login_auxiliary">
+                        <Link to="/forgot-password">Mot de passe oublié ?</Link>
+                    </p>
                     <button type="submit" className="login_btn" disabled={isPending}>
                         {isPending ? 'Connexion...' : 'Se connecter'}
                     </button>

@@ -83,6 +83,23 @@
     margin-top: 0.5rem;
 }
 
+.login_auxiliary {
+    margin: -0.35rem 0 0;
+    text-align: right;
+    font-size: 0.88rem;
+}
+
+.login_auxiliary a {
+    color: var(--bg-color-secondary);
+    text-decoration: none;
+    font-weight: 600;
+}
+
+.login_auxiliary a:hover {
+    color: var(--bg-color-quartary);
+    text-decoration: underline;
+}
+
 .login_btn:hover {
     background-color: #2D6A4F;
 }
