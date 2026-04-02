@@ -8,8 +8,10 @@ import { toast } from 'sonner';
 import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
 import L from 'leaflet';
+import '../components/styles/Product.css';
 
-
+// Fix pour l'icône par défaut de Leaflet (bug connu avec les bundlers comme Vite)
+// Sans ça, le marqueur ne s'affiche pas correctement
 const defaultIcon = L.icon({
     iconUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon.png',
     iconRetinaUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon-2x.png',
