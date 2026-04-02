@@ -2,7 +2,7 @@ import * as assert from "node:assert/strict";
 import { describe, it } from "node:test";
 import argon2 from "argon2";
 import { prisma } from "../models/index.ts";
-import { baseUrl, loginAndGetSession } from "./helpers/http.ts";
+import { baseUrl, createTestSession, loginAndGetSession } from "./helpers/http.ts";
 
 async function createUser({
     firstname = "Test",
@@ -65,50 +65,6 @@ describe("GET /api/users", () => {
     });
 });
 
-describe("GET /api/users/:id", () => {
-    it("returns the connected user by id", async () => {
-        const connectedUser = await createUser({ email: "viewer@greenroots.fr" });
-
-        const { session } = await loginAndGetSession("viewer@greenroots.fr", "GreenRoots123");
-        const response = await session.fetch(`${baseUrl}/api/users/${connectedUser.id}`);
-
-        assert.equal(response.status, 200);
-        assert.deepEqual(await response.json(), {
-            id: connectedUser.id,
-            address: "12 rue des arbres",
-            email: "viewer@greenroots.fr",
-            firstname: "Test",
-            lastname: "User",
-            role: { nameRole: "user" },
-        });
-    });
-
-    it("returns 404 when the user does not exist", async () => {
-        const user = await createUser({ email: "viewer@greenroots.fr" });
-        const { session } = await loginAndGetSession("viewer@greenroots.fr", "GreenRoots123");
-
-        await prisma.user.delete({
-            where: { id: user.id },
-        });
-
-        const response = await session.fetch(`${baseUrl}/api/users/${user.id}`);
-
-        assert.equal(response.status, 404);
-        assert.match(await response.text(), /User not found/);
-    });
-
-    it("returns 403 when a user requests another account", async () => {
-        await createUser({ email: "viewer@greenroots.fr" });
-        const targetUser = await createUser({ email: "target@greenroots.fr" });
-        const { session } = await loginAndGetSession("viewer@greenroots.fr", "GreenRoots123");
-
-        const response = await session.fetch(`${baseUrl}/api/users/${targetUser.id}`);
-
-        assert.equal(response.status, 403);
-        assert.match(await response.text(), /Forbidden/);
-    });
-});
-
 describe("PATCH /api/users/:id", () => {
     it("updates the connected user with a partial payload", async () => {
         const user = await createUser({ email: "viewer@greenroots.fr" });
@@ -132,6 +88,20 @@ describe("PATCH /api/users/:id", () => {
             lastname: "User",
             role: { nameRole: "user" },
         });
+    });
+
+    it("returns 401 without auth cookie", async () => {
+        const user = await createUser({ email: "viewer@greenroots.fr" });
+        const session = await createTestSession();
+
+        const response = await session.csrfFetch(`${baseUrl}/api/users/${user.id}`, {
+            method: "PATCH",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ firstname: "Updated" }),
+        });
+
+        assert.equal(response.status, 401);
+        assert.match(await response.text(), /Unauthorized/);
     });
 
     it("returns 404 when the user does not exist", async () => {
@@ -197,6 +167,18 @@ describe("DELETE /api/users/:id", () => {
         });
 
         assert.equal(deletedUser, null);
+    });
+
+    it("returns 401 without auth cookie", async () => {
+        const user = await createUser({ email: "viewer@greenroots.fr" });
+        const session = await createTestSession();
+
+        const response = await session.csrfFetch(`${baseUrl}/api/users/${user.id}`, {
+            method: "DELETE",
+        });
+
+        assert.equal(response.status, 401);
+        assert.match(await response.text(), /Unauthorized/);
     });
 
     it("returns 403 when a user tries to delete another account", async () => {

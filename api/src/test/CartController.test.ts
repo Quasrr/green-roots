@@ -166,6 +166,57 @@ describe("PUT /api/cart", () => {
         assert.deepEqual(await response.json(), { items: [] });
     });
 
+    it("removes an item when quantity is set to 0", async () => {
+        await createUser();
+        const { session } = await loginAndGetSession(testUser.email, testUser.password);
+        const tree = await createTree(10);
+
+        await session.csrfFetch(`${baseUrl}/api/cart`, {
+            method: "PUT",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+                item: {
+                    id: tree.id,
+                    quantity: 2,
+                },
+            }),
+        });
+
+        const response = await session.csrfFetch(`${baseUrl}/api/cart`, {
+            method: "PUT",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+                item: {
+                    id: tree.id,
+                    quantity: 0,
+                },
+            }),
+        });
+
+        assert.equal(response.status, 200);
+        assert.deepEqual(await response.json(), { items: [] });
+    });
+
+    it("returns 404 when decrementing an item that is not in the cart", async () => {
+        await createUser();
+        const { session } = await loginAndGetSession(testUser.email, testUser.password);
+        const tree = await createTree(10);
+
+        const response = await session.csrfFetch(`${baseUrl}/api/cart`, {
+            method: "PUT",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+                item: {
+                    id: tree.id,
+                    quantity: -1,
+                },
+            }),
+        });
+
+        assert.equal(response.status, 404);
+        assert.match(await response.text(), /Item not found in cart/);
+    });
+
     it("returns 400 when trying to add an out-of-stock tree", async () => {
         await createUser();
         const { session } = await loginAndGetSession(testUser.email, testUser.password);
@@ -239,6 +290,62 @@ describe("PUT /api/cart", () => {
         const cartResponse = await session.fetch(`${baseUrl}/api/cart`);
         assert.equal(cartResponse.status, 200);
         assert.equal((await cartResponse.json()).items[0].quantity, 2);
+    });
+
+    it("returns 404 when the tree does not exist", async () => {
+        await createUser();
+        const { session } = await loginAndGetSession(testUser.email, testUser.password);
+
+        const response = await session.csrfFetch(`${baseUrl}/api/cart`, {
+            method: "PUT",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+                item: {
+                    id: 9999,
+                    quantity: 1,
+                },
+            }),
+        });
+
+        assert.equal(response.status, 404);
+        assert.match(await response.text(), /Tree not found/);
+    });
+
+    it("returns 400 when quantity is missing", async () => {
+        await createUser();
+        const { session } = await loginAndGetSession(testUser.email, testUser.password);
+        const tree = await createTree(10);
+
+        const response = await session.csrfFetch(`${baseUrl}/api/cart`, {
+            method: "PUT",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+                item: {
+                    id: tree.id,
+                },
+            }),
+        });
+
+        assert.equal(response.status, 400);
+        assert.match(await response.text(), /Item must contain a valid quantity/);
+    });
+
+    it("returns 422 when payload is invalid", async () => {
+        await createUser();
+        const { session } = await loginAndGetSession(testUser.email, testUser.password);
+
+        const response = await session.csrfFetch(`${baseUrl}/api/cart`, {
+            method: "PUT",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+                item: {
+                    id: 0,
+                    quantity: 1,
+                },
+            }),
+        });
+
+        assert.equal(response.status, 422);
     });
 
     it("returns 401 when no auth cookie is provided", async () => {

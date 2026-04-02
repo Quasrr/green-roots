@@ -173,6 +173,124 @@ describe("POST /api/orders", () => {
 });
 
 describe("POST /api/orders/:id/pay", () => {
+    it("returns 401 when unauthenticated", async () => {
+        const session = await createTestSession();
+        const response = await session.csrfFetch(`${baseUrl}/api/orders/1/pay`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+        });
+
+        assert.equal(response.status, 401);
+    });
+
+    it("returns 422 when the order id is invalid", async () => {
+        await createUser({ email: "user@greenroots.fr", roleId: 2 });
+        const { session } = await loginAndGetSession("user@greenroots.fr", "GreenRoots123");
+
+        const response = await session.csrfFetch(`${baseUrl}/api/orders/abc/pay`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+        });
+
+        assert.equal(response.status, 422);
+    });
+
+    it("returns 404 when the order does not exist", async () => {
+        await createUser({ email: "user@greenroots.fr", roleId: 2 });
+        const { session } = await loginAndGetSession("user@greenroots.fr", "GreenRoots123");
+
+        const response = await session.csrfFetch(`${baseUrl}/api/orders/9999/pay`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+        });
+
+        assert.equal(response.status, 404);
+        assert.match(await response.text(), /Order not found/);
+    });
+
+    it("returns 403 when paying another user's order", async () => {
+        await createUser({ email: "owner@greenroots.fr", roleId: 2 });
+        await createUser({ email: "other@greenroots.fr", roleId: 2 });
+        const tree = await createTree(10);
+
+        const { session: ownerSession } = await loginAndGetSession("owner@greenroots.fr", "GreenRoots123");
+        const { session: otherSession } = await loginAndGetSession("other@greenroots.fr", "GreenRoots123");
+
+        const created = await ownerSession.csrfFetch(`${baseUrl}/api/orders`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify([{ treeId: tree.id, quantity: 1 }]),
+        });
+        const order = await created.json();
+
+        const response = await otherSession.csrfFetch(`${baseUrl}/api/orders/${order.id}/pay`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+        });
+
+        assert.equal(response.status, 403);
+        assert.match(await response.text(), /Forbidden/);
+    });
+
+    it("returns 409 when the order has already been processed", async () => {
+        await createUser({ email: "user@greenroots.fr", roleId: 2 });
+        const tree = await createTree(10);
+        const { session } = await loginAndGetSession("user@greenroots.fr", "GreenRoots123");
+
+        const created = await session.csrfFetch(`${baseUrl}/api/orders`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify([{ treeId: tree.id, quantity: 1 }]),
+        });
+        const order = await created.json();
+
+        const firstPaymentResponse = await session.csrfFetch(`${baseUrl}/api/orders/${order.id}/pay`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+        });
+        assert.equal(firstPaymentResponse.status, 200);
+
+        const response = await session.csrfFetch(`${baseUrl}/api/orders/${order.id}/pay`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+        });
+
+        assert.equal(response.status, 409);
+        assert.match(await response.text(), /The order has already processed/);
+    });
+
+    it("returns 400 and cancels the order when stock became insufficient before payment", async () => {
+        await createUser({ email: "user@greenroots.fr", roleId: 2 });
+        const tree = await createTree(1);
+        const { session } = await loginAndGetSession("user@greenroots.fr", "GreenRoots123");
+
+        const created = await session.csrfFetch(`${baseUrl}/api/orders`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify([{ treeId: tree.id, quantity: 1 }]),
+        });
+        const order = await created.json();
+
+        await prisma.tree.update({
+            where: { id: tree.id },
+            data: { quantity: 0 },
+        });
+
+        const response = await session.csrfFetch(`${baseUrl}/api/orders/${order.id}/pay`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+        });
+
+        assert.equal(response.status, 400);
+        assert.match(await response.text(), /Stock insuffisant/);
+
+        const updatedOrder = await prisma.order.findUnique({
+            where: { id: order.id },
+            select: { status: true },
+        });
+        assert.equal(updatedOrder?.status, OrderStatus.canceled);
+    });
+
     it("marks one concurrent order as canceled when only one payment can consume the remaining stock", async () => {
         await createUser({ email: "first-user@greenroots.fr", roleId: 2 });
         await createUser({ email: "second-user@greenroots.fr", roleId: 2 });
@@ -232,6 +350,161 @@ describe("POST /api/orders/:id/pay", () => {
         });
 
         assert.equal(updatedTree?.quantity, 0);
+    });
+});
+
+describe("PATCH /api/orders/:id/cancel", () => {
+    it("cancels a waiting order for the authenticated user", async () => {
+        await createUser({ email: "user@greenroots.fr", roleId: 2 });
+        const tree = await createTree(10);
+        const { session } = await loginAndGetSession("user@greenroots.fr", "GreenRoots123");
+
+        const created = await session.csrfFetch(`${baseUrl}/api/orders`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify([{ treeId: tree.id, quantity: 2 }]),
+        });
+        const order = await created.json();
+
+        const response = await session.csrfFetch(`${baseUrl}/api/orders/${order.id}/cancel`, {
+            method: "PATCH",
+        });
+
+        assert.equal(response.status, 200);
+
+        const updatedOrder = await prisma.order.findUnique({
+            where: { id: order.id },
+            select: { status: true },
+        });
+        assert.equal(updatedOrder?.status, OrderStatus.canceled);
+
+        const updatedTree = await prisma.tree.findUnique({
+            where: { id: tree.id },
+            select: { quantity: true },
+        });
+        assert.equal(updatedTree?.quantity, 10);
+    });
+
+    it("restores the stock when canceling a paid order", async () => {
+        await createUser({ email: "user@greenroots.fr", roleId: 2 });
+        const tree = await createTree(10);
+        const { session } = await loginAndGetSession("user@greenroots.fr", "GreenRoots123");
+
+        const created = await session.csrfFetch(`${baseUrl}/api/orders`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify([{ treeId: tree.id, quantity: 3 }]),
+        });
+        const order = await created.json();
+
+        const paymentResponse = await session.csrfFetch(`${baseUrl}/api/orders/${order.id}/pay`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+        });
+        assert.equal(paymentResponse.status, 200);
+
+        const paidTree = await prisma.tree.findUnique({
+            where: { id: tree.id },
+            select: { quantity: true },
+        });
+        assert.equal(paidTree?.quantity, 7);
+
+        const response = await session.csrfFetch(`${baseUrl}/api/orders/${order.id}/cancel`, {
+            method: "PATCH",
+        });
+
+        assert.equal(response.status, 200);
+
+        const updatedOrder = await prisma.order.findUnique({
+            where: { id: order.id },
+            select: { status: true },
+        });
+        assert.equal(updatedOrder?.status, OrderStatus.canceled);
+
+        const updatedTree = await prisma.tree.findUnique({
+            where: { id: tree.id },
+            select: { quantity: true },
+        });
+        assert.equal(updatedTree?.quantity, 10);
+    });
+
+    it("returns 401 when unauthenticated", async () => {
+        const session = await createTestSession();
+        const response = await session.csrfFetch(`${baseUrl}/api/orders/1/cancel`, {
+            method: "PATCH",
+        });
+
+        assert.equal(response.status, 401);
+    });
+
+    it("returns 403 when canceling another user's order", async () => {
+        await createUser({ email: "owner@greenroots.fr", roleId: 2 });
+        await createUser({ email: "other@greenroots.fr", roleId: 2 });
+        const tree = await createTree(10);
+
+        const { session: ownerSession } = await loginAndGetSession("owner@greenroots.fr", "GreenRoots123");
+        const { session: otherSession } = await loginAndGetSession("other@greenroots.fr", "GreenRoots123");
+
+        const created = await ownerSession.csrfFetch(`${baseUrl}/api/orders`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify([{ treeId: tree.id, quantity: 1 }]),
+        });
+        const order = await created.json();
+
+        const response = await otherSession.csrfFetch(`${baseUrl}/api/orders/${order.id}/cancel`, {
+            method: "PATCH",
+        });
+
+        assert.equal(response.status, 403);
+        assert.match(await response.text(), /Forbidden/);
+    });
+
+    it("returns 404 when the order does not exist", async () => {
+        await createUser({ email: "user@greenroots.fr", roleId: 2 });
+        const { session } = await loginAndGetSession("user@greenroots.fr", "GreenRoots123");
+
+        const response = await session.csrfFetch(`${baseUrl}/api/orders/9999/cancel`, {
+            method: "PATCH",
+        });
+
+        assert.equal(response.status, 404);
+        assert.match(await response.text(), /Order not found/);
+    });
+
+    it("returns 409 when the order is already canceled", async () => {
+        await createUser({ email: "user@greenroots.fr", roleId: 2 });
+        const tree = await createTree(10);
+        const { session } = await loginAndGetSession("user@greenroots.fr", "GreenRoots123");
+
+        const created = await session.csrfFetch(`${baseUrl}/api/orders`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify([{ treeId: tree.id, quantity: 1 }]),
+        });
+        const order = await created.json();
+
+        await session.csrfFetch(`${baseUrl}/api/orders/${order.id}/cancel`, {
+            method: "PATCH",
+        });
+
+        const response = await session.csrfFetch(`${baseUrl}/api/orders/${order.id}/cancel`, {
+            method: "PATCH",
+        });
+
+        assert.equal(response.status, 409);
+        assert.match(await response.text(), /Order is already canceled/);
+    });
+
+    it("returns 422 when the order id is invalid", async () => {
+        await createUser({ email: "user@greenroots.fr", roleId: 2 });
+        const { session } = await loginAndGetSession("user@greenroots.fr", "GreenRoots123");
+
+        const response = await session.csrfFetch(`${baseUrl}/api/orders/abc/cancel`, {
+            method: "PATCH",
+        });
+
+        assert.equal(response.status, 422);
     });
 });
 

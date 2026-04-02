@@ -2,7 +2,7 @@ import * as assert from "node:assert/strict";
 import { describe, it } from "node:test";
 import argon2 from "argon2";
 import { Growth, prisma } from "../models/index.ts";
-import { baseUrl, loginAndGetSession } from "./helpers/http.ts";
+import { baseUrl, createTestSession, loginAndGetSession } from "./helpers/http.ts";
 
 function sortCategories<T extends { categories: Array<{ id: number; name: string }> }>(tree: T) {
     return {
@@ -137,6 +137,13 @@ describe("GET /api/trees/:id", () => {
         assert.equal(response.status, 404);
         assert.match(await response.text(), /Tree not found/);
     });
+
+    it("returns 404 when the tree id is invalid", async () => {
+        const response = await fetch(`${baseUrl}/api/trees/0`);
+
+        assert.equal(response.status, 404);
+        assert.match(await response.text(), /Tree not found/);
+    });
 });
 
 describe("POST /api/trees", () => {
@@ -190,6 +197,33 @@ describe("POST /api/trees", () => {
         });
     });
 
+    it("returns 401 without auth cookie", async () => {
+        const session = await createTestSession();
+        const response = await session.csrfFetch(`${baseUrl}/api/trees`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+                name: "Olivier",
+                price: 49.9,
+                description: "Arbre mediterraneen",
+                impact_co2: 18,
+                impact_o2: 14,
+                image: "olivier.webp",
+                quantity: 10,
+                label: "Esprit mediterraneen persistant",
+                country: "Italie",
+                height: 6,
+                growth: "slow",
+                exposition: "Soleil",
+                rusticity: "8-10",
+                categories: [],
+            }),
+        });
+
+        assert.equal(response.status, 401);
+        assert.match(await response.text(), /Unauthorized/);
+    });
+
     it("returns 403 for a non-admin user", async () => {
         await createUser({ email: "user@greenroots.fr", roleId: 2 });
         await createCategory("Fruitier");
@@ -218,6 +252,37 @@ describe("POST /api/trees", () => {
 
         assert.equal(response.status, 403);
         assert.match(await response.text(), /Forbidden/);
+    });
+
+    it("returns 409 when the tree already exists", async () => {
+        await createUser({ email: "admin@greenroots.fr", roleId: 1 });
+        const fruitier = await createCategory("Fruitier");
+        await createTreeWithCategories([fruitier.id]);
+        const { session } = await loginAndGetSession("admin@greenroots.fr", "GreenRoots123");
+
+        const response = await session.csrfFetch(`${baseUrl}/api/trees`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+                name: "Olivier",
+                price: 49.9,
+                description: "Autre arbre",
+                impact_co2: 18,
+                impact_o2: 14,
+                image: "different-image.webp",
+                quantity: 10,
+                label: "Esprit mediterraneen persistant",
+                country: "Italie",
+                height: 6,
+                growth: "slow",
+                exposition: "Soleil",
+                rusticity: "8-10",
+                categories: [fruitier.id],
+            }),
+        });
+
+        assert.equal(response.status, 409);
+        assert.match(await response.text(), /Tree already exists/);
     });
 
     it("returns 422 when payload is invalid", async () => {
@@ -269,6 +334,67 @@ describe("PATCH /api/trees/:id", () => {
         assert.equal((await response.json()).price, "600");
     });
 
+    it("returns 401 without auth cookie", async () => {
+        const fruitier = await createCategory("Fruitier");
+        const tree = await createTreeWithCategories([fruitier.id]);
+        const session = await createTestSession();
+
+        const response = await session.csrfFetch(`${baseUrl}/api/trees/${tree.id}`, {
+            method: "PATCH",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+                name: "Olivier",
+                price: 49.9,
+                description: "Arbre mediterraneen",
+                impact_co2: 18,
+                impact_o2: 14,
+                image: "olivier.webp",
+                quantity: 10,
+                label: "Esprit mediterraneen persistant",
+                country: "Italie",
+                height: 6,
+                growth: "slow",
+                exposition: "Soleil",
+                rusticity: "8-10",
+                categories: [fruitier.id],
+            }),
+        });
+
+        assert.equal(response.status, 401);
+        assert.match(await response.text(), /Unauthorized/);
+    });
+
+    it("returns 403 for a non-admin user", async () => {
+        await createUser({ email: "user@greenroots.fr", roleId: 2 });
+        const fruitier = await createCategory("Fruitier");
+        const tree = await createTreeWithCategories([fruitier.id]);
+        const { session } = await loginAndGetSession("user@greenroots.fr", "GreenRoots123");
+
+        const response = await session.csrfFetch(`${baseUrl}/api/trees/${tree.id}`, {
+            method: "PATCH",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+                name: "Olivier",
+                price: 49.9,
+                description: "Arbre mediterraneen",
+                impact_co2: 18,
+                impact_o2: 14,
+                image: "olivier.webp",
+                quantity: 10,
+                label: "Esprit mediterraneen persistant",
+                country: "Italie",
+                height: 6,
+                growth: "slow",
+                exposition: "Soleil",
+                rusticity: "8-10",
+                categories: [fruitier.id],
+            }),
+        });
+
+        assert.equal(response.status, 403);
+        assert.match(await response.text(), /Forbidden/);
+    });
+
     it("replaces categories when categories are provided", async () => {
         await createUser({ email: "admin@greenroots.fr", roleId: 1 });
         const fruitier = await createCategory("Fruitier");
@@ -303,6 +429,62 @@ describe("PATCH /api/trees/:id", () => {
         ]);
     });
 
+    it("returns 409 when another tree already uses the same name", async () => {
+        await createUser({ email: "admin@greenroots.fr", roleId: 1 });
+        const fruitier = await createCategory("Fruitier");
+        const persistant = await createCategory("Persistant");
+        await createTreeWithCategories([fruitier.id]);
+        const tree = await prisma.tree.create({
+            data: {
+                name: "Citronnier",
+                price: 39.9,
+                description: "Arbre citrus",
+                impact_co2: 12,
+                impact_o2: 10,
+                image: "citronnier.webp",
+                quantity: 5,
+                label: "Parfum citronne",
+                country: "Espagne",
+                height: 3,
+                growth: Growth.medium,
+                exposition: "Soleil",
+                rusticity: "7-9",
+                categories: {
+                    create: [{
+                        category: {
+                            connect: { id: persistant.id },
+                        },
+                    }],
+                },
+            },
+        });
+        const { session } = await loginAndGetSession("admin@greenroots.fr", "GreenRoots123");
+
+        const response = await session.csrfFetch(`${baseUrl}/api/trees/${tree.id}`, {
+            method: "PATCH",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+                name: "Olivier",
+                price: 39.9,
+                description: "Arbre citrus",
+                impact_co2: 12,
+                impact_o2: 10,
+                image: "citronnier.webp",
+                quantity: 5,
+                label: "Parfum citronne",
+                country: "Espagne",
+                height: 3,
+                growth: "medium",
+                exposition: "Soleil",
+                rusticity: "7-9",
+                categories: [persistant.id],
+            }),
+        });
+
+        assert.equal(response.status, 409);
+        assert.match(await response.text(), /Tree already exists/);
+    });
+
     it("returns 404 when the tree does not exist", async () => {
         await createUser({ email: "admin@greenroots.fr", roleId: 1 });
         const { session } = await loginAndGetSession("admin@greenroots.fr", "GreenRoots123");
@@ -330,6 +512,24 @@ describe("PATCH /api/trees/:id", () => {
 
         assert.equal(response.status, 404);
     });
+
+    it("returns 422 when payload is invalid", async () => {
+        await createUser({ email: "admin@greenroots.fr", roleId: 1 });
+        const fruitier = await createCategory("Fruitier");
+        const tree = await createTreeWithCategories([fruitier.id]);
+        const { session } = await loginAndGetSession("admin@greenroots.fr", "GreenRoots123");
+
+        const response = await session.csrfFetch(`${baseUrl}/api/trees/${tree.id}`, {
+            method: "PATCH",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+                name: "",
+                price: -1,
+            }),
+        });
+
+        assert.equal(response.status, 422);
+    });
 });
 
 describe("DELETE /api/trees/:id", () => {
@@ -350,6 +550,33 @@ describe("DELETE /api/trees/:id", () => {
         });
 
         assert.equal(deletedTree, null);
+    });
+
+    it("returns 401 without auth cookie", async () => {
+        const fruitier = await createCategory("Fruitier");
+        const tree = await createTreeWithCategories([fruitier.id]);
+        const session = await createTestSession();
+
+        const response = await session.csrfFetch(`${baseUrl}/api/trees/${tree.id}`, {
+            method: "DELETE",
+        });
+
+        assert.equal(response.status, 401);
+        assert.match(await response.text(), /Unauthorized/);
+    });
+
+    it("returns 403 for a non-admin user", async () => {
+        await createUser({ email: "user@greenroots.fr", roleId: 2 });
+        const fruitier = await createCategory("Fruitier");
+        const tree = await createTreeWithCategories([fruitier.id]);
+        const { session } = await loginAndGetSession("user@greenroots.fr", "GreenRoots123");
+
+        const response = await session.csrfFetch(`${baseUrl}/api/trees/${tree.id}`, {
+            method: "DELETE",
+        });
+
+        assert.equal(response.status, 403);
+        assert.match(await response.text(), /Forbidden/);
     });
 
     it("returns 404 when the tree does not exist", async () => {
