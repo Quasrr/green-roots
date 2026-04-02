@@ -5,6 +5,7 @@ async function cleanExpiredTokens() {
         const result = await prisma.refreshToken.deleteMany({
             where: {
                 expiresAt: {
+                    // lt = less than, ce qui est strictement inférieur
                     lt: new Date()
                 }
             }
@@ -19,7 +20,7 @@ async function cleanExpiredTokens() {
     };
 };
 
-const TWENTY_FOUR_HOURS = 1000 * 60 * 60 * 24;
+const TWENTY_FOUR_HOURS = 1000 * 60 * 60 * 24; // 24h
 
 export function startCleanExpiredTokensJob() {
     cleanExpiredTokens();

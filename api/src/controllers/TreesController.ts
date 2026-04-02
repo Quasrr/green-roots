@@ -63,10 +63,12 @@ class TreesController {
         try {
             const id = Number(req.params.id);
 
-            if (id <= 0) throw new NotFoundError("Tree not found");
+            if (!Number.isInteger(id) || id <= 0) throw new NotFoundError("Tree not found");
 
             // Clé unique par arbre
-            const cached = await redis.get(`trees:${id}`);
+            const cacheKey = `trees:${id}`;
+
+            const cached = await redis.get(cacheKey);
 
             if (cached) {
                 return res.send(JSON.parse(cached));
@@ -90,7 +92,7 @@ class TreesController {
                 categories: tree.categories.map((item) => item.category),
             };
 
-            await redis.set(`trees:${id}`, JSON.stringify(normalizedTree), { EX: 3600 });
+            await redis.set(cacheKey, JSON.stringify(normalizedTree), { EX: 3600 });
 
             res.send(normalizedTree);
         } catch (error) {

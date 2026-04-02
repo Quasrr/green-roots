@@ -183,7 +183,13 @@ class AuthController {
     async logout(req: Request, res: Response) {
         const refreshToken = req.cookies?.refresh_token;
         // Supression access token
-        res.clearCookie("access_token", { path: "/api" });
+        res.clearCookie("access_token", {
+            httpOnly: true,
+            secure: process.env.NODE_ENV === "production",
+            sameSite: "lax",
+            path: "/api",
+            maxAge: 1000 * 60 * 60
+        });
 
         // Supression refresh token + suppression en bdd
         res.clearCookie(`refresh_token`, {

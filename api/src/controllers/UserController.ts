@@ -35,29 +35,6 @@ class UserController {
         };
     };
 
-    async getById(req: Request, res: Response) {
-        try {
-            const id = Number(req.params.id);
-
-            if (!id || isNaN(id)) throw new NotFoundError('User not found');
-
-            if (Number(req.user.id) !== id) {
-                throw new ForbiddenError('Forbidden');
-            };
-
-            const user = await prisma.user.findUnique({
-                where: { id },
-                select: userSelect
-            });
-
-            if (!user) throw new NotFoundError('User not found');
-
-            res.json(user);
-        } catch (error) {
-            ErrorHandler.sendError(res, error);
-        };
-    };
-
     async update(req: Request, res: Response) {
         try {
             const id = Number(req.params.id);
@@ -116,13 +93,20 @@ class UserController {
                 });
             });
 
-            res.clearCookie("access_token", { path: "/api" });
+            res.clearCookie("access_token", {
+                httpOnly: true,
+                secure: process.env.NODE_ENV === "production",
+                sameSite: "lax",
+                path: "/api",
+                maxAge: 1000 * 60 * 60
+            });
+
             res.clearCookie("refresh_token", {
                 httpOnly: true,
                 secure: process.env.NODE_ENV === "production",
                 sameSite: "lax",
                 maxAge: 1000 * 60 * 60 * 24 * 7,
-                path: "/api/auth/refresh"
+                path: "/api/auth/"
             });
 
             res.status(204).send();
