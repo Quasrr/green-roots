@@ -241,6 +241,13 @@
   display: block;
 }
 
+.map_leaflet {
+  width: 100%;
+  height: 280px;
+  border-radius: 0.75rem;
+  z-index: 0;
+}
+
 .wrap_div_map {
   display: flex;
   align-items: center;

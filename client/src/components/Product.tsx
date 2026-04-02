@@ -5,7 +5,40 @@ import { Leaf, Wind, MapPin, TriangleAlert } from 'lucide-react';
 import { useCart } from "../hooks/useCart";
 import { useAuth } from '../hooks/useAuth';
 import { toast } from 'sonner';
-import '../components/styles/Product.css';
+import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
+import 'leaflet/dist/leaflet.css';
+import L from 'leaflet';
+
+
+const defaultIcon = L.icon({
+    iconUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon.png',
+    iconRetinaUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon-2x.png',
+    shadowUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png',
+    iconSize: [25, 41],
+    iconAnchor: [12, 41],
+    popupAnchor: [1, -34],
+});
+L.Marker.prototype.options.icon = defaultIcon;
+
+// Coordonnées GPS [latitude, longitude] pour chaque pays d'origine
+// On les stocke ici directement 
+const countryCoordinates: Record<string, [number, number]> = {
+    "France": [46.6034, 2.2137],
+    "Italie": [41.8719, 12.5674],
+    "Japon": [36.2048, 138.2529],
+    "Chine": [35.8617, 104.1954],
+    "Canada": [56.1304, -106.3468],
+    "Espagne": [40.4637, -3.7492],
+    "Europe": [50.1109, 9.6824],
+    "Allemagne": [51.1657, 10.4515],
+    "Brésil": [-14.2350, -51.9253],
+    "États-Unis": [37.0902, -95.7129],
+    "Australie": [-25.2744, 133.7751],
+    "Inde": [20.5937, 78.9629],
+    "Maroc": [31.7917, -7.0926],
+    "Portugal": [39.3999, -8.2245],
+    "Royaume-Uni": [55.3781, -3.4360],
+};
 
 function Product() {
 
@@ -111,7 +144,26 @@ function Product() {
                         <MapPin size={48} color="#1F4D4D" className="logo_article_choose" />
                         <h3 className="h3_map">Aire d'origine & répartition</h3>
                     </div>
-                    <img src="/map.png" alt="carte du monde d'origine des arbres" className="map_img" />
+                    {/* MapContainer = le composant principal de Leaflet qui crée la carte */}
+                    {/* center = coordonnées GPS du pays, zoom = niveau de zoom initial */}
+                    <MapContainer
+                        center={countryCoordinates[tree.country] || [20, 0]}
+                        zoom={4}
+                        className="map_leaflet"
+                        scrollWheelZoom={false}
+                    >
+                        {/* TileLayer = les images de fond de carte (ici OpenStreetMap, gratuit) */}
+                        <TileLayer
+                            attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+                            url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+                        />
+                        {/* Marker = le point rouge sur la carte, Popup = la bulle au clic */}
+                        {countryCoordinates[tree.country] && (
+                            <Marker position={countryCoordinates[tree.country]}>
+                                <Popup>{tree.name} — Origine : {tree.country}</Popup>
+                            </Marker>
+                        )}
+                    </MapContainer>
                     <div className="description_map">
                         <p className="origin">Origine de l'arbre : {tree.country}</p>
                         <p className="description_origin">Cultivé durablement dans notre pépinière</p>
