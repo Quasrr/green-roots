@@ -211,45 +211,56 @@ class AuthController {
         res.sendStatus(204);
     };
 
-    async me(req: Request, res: Response): Promise<void> {
-        // Récupérer les informations de l'utilisateur à partir de la requête (grâce au middleware d'authentification)
-        const userInfo = req.user;
+    async me(req: Request, res: Response) {
+        try {
+            // Récupérer les informations de l'utilisateur à partir de la requête (grâce au middleware d'authentification)
+            const userInfo = req.user;
 
-        // Si l'utilisateur n'est pas trouvé, renvoyer une erreur
-        if (!userInfo) throw new NotFoundError('User not found');
+            // Si l'utilisateur n'est pas trouvé, renvoyer une erreur
+            if (!userInfo) throw new NotFoundError('User not found');
 
-        //On utilise l'email du token pour aller chercher toutes les infos en BDD
-        const user = await prisma.user.findUnique({ where: { email: userInfo.email } });
-        if (!user) throw new NotFoundError('User not found');
+            //On utilise l'email du token pour aller chercher toutes les infos en BDD
+            const user = await prisma.user.findUnique({ where: { email: userInfo.email } });
+            if (!user) throw new NotFoundError('User not found');
 
-        // Renvoyer les informations de l'utilisateur au client
-        res.send({ id: user.id, email: user.email, firstname: user.firstname, lastname: user.lastname, role: user.roleId });
+            // Renvoyer les informations de l'utilisateur au client
+            res.send({ id: user.id, email: user.email, firstname: user.firstname, lastname: user.lastname, role: user.roleId });
+        } catch (error) {
+            return ErrorHandler.sendError(res, error);
+        };
     };
 
     async forgotPassword(req: Request, res: Response) {
-        const { email } = req.body;
+        const schema = z.object({
+            email: z.string().email(),
+        });
 
-        if (!email) throw new BadRequestError("Email requis");
+        try {
+            const { email } = schema.parse(req.body);
 
-        // Envoyé quoi qu'il arrive
-        res.send({ message: "Si ce compte existe, un email a été envoyé" });
+            if (!email) throw new BadRequestError("Email requis");
 
-        const user = await prisma.user.findUnique({ where: { email } });
-        if (!user) return;
+            // Envoyé quoi qu'il arrive
+            res.send({ message: "Si ce compte existe, un email a été envoyé" });
 
-        // 1 demande par minute par email
-        const onCooldown = await redis.get(`reset-cooldown:${email}`);
+            const user = await prisma.user.findUnique({ where: { email } });
+            if (!user) return;
 
-        if (onCooldown) return;
+            // 1 demande par minute par email
+            const onCooldown = await redis.get(`reset-cooldown:${email}`);
+            if (onCooldown) return;
 
-        const rawToken = generateToken();
-        const hashedToken = hashToken(rawToken);
+            const rawToken = generateToken();
+            const hashedToken = hashToken(rawToken);
 
-        await redis.set(`reset:${hashedToken}`, email, { EX: 3600 });
-        await redis.set(`reset-cooldown:${email}`, "1", { EX: 60 });
+            await redis.set(`reset:${hashedToken}`, email, { EX: 3600 });
+            await redis.set(`reset-cooldown:${email}`, "1", { EX: 60 });
 
-        const resetUrl = `${process.env.FRONT_URL}/reset-password?token=${rawToken}`;
-        await sendResetEmail(email, resetUrl);
+            const resetUrl = `${process.env.FRONT_URL}/reset-password?token=${rawToken}`;
+            await sendResetEmail(email, resetUrl);
+        } catch (error) {
+            return ErrorHandler.sendError(res, error);
+        }
     };
 
     async resetPassword(req: Request, res: Response) {
@@ -268,29 +279,33 @@ class AuthController {
                 ),
         });
 
-        const { token, newPassword } = schema.parse(req.body);
+        try {
+            const { token, newPassword } = schema.parse(req.body);
 
-        const hashedToken = hashToken(token);
-        const email = await redis.get(`reset:${hashedToken}`);
+            const hashedToken = hashToken(token);
+            const email = await redis.get(`reset:${hashedToken}`);
 
-        if (!email) throw new BadRequestError("Token invalide ou expiré");
+            if (!email) throw new BadRequestError("Token invalide ou expiré");
 
-        const user = await prisma.user.findUnique({ where: { email } });
+            const user = await prisma.user.findUnique({ where: { email } });
 
-        if (!user) throw new BadRequestError("Utilisateur introuvable");
+            if (!user) throw new BadRequestError("Utilisateur introuvable");
 
-        // Nouveau mot de passe
-        const hashedPassword = await argon2.hash(newPassword);
+            // Nouveau mot de passe
+            const hashedPassword = await argon2.hash(newPassword);
 
-        await prisma.user.update({
-            where: { email },
-            data: { password: hashedPassword },
-        });
+            await prisma.user.update({
+                where: { email },
+                data: { password: hashedPassword },
+            });
 
-        // Invalider le token en le supprimant de la base redis
-        await redis.del(`reset:${hashedToken}`);
+            // Invalider le token en le supprimant de la base redis
+            await redis.del(`reset:${hashedToken}`);
 
-        res.send({ message: "Mot de passe mis à jour avec succès" });
+            res.send({ message: "Mot de passe mis à jour avec succès" });
+        } catch (error) {
+            return ErrorHandler.sendError(res, error);
+        }
     };
 };
 
