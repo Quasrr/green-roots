@@ -53,7 +53,7 @@ function About() {
                         <div className="about_team_avatar">T</div>
                         <h3>Tony</h3>
                         <p className="about_team_role">Lead Developer</p>
-                        <p className="about_team_desc">Architecture technique, backend, intégration Stripe et gestion Git.</p>
+                        <p className="about_team_desc">Architecture technique, backend et gestion Git.</p>
                     </article>
                     <article className="about_team_card">
                         <div className="about_team_avatar">S</div>
