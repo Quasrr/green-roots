@@ -49,7 +49,7 @@ services:
       GMAIL_USER: ${GMAIL_USER}
       FRONT_URL: https://greenroots.duckdns.org
     ports:
-      - "3000:3000"
+      - "3000"
     networks:
       - greenroots-network
     depends_on:
